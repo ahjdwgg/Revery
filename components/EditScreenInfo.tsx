@@ -1,6 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import tw from 'twrnc';
 
 import Colors from '../constants/Colors';
 import { MonoText } from './StyledText';
@@ -10,7 +11,7 @@ export default function EditScreenInfo({ path }: { path: string }) {
     return (
         <View>
             <View style={styles.getStartedContainer}>
-                <Text style={styles.getStartedText} lightColor="rgba(0,0,0,0.8)" darkColor="rgba(255,255,255,0.8)">
+                <Text style={tw`text-green-400`} lightColor="rgba(0,0,0,0.8)" darkColor="rgba(255,255,255,0.8)">
                     Open up the code for this screen:
                 </Text>
 
