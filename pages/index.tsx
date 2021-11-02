@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
+import { BiLink } from 'react-icons/bi';
 
 const Home: NextPage = () => {
     return (
@@ -42,7 +43,10 @@ const Home: NextPage = () => {
                         className={styles.card}
                     >
                         <h2>Deploy &rarr;</h2>
-                        <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
+                        <p>
+                            Instantly deploy your Next.js site <BiLink className="inline text-blue-500" /> to a public
+                            URL with Vercel.
+                        </p>
                     </a>
                 </div>
             </main>
