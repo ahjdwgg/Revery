@@ -4,3 +4,9 @@ export const COLORS = {
     donation: 'donation',
     footprint: 'footprint',
 };
+
+export const BUTTON_ICONS = {
+    expand: 'expand',
+    plus: 'plus',
+    minus: 'minus',
+};

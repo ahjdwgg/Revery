@@ -1,11 +1,12 @@
 /**
  * This component is used for profile link buttons
+ * @param {string} key - The key of the button
  * @param {string} text - The text of the button
  * @param {string} [color] - The text and background color of the button
  * @example
  * <LinkButton text={"Edit Profile"} color={COLORS.primary}/>
  */
-const LinkButton = (props: { text: string; color?: string }) => {
+const LinkButton = (props: { key: any; text: string; color?: string }) => {
     var { text, color } = props;
 
     // if color is not specified in props, use 'primary' as default
