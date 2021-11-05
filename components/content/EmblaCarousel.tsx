@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Thumb } from './EmblaCarouselThumb';
-import style from '../styles/embla.module.css'
+import style from '../../styles/embla.module.css';
 
 const EmblaCarousel = ({ slides }: any) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -15,7 +15,7 @@ const EmblaCarousel = ({ slides }: any) => {
     const onThumbClick = useCallback(
         (index) => {
             if (!embla || !emblaThumbs) return;
-            if (emblaThumbs.clickAllowed()) embla.scrollTo(index);            
+            if (emblaThumbs.clickAllowed()) embla.scrollTo(index);
         },
         [embla, emblaThumbs],
     );
