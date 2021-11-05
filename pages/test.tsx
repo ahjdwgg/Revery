@@ -1,4 +1,6 @@
 import type { NextPage } from 'next';
+import Head from 'next/head';
+import React from 'react';
 import ContentCard from '../components/content/ContentCard';
 
 const Test: NextPage = () => {
@@ -18,6 +20,9 @@ const Test: NextPage = () => {
 
     return (
         <div className="flex flex-col max-w-lg m-auto">
+            <Head>
+                <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+            </Head>
             <h1 className="mt-4 font-bold text-center">Test Page</h1>
             <section className="divide-y-2 divide-solid divide-opacity-5 divide-primary">
                 <ContentCard
