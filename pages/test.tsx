@@ -69,6 +69,7 @@ const Test: NextPage = () => {
                                         'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
                                     }
                                     isFullRound={false}
+                                    size={84}
                                 />
                             ))}
                         </AssetCard>
@@ -81,6 +82,7 @@ const Test: NextPage = () => {
                                         'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
                                     }
                                     isFullRound={false}
+                                    size={84}
                                 />
                             ))}
                         </AssetCard>

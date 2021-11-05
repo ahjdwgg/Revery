@@ -28,7 +28,7 @@ const FootprintCard = ({ imageUrl, startDate, endDate, city, country, username, 
 
     return (
         <div className="flex flex-row gap-2 justify-start p-4 text-left">
-            <AssetItem imageUrl={imageUrl} isFullRound={true} />
+            <AssetItem imageUrl={imageUrl} isFullRound={true} size={76} />
             <section className="flex flex-1 flex-col justify-around text-body-text text-sm leading-normal">
                 <div className="flex flex-row gap-2 items-center">
                     <BiCalendar className="text-footprint" />
