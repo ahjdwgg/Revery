@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import style from '../../styles/embla.module.css';
 
 export const Thumb = ({ selected, onClick, imgSrc }: any) => (
@@ -8,7 +9,7 @@ export const Thumb = ({ selected, onClick, imgSrc }: any) => (
             className={`${style.embla__slide__inner} ${style.embla__slide__inner__thumb}`}
             type="button"
         >
-            <img src={imgSrc} alt="A cool cat." />
+            <Image src={imgSrc} layout="fill" objectFit="cover" />
         </button>
     </div>
 );

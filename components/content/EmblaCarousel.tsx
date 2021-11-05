@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Thumb } from './EmblaCarouselThumb';
 import style from '../../styles/embla.module.css';
@@ -40,7 +41,7 @@ const EmblaCarousel = ({ slides }: any) => {
                         {slides.map((imgSrc: string, index: number) => (
                             <div className={style.embla__slide} key={index}>
                                 <div className={style.embla__slide__inner}>
-                                    <img src={imgSrc} alt="A cool cat." />
+                                    <Image src={imgSrc} layout="fill" objectFit="cover" />
                                 </div>
                             </div>
                         ))}

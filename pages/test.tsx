@@ -1,11 +1,5 @@
-import EmblaCarousel from '../components/content/EmblaCarousel';
 import type { NextPage } from 'next';
-import Image from 'next/image';
 import ContentCard from '../components/content/ContentCard';
-
-function getRandomNumber() {
-    return Math.round(Math.random() * 100) % 13;
-}
 
 const Test: NextPage = () => {
     let slides = [
@@ -31,9 +25,9 @@ const Test: NextPage = () => {
                     username="Fendi"
                     content="hello world:)"
                     images={slides}
-                    like={getRandomNumber()}
-                    comment={getRandomNumber()}
-                    share={getRandomNumber()}
+                    like={7}
+                    comment={4}
+                    share={6}
                     timeStamp={0x60de434e}
                     type="Twitter"
                 />
@@ -41,9 +35,9 @@ const Test: NextPage = () => {
                     avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                     username="Fendi"
                     content="hello world:)"
-                    like={getRandomNumber()}
-                    comment={getRandomNumber()}
-                    share={getRandomNumber()}
+                    like={3}
+                    comment={2}
+                    share={1}
                     timeStamp={0x60de1fce}
                     type="Misskey"
                 />
