@@ -35,10 +35,15 @@ module.exports = {
             padding: {
                 sm: '0.2rem',
             },
+            minWidth: {
+                '1/4': '25%',
+            }
         },
     },
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/aspect-ratio'),
+    ],
 };
