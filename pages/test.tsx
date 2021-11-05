@@ -1,5 +1,8 @@
 import type { NextPage } from 'next';
 import ContentCard from '../components/content/ContentCard';
+import AssetCard from '../components/assets/AssetCard';
+import AssetItem from '../components/assets/AssetItem';
+import FootprintCard from '../components/assets/FootprintCard';
 
 const Test: NextPage = () => {
     let slides = [
@@ -55,6 +58,52 @@ const Test: NextPage = () => {
                     timeStamp={0x60de41ce}
                     type="Arweave"
                 />
+
+                <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
+                            {[...Array(5)].map((_, i) => (
+                                <AssetItem
+                                    key={i}
+                                    imageUrl={
+                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                    }
+                                    isFullRound={false}
+                                />
+                            ))}
+                        </AssetCard>
+
+                        <AssetCard title="Donations" color="donation" isShowingEditButton={true} bodyCols={2}>
+                            {[...Array(5)].map((_, i) => (
+                                <AssetItem
+                                    key={i}
+                                    imageUrl={
+                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                    }
+                                    isFullRound={false}
+                                />
+                            ))}
+                        </AssetCard>
+                    </div>
+                    <div>
+                        <AssetCard title="Footprints" color="footprint" isShowingEditButton={true} bodyCols={1}>
+                            {[...Array(5)].map((_, i) => (
+                                <FootprintCard
+                                    key={i}
+                                    imageUrl={
+                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                    }
+                                    startDate={'0x61800f00'}
+                                    endDate={'0x61800f00'}
+                                    city={''}
+                                    country={''}
+                                    username={'RSS3Lover'}
+                                    activity={'Say hi'}
+                                />
+                            ))}
+                        </AssetCard>
+                    </div>
+                </div>
             </section>
         </div>
     );
