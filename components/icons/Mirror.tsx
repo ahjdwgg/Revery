@@ -27,9 +27,9 @@ export default function Mirror() {
                     gradientTransform="matrix(701.1, 0, 0, -973.04, -333889.75, 484075.51)"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop offset="0" stop-color="#999" />
-                    <stop offset="0.34" stop-color="#fff" />
-                    <stop offset="1" stop-color="#999" />
+                    <stop offset="0" stopColor="#999" />
+                    <stop offset="0.34" stopColor="#fff" />
+                    <stop offset="1" stopColor="#999" />
                 </linearGradient>
                 <linearGradient
                     id="linear-gradient-2"
@@ -40,14 +40,14 @@ export default function Mirror() {
                     gradientTransform="matrix(758.17, 0, 0, -794.13, -361170.2, 395338.61)"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop offset="0" stop-color="gray" />
-                    <stop offset="0.23" stop-color="#7e7e7e" />
-                    <stop offset="0.31" stop-color="#777" />
-                    <stop offset="0.37" stop-color="#6c6c6c" />
-                    <stop offset="0.42" stop-color="#5b5b5b" />
-                    <stop offset="0.46" stop-color="#454545" />
-                    <stop offset="0.48" stop-color="#363636" />
-                    <stop offset="1" stop-color="gray" />
+                    <stop offset="0" stopColor="gray" />
+                    <stop offset="0.23" stopColor="#7e7e7e" />
+                    <stop offset="0.31" stopColor="#777" />
+                    <stop offset="0.37" stopColor="#6c6c6c" />
+                    <stop offset="0.42" stopColor="#5b5b5b" />
+                    <stop offset="0.46" stopColor="#454545" />
+                    <stop offset="0.48" stopColor="#363636" />
+                    <stop offset="1" stopColor="gray" />
                 </linearGradient>
             </defs>
             <image

@@ -17,8 +17,8 @@ export default function Arweave() {
                 r="61.7"
                 fill="none"
                 stroke="#222326"
-                stroke-miterlimit="10"
-                stroke-width="9.65px"
+                strokeMiterlimit="10"
+                strokeWidth="9.65px"
             />
         </svg>
     );
