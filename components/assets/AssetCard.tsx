@@ -57,7 +57,7 @@ const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: As
         <div className={`px-3.5 py-3 flex flex-col ${cardColorStyles}`}>
             <div className="flex flex-row justify-between">
                 <div className={textColorStyles}>
-                    <span>{title}</span>
+                    <span className="opacity-70 font-semibold text-sm">{title}</span>
                 </div>
                 <div className="flex flex-row">
                     {isShowingEditButton && (
