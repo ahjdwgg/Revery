@@ -66,22 +66,22 @@ const ContentCard = ({
     return (
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-3">
-                <Image src={avatarUrl} alt="Avator" width={32} height={32} className="rounded-full" />
+                <Image src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
                 <div className="text-base font-semibold">{username}</div>
             </div>
             <div className="mt-2 text-sm leading-5 whitespace-pre-line">{content}</div>
             {images && images?.length > 0 && <EmblaCarousel slides={images} />}
-            <section className="flex flex-row justify-between mt-2 ">
+            <section className="flex flex-row justify-between mt-2 text-sm">
                 <div className="flex flex-row gap-x-2.5 opacity-20">
-                    <div className="flex flex-row items-center mr-1">
+                    <div className="flex flex-row items-center gap-x-1">
                         <BiHeart />
                         <span>{like}</span>
                     </div>
-                    <div className="flex flex-row items-center mr-1">
+                    <div className="flex flex-row items-center gap-x-1">
                         <BiMessage />
                         <span>{comment}</span>
                     </div>
-                    <div className="flex flex-row items-center mr-1">
+                    <div className="flex flex-row items-center gap-x-1">
                         <BiShare />
                         <span>{share}</span>
                     </div>
@@ -89,7 +89,7 @@ const ContentCard = ({
                 <div className="flex flex-row items-center justify-end gap-x-2">
                     <span className="opacity-20">{timeDifferent(timeStamp)}</span>
                     {type && iconSVG && (
-                        <div className="flex w-5 h-5 rounded-full opacity-100 place-items-center">{iconSVG}</div>
+                        <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
                     )}
                 </div>
             </section>

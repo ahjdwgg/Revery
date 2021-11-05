@@ -49,7 +49,7 @@ const EmblaCarousel = ({ slides }: any) => {
                 </div>
             </div>
 
-            <div className={`relative max-w-screen-md mx-auto bg-white w-full -mt-3 pt-0`}>
+            <div className={`relative max-w-screen-md mx-auto bg-white w-full pt-0`}>
                 <div className="w-full overflow-hidden" ref={thumbViewportRef}>
                     <div className={`${style.embla__container} ${style.embla__container__thumb}`}>
                         {slides.map((imgSrc: string, index: number) => (
