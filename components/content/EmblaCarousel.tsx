@@ -35,12 +35,12 @@ const EmblaCarousel = ({ slides }: any) => {
 
     return (
         <>
-            <div className={style.embla}>
-                <div className={style.embla__viewport} ref={mainViewportRef}>
+            <div className="relative max-w-screen-md min-w-full mx-auto mt-3 bg-white">
+                <div className="w-full overflow-hidden" ref={mainViewportRef}>
                     <div className={style.embla__container}>
                         {slides.map((imgSrc: string, index: number) => (
-                            <div className={style.embla__slide} key={index}>
-                                <div className={style.embla__slide__inner}>
+                            <div className="pl-2.5 min-w-full relative" key={index}>
+                                <div className="relative overflow-hidden aspect-w-16 aspect-h-9">
                                     <Image src={imgSrc} layout="fill" objectFit="cover" />
                                 </div>
                             </div>
@@ -49,8 +49,8 @@ const EmblaCarousel = ({ slides }: any) => {
                 </div>
             </div>
 
-            <div className={`${style.embla} ${style.embla__thumb}`}>
-                <div className={style.embla__viewport} ref={thumbViewportRef}>
+            <div className={`relative max-w-screen-md mx-auto bg-white w-full -mt-3 pt-0`}>
+                <div className="w-full overflow-hidden" ref={thumbViewportRef}>
                     <div className={`${style.embla__container} ${style.embla__container__thumb}`}>
                         {slides.map((imgSrc: string, index: number) => (
                             <Thumb

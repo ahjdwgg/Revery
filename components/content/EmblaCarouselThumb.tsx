@@ -1,12 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import style from '../../styles/embla.module.css';
 
 export const Thumb = ({ selected, onClick, imgSrc }: any) => (
-    <div className={`${style.embla__slide} ${style.embla__slide__thumb}`}>
+    <div className="relative pl-2 -mt-3 min-w-1/4">
         <button
             onClick={onClick}
-            className={`${style.embla__slide__inner} ${style.embla__slide__inner__thumb}`}
+            className="relative w-full m-0 overflow-hidden bg-transparent cursor-pointer aspect-w-16 aspect-h-9"
             type="button"
         >
             <Image src={imgSrc} layout="fill" objectFit="cover" />

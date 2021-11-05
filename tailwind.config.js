@@ -8,13 +8,16 @@ module.exports = {
                 primary: '#0072ff',
                 nft: {
                     DEFAULT: '#7553ff',
-                    bg: '#f7f5ff'},
+                    bg: '#f7f5ff'
+                },
                 donation: {
                     DEFAULT: '#11BC92',
-                    bg: '#F0FFFA'},
+                    bg: '#F0FFFA'
+                },
                 footprint: {
                     DEFAULT: '#FFBB39',
-                    bg: '#FFF9F0'},                    
+                    bg: '#FFF9F0'
+                },
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg
@@ -26,6 +29,9 @@ module.exports = {
             },
             borderRadius: {
                 DEFAULT: '5px'
+            },
+            minWidth: {
+                '1/4': '25%',
             }
 
         },
@@ -33,5 +39,7 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/aspect-ratio'),
+    ],
 };
