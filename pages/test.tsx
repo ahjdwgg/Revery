@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
 import ContentCard from '../components/content/ContentCard';
+import Profile from '../components/profile/profile';
 
 const Test: NextPage = () => {
     let slides = [
@@ -15,6 +16,9 @@ const Test: NextPage = () => {
         'https://i.imgur.com/GdWEt4z.jpg',
     ];
 
+    let bio =
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ';
+
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
@@ -25,6 +29,22 @@ const Test: NextPage = () => {
             </Head>
             <h1 className="mt-4 font-bold text-center">Test Page</h1>
             <section className="divide-y-2 divide-solid divide-opacity-5 divide-primary">
+                <Profile
+                    avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                    username="Fendi"
+                    bio={bio}
+                    followers={12}
+                    followings={8}
+                    rns="Fendi.rss3.bio"
+                    link="Fendi.github.io"
+                />
+                <Profile
+                    avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                    username="Fendi"
+                    bio={bio}
+                    followers={12}
+                    followings={8}
+                />
                 <ContentCard
                     avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                     username="Fendi"
