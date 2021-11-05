@@ -1,14 +1,14 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface AssetItemProps {
+interface ImageProps {
     imageUrl: string;
     title?: string;
     isFullRound: boolean;
     size: number;
 }
 
-const AssetItem = ({ imageUrl, title, isFullRound, size }: AssetItemProps) => {
+const ImageHolder = ({ imageUrl, title, isFullRound, size }: ImageProps) => {
     const roundedStyleString = isFullRound ? 'rounded-full' : 'rounded';
 
     return (
@@ -18,4 +18,4 @@ const AssetItem = ({ imageUrl, title, isFullRound, size }: AssetItemProps) => {
     );
 };
 
-export default AssetItem;
+export default ImageHolder;

@@ -16,7 +16,7 @@ import Button from '../buttons/Button';
  * >
  *     {
  *         [...Array(5)].map((_, i) => (
- *             <AssetItem key={i} imageUrl={'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'} isFullRound={false} />
+ *             <ImageHolder key={i} imageUrl={'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'} isFullRound={false} />
  *         ))
  *     }
  * </AssetCard>
