@@ -1,20 +1,21 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface ContentProps {
+interface AssetItemProps {
     imageUrl: string;
     title?: string;
     isFullRound: boolean;
+    size: number;
 }
 
-const ContentCard = ({ imageUrl, title, isFullRound }: ContentProps) => {
+const AssetItem = ({ imageUrl, title, isFullRound, size }: AssetItemProps) => {
     const roundedStyleString = isFullRound ? 'rounded-full' : 'rounded';
 
     return (
         <div className={roundedStyleString}>
-            <Image className={roundedStyleString} src={imageUrl} alt={title} width={84} height={84} />
+            <Image className={roundedStyleString} src={imageUrl} alt={title} width={size} height={size} />
         </div>
     );
 };
 
-export default ContentCard;
+export default AssetItem;
