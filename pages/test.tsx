@@ -3,6 +3,7 @@ import ContentCard from '../components/content/ContentCard';
 import AssetCard from '../components/assets/AssetCard';
 import ImageHolder from '../components/ImageHolder';
 import FootprintCard from '../components/assets/FootprintCard';
+import RecommendSection from '../components/recommends/RecommendSection';
 
 const Test: NextPage = () => {
     let slides = [
@@ -18,6 +19,44 @@ const Test: NextPage = () => {
 
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+    const recommendGroups = [
+        {
+            name: 'RSS3',
+            intro: 'Want to keep updated on RSS3 news? Follow any of the crew members!',
+            avatarUrl: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+            users: [
+                {
+                    username: 'anniiii',
+                    avatarUrl: 'https://i.imgur.com/GdWEt4z.jpg',
+                    bio: "CXO @ RSS3, Cat's name's Fendi, Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+                    ethAddress: '0x...',
+                    rns: 'anniiii',
+                },
+                {
+                    username: 'anniiii',
+                    avatarUrl: 'https://i.imgur.com/GdWEt4z.jpg',
+                    bio: "CXO @ RSS3, Cat's name's Fendi, Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+                    ethAddress: '0x...',
+                    rns: 'anniiii',
+                },
+                {
+                    username: 'anniiii',
+                    avatarUrl: 'https://i.imgur.com/GdWEt4z.jpg',
+                    bio: "CXO @ RSS3, Cat's name's Fendi, Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+                    ethAddress: '0x...',
+                    rns: 'anniiii',
+                },
+                {
+                    username: 'anniiii',
+                    avatarUrl: 'https://i.imgur.com/GdWEt4z.jpg',
+                    bio: "CXO @ RSS3, Cat's name's Fendi, Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+                    ethAddress: '0x...',
+                    rns: 'anniiii',
+                },
+            ],
+        },
+    ];
 
     return (
         <div className="flex flex-col max-w-lg m-auto">
@@ -100,11 +139,15 @@ const Test: NextPage = () => {
                                     city={''}
                                     country={''}
                                     username={'RSS3Lover'}
-                                    activity={'Say hi'}
+                                    activity={'Say hi. ' + content}
                                 />
                             ))}
                         </AssetCard>
                     </div>
+                </div>
+
+                <div>
+                    <RecommendSection groups={recommendGroups} />
                 </div>
             </section>
         </div>
