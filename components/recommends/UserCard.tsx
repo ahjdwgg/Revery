@@ -16,15 +16,15 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns }: UserItemProps) 
     const address = rns ? `${rns}.rss3.bio` : ethAddress;
 
     return (
-        <div className="flex flex-row gap-2 justify-start p-4 text-left">
+        <div className="flex flex-row gap-2 justify-start p-2 text-left">
             <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
             <section className="flex flex-col flex-grow">
-                <div className="flex flex-row">
-                    <span>{username}</span>
+                <div className="flex flex-row items-center">
+                    <span className="font-semibold text-sm">{username}</span>
                     <LinkButton key={address} text={address} />
                 </div>
                 <div className="flex flex-row">
-                    <span className="flex-1 w-0 truncate">{bio}</span>
+                    <span className="flex-1 w-0 truncate text-xs leading-5">{bio}</span>
                 </div>
             </section>
         </div>
