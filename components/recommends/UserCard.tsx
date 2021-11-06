@@ -19,7 +19,7 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns }: UserItemProps) 
         <div className="flex flex-row gap-2 justify-start p-2 text-left">
             <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
             <section className="flex flex-col flex-grow">
-                <div className="flex flex-row items-center">
+                <div className="flex flex-row items-center gap-1.5">
                     <span className="font-semibold text-sm">{username}</span>
                     <LinkButton key={address} text={address} />
                 </div>
