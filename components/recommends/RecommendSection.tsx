@@ -19,8 +19,8 @@ const RecommendSection = ({ groups }: RecommendSectionProps) => {
             <div>
                 <span className="text-primary">For You</span>
             </div>
-            <div className="flex-row">
-                <div className="flex flex-col divide-primary divide-y flex-grow">
+            <div className="flex flex-row gap-4">
+                <div className="flex flex-col divide-primary divide-y">
                     <div>
                         <p>{groups[activeGroupId].intro}</p>
                     </div>
@@ -37,7 +37,7 @@ const RecommendSection = ({ groups }: RecommendSectionProps) => {
                         ))}
                     </div>
                 </div>
-                <div className="flex flex-col flex-shrink">
+                <div className="flex flex-col">
                     {groups.map((group, i) => (
                         <GroupItem
                             key={i}

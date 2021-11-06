@@ -10,7 +10,11 @@ export interface GroupItemProps {
 const GroupItem = ({ name, avatarUrl, isSelected }: GroupItemProps) => {
     return (
         <div className="text-center">
-            <div className={`border ${isSelected ? 'border-primary rounded-full' : ''}`}>
+            <div
+                className={`border rounded-full w-16 h-16 flex justify-center items-center ${
+                    isSelected ? 'border-primary' : ''
+                }`}
+            >
                 <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={52} />
             </div>
             <div>

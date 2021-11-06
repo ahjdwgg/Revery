@@ -12,7 +12,7 @@ const ImageHolder = ({ imageUrl, title, isFullRound, size }: ImageProps) => {
     const roundedStyleString = isFullRound ? 'rounded-full' : 'rounded';
 
     return (
-        <div className={roundedStyleString}>
+        <div className={`flex justify-around ${roundedStyleString}`}>
             <Image className={roundedStyleString} src={imageUrl} alt={title} width={size} height={size} />
         </div>
     );

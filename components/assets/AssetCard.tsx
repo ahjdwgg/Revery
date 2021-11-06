@@ -54,7 +54,7 @@ const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: As
     }
 
     return (
-        <div className={`px-3.5 py-3 flex flex-col ${cardColorStyles}`}>
+        <div className={`px-3.5 py-3 flex flex-col gap-2 ${cardColorStyles}`}>
             <div className="flex flex-row justify-between">
                 <div className={textColorStyles}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
@@ -71,7 +71,7 @@ const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: As
                 </div>
             </div>
 
-            <div className={`mt-2.5 text-center grid grid-cols-${bodyCols} gap-3`}>{children}</div>
+            <div className={`grid grid-cols-${bodyCols} gap-3`}>{children}</div>
         </div>
     );
 };
