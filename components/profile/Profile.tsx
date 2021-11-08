@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Image from 'next/image';
 import LinkButton from '../buttons/LinkButton';
 import { COLORS } from '../buttons/variables';
@@ -12,9 +12,10 @@ interface ProfileProps {
     rns?: string;
     link?: string;
     bio: string;
+    children?: ReactNode;
 }
 
-const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio }: ProfileProps) => {
+const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio, children }: ProfileProps) => {
     return (
         <div className="flex flex-row items-start justify-start w-full py-4 gap-x-8">
             <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
@@ -36,6 +37,7 @@ const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio }:
                     {link && <LinkButton text={link} color={COLORS.primary} link={true} />}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>
+                <div className={`${!children && 'hidden'} flex flex-row gap-x-2`}>{children}</div>
             </div>
         </div>
     );

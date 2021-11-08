@@ -1,8 +1,10 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import React from 'react';
+import AccountItem from '../components/account/AccountItem';
+import EVMpAccountItem from '../components/account/EVMpAccountItem';
 import ContentCard from '../components/content/ContentCard';
-import Profile from '../components/profile/profile';
+import Profile from '../components/profile/Profile';
 
 const Test: NextPage = () => {
     let slides = [
@@ -37,7 +39,14 @@ const Test: NextPage = () => {
                     followings={8}
                     rns="Fendi.rss3.bio"
                     link="Fendi.github.io"
-                />
+                >
+                    <EVMpAccountItem address={'0xd0B85A7bB6B602f63B020256654cBE73A753DFC4'} />
+                    <AccountItem size="sm" chain="BSC" />
+                    <AccountItem size="sm" chain="Ethereum" />
+                    <AccountItem size="sm" chain="Ronin" />
+                    <AccountItem size="sm" chain="Misskey" />
+                    <AccountItem size="sm" chain="Twitter" />
+                </Profile>
                 <Profile
                     avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                     username="Fendi"

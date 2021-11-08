@@ -37,7 +37,16 @@ module.exports = {
             },
             minWidth: {
                 '1/4': '25%',
-            }
+            },
+            backgroundImage: (theme) => ({
+                EVM: 'url(/chains/evm.png)',
+                BSC: 'url(/chains/BSC.png)',
+                Ethereum: 'url(/chains/Ethereum.png)',
+                Polygon: 'url(/chains/Polygon.png)',
+                Ronin: 'url(/chains/Ronin.png)',
+                Misskey: 'url(/chains/Misskey.png)',
+                Twitter: 'url(/chains/Twitter.png)',
+            }),
         },
     },
     variants: {
