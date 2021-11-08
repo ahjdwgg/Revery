@@ -2,7 +2,7 @@
 module.exports = {
     reactStrictMode: true,
     images: {
-        domains: ['i.imgur.com'],
-        formats: ['image/avif', 'image/webp']
-    }
+        domains: ['i.imgur.com', 'rss3.mypinata.cloud'],
+        formats: ['image/avif', 'image/webp'],
+    },
 };
