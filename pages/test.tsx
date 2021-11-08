@@ -63,13 +63,20 @@ const Test: NextPage = () => {
                 <h1>
                     <b>Components Samples</b>
                 </h1>
-                <Button isOutlined={false} color={COLORS.donation} icon={'minus'} />
-                <Button isOutlined={true} color={COLORS.donation} icon={'plus'} />
+                <Button isOutlined={false} color={COLORS.account} icon={'minus'} />
+                <Button isOutlined={true} color={COLORS.account} icon={'plus'} />
                 <Button isOutlined={true} color={COLORS.donation} icon={'expand'} />
                 <Button isOutlined={true} color={COLORS.nft} text={'Edit'} />
                 <Button isOutlined={true} color={COLORS.donation} text={'Edit'} />
                 <Button isOutlined={true} color={COLORS.footprint} text={'Edit'} />
-                <Button isOutlined={false} color={COLORS.primary} text={'Edit Profile'} />
+                <Button isOutlined={false} color={COLORS.primary} text={'Save'} fontSize={'text-base'} width={'w-48'} />
+                <Button
+                    isOutlined={true}
+                    color={COLORS.primary}
+                    text={'Discard'}
+                    fontSize={'text-base'}
+                    width={'w-48'}
+                />
                 <Button isOutlined={false} isDisabled={true} color={COLORS.primary} text={'Edit Profile'} />
                 <LinkButton text={'mypersonalsite.com'} color={COLORS.primary} />
             </div>

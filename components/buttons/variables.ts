@@ -1,5 +1,6 @@
 export const COLORS = {
     primary: 'primary',
+    account: 'account',
     nft: 'nft',
     donation: 'donation',
     footprint: 'footprint',
@@ -14,7 +15,7 @@ export const BUTTON_ICONS = {
 interface colorToStyleInterface {
     name: string;
     bgDefault: string;
-    bgBg: string;
+    bgAlt: string;
     text: string;
     border: string;
     hoverBg: string;
@@ -26,41 +27,51 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
     {
         name: 'primary',
         bgDefault: 'bg-primary',
-        bgBg: 'bg-white',
+        bgAlt: 'bg-white',
         text: 'text-primary',
         border: 'border-primary',
-        hoverBg: 'hover:bg-white',
-        hoverText: 'hover:text-primary',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-primary',
+    },
+    {
+        name: 'account',
+        bgDefault: 'bg-account',
+        bgAlt: 'bg-white',
+        text: 'text-account',
+        border: 'border-account',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-white',
+        hoverBorder: 'hover:border-account',
     },
     {
         name: 'nft',
         bgDefault: 'bg-nft',
-        bgBg: 'bg-nft-bg',
+        bgAlt: 'bg-white',
         text: 'text-nft',
         border: 'border-nft',
-        hoverBg: 'hover:bg-nft-bg',
-        hoverText: 'hover:text-nft',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-nft',
     },
     {
         name: 'donation',
         bgDefault: 'bg-donation',
-        bgBg: 'bg-donation-bg',
+        bgAlt: 'bg-white',
         text: 'text-donation',
         border: 'border-donation',
-        hoverBg: 'hover:bg-donation-bg',
-        hoverText: 'hover:text-donation',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-donation',
     },
     {
         name: 'footprint',
         bgDefault: 'bg-footprint',
-        bgBg: 'bg-footprint-bg',
+        bgAlt: 'bg-white',
         text: 'text-footprint',
         border: 'border-footprint',
-        hoverBg: 'hover:bg-footprint-bg',
-        hoverText: 'hover:text-footprint',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-footprint',
     },
 ];
