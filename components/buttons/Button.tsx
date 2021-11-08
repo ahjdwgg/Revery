@@ -2,6 +2,16 @@ import Expand from './icons/expand';
 import Plus from './icons/plus';
 import Minus from './icons/minus';
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
+
+interface ButtonInterface {
+    color: string;
+    text?: string;
+    fontSize?: string;
+    icon?: string;
+    isOutlined?: boolean;
+    isDisabled?: boolean;
+    width?: string;
+}
 /**
  * This Button component supports 4 different kinds of buttons:
  * 1. default simple button
@@ -10,17 +20,19 @@ import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
  * 4. button with an icon
  * @param {string} color - The text and background color of the button
  * @param {string} [text] - The text of the button
+ * @param {string} [fontSize] - The font size of the button
  * @param {string} [icon] - The icon on the button
  * @param {boolean} [isOutlined] - Specify if the button style is outlined
  * @param {boolean} [isDisabled] - Specify if the button style is disabled
+ * @param {string} [width] - width if not wrapped around text
  * @example
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
-const Button = (props: { color: string; text?: string; icon?: string; isOutlined?: boolean; isDisabled?: boolean }) => {
-    var { color, text, icon, isOutlined, isDisabled } = props;
+const Button = (props: ButtonInterface) => {
+    var { color, text, fontSize, icon, isOutlined, isDisabled, width } = props;
 
     var bgDefaultStyle = '';
-    var bgBgStyle = '';
+    var bgAltStyle = '';
     var textStyle = '';
     var borderStyle = '';
     var hoverTextStyle = '';
@@ -31,7 +43,7 @@ const Button = (props: { color: string; text?: string; icon?: string; isOutlined
         for (let styleItem of COLORTOSTYLE) {
             if (styleItem.name == color) {
                 bgDefaultStyle = styleItem.bgDefault;
-                bgBgStyle = styleItem.bgBg;
+                bgAltStyle = styleItem.bgAlt;
                 textStyle = styleItem.text;
                 borderStyle = styleItem.border;
                 hoverTextStyle = styleItem.hoverText;
@@ -42,11 +54,19 @@ const Button = (props: { color: string; text?: string; icon?: string; isOutlined
     }
 
     // default = simple button filled with specified color
-    const defaultClassName = `${bgDefaultStyle} ${hoverBgStyle} hover:bg-opacity-70 text-white font-medium text-xs ${hoverTextStyle} hover:text-opacity-80 py-1 px-3 border ${borderStyle} hover:border ${hoverBorderStyle} hover:border-opacity-80 rounded`;
+    const defaultClassName = `${bgDefaultStyle} ${hoverBgStyle} text-white font-medium ${
+        fontSize ? fontSize : 'text-xs'
+    } ${hoverTextStyle} py-1 ${fontSize ? 'px-6' : 'px-3'} ${width} border ${borderStyle} ${hoverBorderStyle} rounded`;
 
-    const outlinedClassName = `h-6 ${bgBgStyle} ${textStyle} text-opacity-70 font-medium text-xs hover:text-opacity-80 py-sm px-3 border ${borderStyle} border-opacity-40 hover:border-opacity-80 rounded`;
+    const outlinedClassName = `${bgAltStyle} ${textStyle} text-opacity-70 font-medium ${
+        fontSize ? fontSize : 'text-xs'
+    } hover:text-opacity-80 py-sm ${
+        fontSize ? 'px-6' : 'px-3'
+    } ${width} border ${borderStyle} border-opacity-70 hover:border-opacity-40 rounded`;
 
-    const disabledClassName = `h-6 ${bgDefaultStyle} ${textStyle} text-opacity-40 text-xs font-medium py-sm px-3 rounded bg-opacity-5 cursor-not-allowed`;
+    const disabledClassName = `${bgDefaultStyle} ${textStyle} text-opacity-40 ${
+        fontSize ? fontSize : 'text-xs'
+    } font-medium py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} rounded bg-opacity-5 cursor-not-allowed`;
 
     var className = defaultClassName;
 
@@ -63,16 +83,12 @@ const Button = (props: { color: string; text?: string; icon?: string; isOutlined
     var iconSVG = null;
 
     if (icon != undefined) {
-        switch (icon) {
-            case BUTTON_ICONS.expand:
-                iconSVG = <Expand />;
-                break;
-            case BUTTON_ICONS.plus:
-                iconSVG = <Plus />;
-                break;
-            case BUTTON_ICONS.minus:
-                iconSVG = <Minus />;
-                break;
+        if (icon == BUTTON_ICONS.expand) {
+            iconSVG = <Expand />;
+        } else if (icon == BUTTON_ICONS.plus) {
+            iconSVG = <Plus />;
+        } else if (icon == BUTTON_ICONS.minus) {
+            iconSVG = <Minus />;
         }
     }
 
