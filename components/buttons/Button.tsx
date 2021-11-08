@@ -2,6 +2,14 @@ import Expand from './icons/expand';
 import Plus from './icons/plus';
 import Minus from './icons/minus';
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
+
+interface ButtonInterface {
+    color: string;
+    text?: string;
+    icon?: string;
+    isOutlined?: boolean;
+    isDisabled?: boolean;
+}
 /**
  * This Button component supports 4 different kinds of buttons:
  * 1. default simple button
@@ -16,7 +24,7 @@ import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
  * @example
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
-const Button = (props: { color: string; text?: string; icon?: string; isOutlined?: boolean; isDisabled?: boolean }) => {
+const Button = (props: ButtonInterface) => {
     var { color, text, icon, isOutlined, isDisabled } = props;
 
     var bgDefaultStyle = '';
@@ -63,16 +71,12 @@ const Button = (props: { color: string; text?: string; icon?: string; isOutlined
     var iconSVG = null;
 
     if (icon != undefined) {
-        switch (icon) {
-            case BUTTON_ICONS.expand:
-                iconSVG = <Expand />;
-                break;
-            case BUTTON_ICONS.plus:
-                iconSVG = <Plus />;
-                break;
-            case BUTTON_ICONS.minus:
-                iconSVG = <Minus />;
-                break;
+        if (icon == BUTTON_ICONS.expand) {
+            iconSVG = <Expand />;
+        } else if (icon == BUTTON_ICONS.plus) {
+            iconSVG = <Plus />;
+        } else if (icon == BUTTON_ICONS.minus) {
+            iconSVG = <Minus />;
         }
     }
 

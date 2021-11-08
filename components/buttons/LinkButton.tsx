@@ -1,4 +1,5 @@
 import { COLORTOSTYLE } from './variables';
+
 /**
  * This component is used for profile link buttons
  * @param {string} text - The text of the button
