@@ -44,6 +44,7 @@ const RecommendSection = ({ groups }: RecommendSectionProps) => {
                             name={group.name}
                             avatarUrl={group.avatarUrl}
                             isSelected={i === activeGroupId}
+                            onClick={() => setActiveGroupId(i)}
                         />
                     ))}
                 </div>
