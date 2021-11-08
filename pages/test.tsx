@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import AccountItem from '../components/account/AccountItem';
 import EVMpAccountItem from '../components/account/EVMpAccountItem';
 import ContentCard from '../components/content/ContentCard';
@@ -14,6 +14,87 @@ import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
 import Input from '../components/inputs/Input';
+
+interface InputStates {
+    website: string;
+    bio: string;
+    name1: string;
+    name2: string;
+}
+
+type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
+
+class InputSection extends React.Component<{}, InputStates> {
+    constructor(props: {}) {
+        super(props);
+        this.state = {
+            website: '',
+            bio: '',
+            name1: 'Joshua',
+            name2: '',
+        };
+
+        this.handleChangeWebsite = this.handleChangeWebsite.bind(this);
+        this.handleChangeBio = this.handleChangeBio.bind(this);
+        this.handleChangeName1 = this.handleChangeName1.bind(this);
+        this.handleChangeName2 = this.handleChangeName2.bind(this);
+    }
+
+    handleChangeWebsite(event: InputEventType) {
+        this.setState({
+            website: event.target.value,
+        });
+    }
+    handleChangeBio(event: InputEventType) {
+        this.setState({
+            bio: event.target.value,
+        });
+    }
+    handleChangeName1(event: InputEventType) {
+        this.setState({
+            name1: event.target.value,
+        });
+    }
+    handleChangeName2(event: InputEventType) {
+        this.setState({
+            name2: event.target.value,
+        });
+    }
+    handlePrint() {
+        console.log(this.state);
+    }
+
+    render() {
+        return (
+            <section>
+                <Input
+                    placeholder={'Personal Website'}
+                    isSingleLine={true}
+                    prefix={'https://'}
+                    onChange={this.handleChangeWebsite}
+                />
+                <Input placeholder={'Bio'} isSingleLine={false} onChange={this.handleChangeBio} />
+                <Input
+                    placeholder={'Username'}
+                    isSingleLine={true}
+                    value={this.state.name1}
+                    onChange={this.handleChangeName1}
+                />
+                <Input placeholder={'Username'} isSingleLine={true} onChange={this.handleChangeName2} />
+                <div onClick={() => this.handlePrint()}>
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.primary}
+                        text={'PrintState'}
+                        fontSize={'text-base'}
+                        width={'w-48'}
+                    />
+                </div>
+            </section>
+        );
+    }
+}
+
 const Test: NextPage = () => {
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -146,12 +227,7 @@ const Test: NextPage = () => {
                     <LinkButton text={'mypersonalsite.com'} color={COLORS.primary} />
                 </section>
 
-                <section>
-                    <Input placeholder={'Personal Website'} isSingleLine={true} prefix={'https://'} />
-                    <Input placeholder={'Bio'} isSingleLine={false} />
-                    <Input placeholder={'Username'} isSingleLine={true} value={'Joshua'} />
-                    <Input placeholder={'Username'} isSingleLine={true} />
-                </section>
+                <InputSection />
 
                 <section>
                     <div className="flex flex-col gap-4">
