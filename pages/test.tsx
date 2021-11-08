@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
-
+import Input from '../components/inputs/Input';
 const Test: NextPage = () => {
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -64,7 +64,7 @@ const Test: NextPage = () => {
                         type="Arweave"
                     />
                 </section>
-                <div>
+                <div className="flex flex-col max-w-lg  gap-2 justify-start">
                     <h1>
                         <b>Components Samples</b>
                     </h1>
@@ -90,6 +90,10 @@ const Test: NextPage = () => {
                     />
                     <Button isOutlined={false} isDisabled={true} color={COLORS.primary} text={'Edit Profile'} />
                     <LinkButton text={'mypersonalsite.com'} color={COLORS.primary} />
+                    <Input placeholder={'Personal Website'} isSingleLine={true} prefix={'https://'} />
+                    <Input placeholder={'Bio'} isSingleLine={false} />
+                    <Input placeholder={'Username'} isSingleLine={true} value={'Joshua'} />
+                    <Input placeholder={'Username'} isSingleLine={true} />
                 </div>
             </div>
         </div>
