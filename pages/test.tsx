@@ -40,12 +40,13 @@ const Test: NextPage = () => {
                     rns="Fendi.rss3.bio"
                     link="Fendi.github.io"
                 >
-                    <EVMpAccountItem address={'0xd0B85A7bB6B602f63B020256654cBE73A753DFC4'} />
+                    <EVMpAccountItem size="sm" address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4" />
                     <AccountItem size="sm" chain="BSC" />
                     <AccountItem size="sm" chain="Ethereum" />
                     <AccountItem size="sm" chain="Ronin" />
                     <AccountItem size="sm" chain="Misskey" />
                     <AccountItem size="sm" chain="Twitter" />
+                    <EVMpAccountItem size="sm" address="0x0000000000000000000000000000000000000000" />
                 </Profile>
                 <Profile
                     avatarUrl="https://i.imgur.com/GdWEt4z.jpg"

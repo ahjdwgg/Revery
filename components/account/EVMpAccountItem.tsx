@@ -1,10 +1,10 @@
 import React from 'react';
 import { hex2rgb, hslToRgb, rgb2hex, rgbToHsl } from '../../utils/color';
+import { AccountItemProps, AccountSize } from './variables';
 
-export default function EVMpAccountItem(props: { address: string }) {
-    let { address } = props;
+const EVMpAccountItem = ({ size = 'sm', address = '0x0000000000000000000000000000000000000000' }: AccountItemProps) => {
     const style = {
-        background: 'blue',
+        background: 'white',
     };
     const addr = address.replace(/^0x/, '');
 
@@ -17,9 +17,12 @@ export default function EVMpAccountItem(props: { address: string }) {
         }
         style.background += ')';
     }
+
     return (
-        <div className="w-6 h-6 p-1 border rounded-full border-primary" style={style}>
+        <div className={`${AccountSize.get(size)} p-1 border rounded-full border-primary`} style={style}>
             <div className="w-full h-full bg-center bg-no-repeat bg-cover bg-EVM bg-85 mix-blend-overlay" />
         </div>
     );
-}
+};
+
+export default EVMpAccountItem;
