@@ -32,13 +32,13 @@ const Test: NextPage = () => {
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-    const recommendGroups = [...Array(5)].map((_, gid) => ({
+    const recommendGroups = [...Array(3)].map((_, gid) => ({
         name: 'RSS3',
         intro: 'Want to keep updated on RSS3 news? Follow any of the crew members!',
-        avatarUrl: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+        avatarUrl: `https://http.cat/10${gid}`,
         users: [...Array(5)].map((_, uid) => ({
             username: `anniiii@${gid}-${uid}`,
-            avatarUrl: 'https://i.imgur.com/GdWEt4z.jpg',
+            avatarUrl: `https://http.cat/${gid + 2}0${uid}`,
             bio: "CXO @ RSS3, Cat's name's Fendi" + content,
             ethAddress: `0x${gid}${uid}`,
             rns: 'anniiii',

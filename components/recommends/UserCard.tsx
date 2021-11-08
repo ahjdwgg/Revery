@@ -16,8 +16,10 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns }: UserItemProps) 
     const address = rns ? `${rns}.rss3.bio` : ethAddress;
 
     return (
-        <div className="flex flex-row gap-2 justify-start p-2 text-left">
-            <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
+        <div className="flex flex-row gap-2 justify-start p-2">
+            <section className="flex flex-row items-center flex-shrink-0">
+                <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
+            </section>
             <section className="flex flex-col flex-grow">
                 <div className="flex flex-row items-center gap-1.5">
                     <span className="font-semibold text-sm">{username}</span>
