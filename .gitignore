@@ -38,3 +38,6 @@ yarn-error.log*
 
 # JetBrains Idea
 .idea/
+package-lock.json
+yarn.lock
+yarn.lock
