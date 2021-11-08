@@ -246,6 +246,11 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.0.9.tgz#1168db664faab4c3bb82c76124b393970e80bf89"
   integrity sha512-yk9Xj/3bUxyz3azMXW8qigLqXWEr2R0h9G7PVnnmjNQdlZLN+aESqCTnVN7ubtYUIQfW32/v8+AXsbpL1ryI1A==
 
+"@tailwindcss/aspect-ratio@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/aspect-ratio/-/aspect-ratio-0.3.0.tgz#f779ab3f07cac848fb844122d6662ba6560010b8"
+  integrity sha512-DMgWskNJR6FNPLbQ8Xoq/PKV/9DfNKh5dvKB+SM8x7lVl4+pnxlZ3Ns4+yGmurA/ze708HrnCG1tXk85HolJmw==
+
 "@types/json5@^0.0.29":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
@@ -1129,6 +1134,18 @@ elliptic@^6.5.3:
     inherits "^2.0.4"
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
+
+embla-carousel-react@5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/embla-carousel-react/-/embla-carousel-react-5.0.1.tgz#91fb27ad92d5cd7a4ba9626dc75f4b5e89bb1ecd"
+  integrity sha512-zR9kmMVxh3TNza7Anj/McBQLeFD7nB0vVMmahyDl6XmH1K6o3X6T6Wwhh4fUeRH9nJhAn7yyRqT22qqGjd66oA==
+  dependencies:
+    embla-carousel "5.0.1"
+
+embla-carousel@5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/embla-carousel/-/embla-carousel-5.0.1.tgz#6c25d889e7287a032b6b31c458481bb648f098d8"
+  integrity sha512-pFvUI9mI/pxU92+4VDkPx0yP4Bs3VqJuRX/aw6ESYJdRBtzLx+6X2kXMu9aXK+SwO2zYsD2WURb1SeBaAv6zQA==
 
 emoji-regex@^8.0.0:
   version "8.0.0"

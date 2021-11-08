@@ -6,6 +6,10 @@ module.exports = {
         extend: {
             colors: {
                 primary: '#0072ff',
+                account: {
+                    DEFAULT: '#40D22F',
+                    bg: '#F6FFF5',
+                },
                 nft: {
                     DEFAULT: '#7553ff',
                     bg: '#f7f5ff',
@@ -15,7 +19,7 @@ module.exports = {
                     bg: '#F0FFFA',
                 },
                 footprint: {
-                    DEFAULT: '#FFBB39',
+                    DEFAULT: '#FFB426',
                     bg: '#FFF9F0',
                 },
             },
@@ -35,10 +39,13 @@ module.exports = {
             padding: {
                 sm: '0.2rem',
             },
+            minWidth: {
+                '1/4': '25%',
+            },
         },
     },
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio')],
 };
