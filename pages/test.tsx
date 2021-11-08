@@ -13,7 +13,7 @@ import Header from '../components/Header';
 import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
-
+import Input from '../components/inputs/Input';
 const Test: NextPage = () => {
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -144,6 +144,13 @@ const Test: NextPage = () => {
                     />
                     <Button isOutlined={false} isDisabled={true} color={COLORS.primary} text={'Edit Profile'} />
                     <LinkButton text={'mypersonalsite.com'} color={COLORS.primary} />
+                </section>
+
+                <section>
+                    <Input placeholder={'Personal Website'} isSingleLine={true} prefix={'https://'} />
+                    <Input placeholder={'Bio'} isSingleLine={false} />
+                    <Input placeholder={'Username'} isSingleLine={true} value={'Joshua'} />
+                    <Input placeholder={'Username'} isSingleLine={true} />
                 </section>
 
                 <section>
