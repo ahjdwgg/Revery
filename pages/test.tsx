@@ -44,6 +44,7 @@ const Test: NextPage = () => {
     return (
         <div className="flex flex-col max-w-lg m-auto">
             <Head>
+                <title>Test page</title>
                 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
             </Head>
             <h1 className="mt-4 font-bold text-center">Test Page</h1>
@@ -107,7 +108,9 @@ const Test: NextPage = () => {
                     timeStamp={0x60de41ce}
                     type="Arweave"
                 />
+            </section>
 
+            <section>
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
