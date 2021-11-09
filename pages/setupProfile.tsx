@@ -8,6 +8,7 @@ import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
 import Input from '../components/inputs/Input';
+import ImageHolder from '../components/ImageHolder';
 
 const AccountItems = [
     {
@@ -114,6 +115,10 @@ const SetupProfile: NextPage = () => {
     return (
         <div>
             <Header>
+                <div className="flex flex-row justify-end w-full gap-x-8">
+                    <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                    <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={28} />
+                </div>
                 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
             </Header>
             <div className="pt-12 md:pt-16 flex flex-col max-w-5xl m-auto">
