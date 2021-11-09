@@ -89,6 +89,14 @@ const EditProfile: NextPage = () => {
         console.log(accountItems);
     };
 
+    const handleEdit = () => {
+        console.log('Edit Clicked');
+    };
+
+    const handleExpand = () => {
+        console.log('Expand Clicked');
+    };
+
     const handleDiscard = () => {
         console.log('Discard Clicked');
     };
@@ -157,7 +165,7 @@ const EditProfile: NextPage = () => {
 
                         <div className="flex flex-row gap-x-5 w-full justify-start">
                             <label className="w-48 text-right">Accounts</label>
-                            <div className="flex flex-row gap-x-2 w-full">
+                            <div className="flex flex-row gap-x-2 w-4/5">
                                 {accountItems.map((item) => {
                                     if (item.type == 'default') {
                                         return <AccountItem size="sm" chain={item.value} />;
@@ -165,6 +173,28 @@ const EditProfile: NextPage = () => {
                                         return <EVMpAccountItem size="sm" address={item.value} />;
                                     }
                                 })}
+                            </div>
+                            <div className="flex flex-row">
+                                <div>
+                                    <Button
+                                        key="edit"
+                                        color={COLORS.primary}
+                                        text="Edit"
+                                        onClick={handleEdit}
+                                        isOutlined={true}
+                                        isDisabled={false}
+                                    />
+                                </div>
+                                <div className="ml-2">
+                                    <Button
+                                        key="expand"
+                                        color={COLORS.primary}
+                                        icon="expand"
+                                        onClick={handleExpand}
+                                        isOutlined={true}
+                                        isDisabled={false}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="flex flex-row gap-x-3 pl-40 justify-center">
