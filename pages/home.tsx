@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import React from 'react';
 import AccountItem from '../components/account/AccountItem';
-import EVMpAccountItem from '../components/account/EVMpAccountItem';
 import AssetCard from '../components/assets/AssetCard';
 import FootprintCard from '../components/assets/FootprintCard';
 import Button from '../components/buttons/Button';
@@ -48,7 +47,7 @@ const Home: NextPage = () => {
                     <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
                 </div>
             </Header>
-            <div className="flex flex-row justify-between max-w-6xl pt-16 mx-auto gap-x-8">
+            <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
                 <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
                     <Profile
                         avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
