@@ -20,9 +20,9 @@ function Header(props: any) {
                 !top && 'bg-white border-b border-black shadow-lg'
             }`}
         >
-            <div className="max-w-6xl mx-auto px-5 sm:px-6">
+            <div className="max-w-6xl mx-auto ">
                 <div className="flex items-center justify-between h-12 md:h-16">
-                    <nav className="hidden md:flex md:flex-grow">{props.children}</nav>
+                    <nav className="hidden w-full md:flex md:flex-grow">{props.children}</nav>
                 </div>
             </div>
         </header>
