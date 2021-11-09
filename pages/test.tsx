@@ -14,6 +14,8 @@ import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
 import Input from '../components/inputs/Input';
+import NFTBadges from '../components/assets/NFTBadges';
+import NFTItem from '../components/assets/NFTItem';
 
 interface InputStates {
     website: string;
@@ -135,6 +137,9 @@ const Test: NextPage = () => {
             <Header>
                 <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
             </Header>
+
+            {/*<NFTBadges location="header" chain="Ethereum" collectionImg='https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5' />*/}
+
             <div className="pt-12 md:pt-16 flex flex-col max-w-lg m-auto">
                 <h1 className="mt-4 font-bold text-center">Test Page</h1>
                 <section className="divide-y-2 divide-solid divide-opacity-5 divide-primary">
@@ -233,15 +238,12 @@ const Test: NextPage = () => {
                     <div className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-4">
                             <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
+                                {/*要做组件限高可以做在这里*/}
                                 {[...Array(5)].map((_, i) => (
-                                    <ImageHolder
-                                        key={i}
-                                        imageUrl={
-                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                        }
-                                        isFullRound={false}
-                                        size={84}
-                                    />
+                                    <div key={i} className="flex flex-col items-center justify-center relative m-auto">
+                                        <NFTItem size={84} previewUrl="" detailUrl="" />
+                                        {/*<NFTBadges location="overlay" chain="Ethereum" collectionImg='https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5' />*/}
+                                    </div>
                                 ))}
                             </AssetCard>
 
