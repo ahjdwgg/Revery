@@ -86,7 +86,7 @@ class Input extends Component<InputProps, InputState> {
 export default Input;
 
 const style = {
-    wrapper: 'flex pl-4 pr-5 py-2 text-base font-regular border border-gray-300 rounded box-border',
+    wrapper: 'flex pl-4 pr-5 py-2 w-full text-base font-regular border border-gray-300 rounded box-border',
     additional: 'flex ml-0 mr-1 font-medium opacity-40',
     input: 'placeholder-black placeholder-opacity-20 flex w-full font-normal bg-input-bg border-none outline-none resize-none',
     textarea:
