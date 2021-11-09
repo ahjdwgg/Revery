@@ -63,6 +63,8 @@ const EditProfile: NextPage = () => {
     const [website, setWebsite] = useState<string>('');
     const [accountItems, setAccountItems] = useState<AccountItemInterface[]>(AccountItems); // this is a hard-coded placeholder array
 
+    const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+
     const handleChangeAvatar = () => {
         console.log('Change Avatar');
         // setAvatarUrl(value)
@@ -212,6 +214,7 @@ const EditProfile: NextPage = () => {
                                 text={'Save'}
                                 fontSize={'text-base'}
                                 width={'w-48'}
+                                isDisabled={saveBtnDisabled}
                                 onClick={() => handleSave()}
                             />
                         </div>
