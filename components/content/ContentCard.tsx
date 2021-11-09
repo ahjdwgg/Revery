@@ -69,7 +69,7 @@ const ContentCard = ({
                 <Image src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
                 <div className="text-base font-semibold">{username}</div>
             </div>
-            <div className="mt-2 text-sm leading-5 whitespace-pre-line select-none">{content}</div>
+            <div className="mt-2 text-base leading-5 whitespace-pre-line select-none">{content}</div>
             {images && images?.length > 0 && <EmblaCarousel slides={images} />}
             <section className="flex flex-row justify-between mt-2 text-sm">
                 <div className="flex flex-row gap-x-2.5 opacity-20">
