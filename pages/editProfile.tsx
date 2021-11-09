@@ -54,118 +54,51 @@ interface InputStates {
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
-class InputSection extends React.Component<{}, InputStates> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            username: '',
-            website: '',
-            bio: '',
-            accountItems: AccountItems, // this is a hard-coded placeholder array
-        };
-
-        this.handleChangeUsername = this.handleChangeUsername.bind(this);
-        this.handleChangeWebsite = this.handleChangeWebsite.bind(this);
-        this.handleChangeBio = this.handleChangeBio.bind(this);
-        this.handleChangeAccountItems = this.handleChangeAccountItems.bind(this);
-    }
-
-    handleChangeWebsite(event: InputEventType) {
-        this.setState({
-            website: event.target.value,
-        });
-    }
-    handleChangeBio(event: InputEventType) {
-        this.setState({
-            bio: event.target.value,
-        });
-    }
-    handleChangeUsername(event: InputEventType) {
-        this.setState({
-            username: event.target.value,
-        });
-    }
-    handleChangeAccountItems() {
-        console.log(this.state.accountItems);
-    }
-    handlePrint() {
-        console.log(this.state);
-    }
-
-    render() {
-        return (
-            <section className="flex flex-col w-4/5 gap-y-5">
-                <div className="flex flex-row gap-x-5 w-full justify-end">
-                    <label className="w-48 text-right pt-2">Username</label>
-                    <Input
-                        placeholder={'Username'}
-                        isSingleLine={true}
-                        value={this.state.username}
-                        onChange={this.handleChangeUsername}
-                    />
-                </div>
-                <div className="flex flex-row gap-x-5 w-full justify-end">
-                    <label className="w-48 text-right pt-2">Personal Website</label>
-                    <Input
-                        placeholder={'Personal Website'}
-                        isSingleLine={true}
-                        prefix={'https://'}
-                        onChange={this.handleChangeWebsite}
-                    />
-                </div>
-
-                <div className="flex flex-row gap-x-5 w-full justify-end">
-                    <label className="w-48 text-right pt-2">Bio</label>
-                    <Input placeholder={'Bio'} isSingleLine={false} onChange={this.handleChangeBio} />
-                </div>
-
-                <div className="flex flex-row gap-x-5 w-full justify-start">
-                    <label className="w-48 text-right">Accounts</label>
-                    <div className="flex flex-row gap-x-2 w-full">
-                        {this.state.accountItems.map((item) => {
-                            if (item.type == 'default') {
-                                return <AccountItem size="sm" chain={item.value} />;
-                            } else {
-                                return <EVMpAccountItem size="sm" address={item.value} />;
-                            }
-                        })}
-                    </div>
-                </div>
-                <div className="flex flex-row gap-x-3 pl-40 justify-center">
-                    <Button
-                        isOutlined={true}
-                        color={COLORS.primary}
-                        text={'Discard'}
-                        fontSize={'text-base'}
-                        width={'w-48'}
-                    />
-                    <Button
-                        isOutlined={false}
-                        color={COLORS.primary}
-                        text={'Save'}
-                        fontSize={'text-base'}
-                        width={'w-48'}
-                        onClick={() => this.handlePrint()}
-                    />
-                </div>
-            </section>
-        );
-    }
-}
-
 const EditProfile: NextPage = () => {
     const [avatarUrl, setAvatarUrl] = useState('https://i.imgur.com/GdWEt4z.jpg');
-    const [username, setUsername] = useState('Fendi');
-    const [link, setLink] = useState('Fendi.github.io');
+    const [link, setLink] = useState<string>('Fendi.github.io'); // this is a hard-coded placeholder link
+
+    const [username, setUsername] = useState<string>('');
+    const [bio, setBio] = useState<string>('');
+    const [website, setWebsite] = useState<string>('');
+    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>(AccountItems); // this is a hard-coded placeholder array
 
     const handleChangeAvatar = () => {
         console.log('Change Avatar');
         // setAvatarUrl(value)
     };
 
-    const handleLinkOnClieck = () => {
+    const handleLinkOnClick = () => {
         console.log('Link Clicked');
         // setLink(value)
+    };
+
+    const handleChangeWebsite = (event: InputEventType) => {
+        setWebsite(event.target.value);
+    };
+
+    const handleChangeBio = (event: InputEventType) => {
+        setBio(event.target.value);
+    };
+
+    const handleChangeUsername = (event: InputEventType) => {
+        setUsername(event.target.value);
+    };
+
+    const handleChangeAccountItems = () => {
+        console.log(accountItems);
+    };
+
+    const handleDiscard = () => {
+        console.log('Discard Clicked');
+    };
+
+    const handleSave = () => {
+        console.log({
+            username: username,
+            bio: bio,
+            website: website,
+        });
     };
 
     return (
@@ -189,7 +122,7 @@ const EditProfile: NextPage = () => {
                                 {link && (
                                     <LinkButton
                                         text={link}
-                                        onClick={handleLinkOnClieck}
+                                        onClick={handleLinkOnClick}
                                         color={COLORS.primary}
                                         link={true}
                                     />
@@ -197,7 +130,62 @@ const EditProfile: NextPage = () => {
                             </div>
                         </div>
                     </div>
-                    <InputSection />
+                    <section className="flex flex-col w-4/5 gap-y-5">
+                        <div className="flex flex-row gap-x-5 w-full justify-end">
+                            <label className="w-48 text-right pt-2">Username</label>
+                            <Input
+                                placeholder={'Username'}
+                                isSingleLine={true}
+                                value={username}
+                                onChange={handleChangeUsername}
+                            />
+                        </div>
+                        <div className="flex flex-row gap-x-5 w-full justify-end">
+                            <label className="w-48 text-right pt-2">Personal Website</label>
+                            <Input
+                                placeholder={'Personal Website'}
+                                isSingleLine={true}
+                                prefix={'https://'}
+                                onChange={handleChangeWebsite}
+                            />
+                        </div>
+
+                        <div className="flex flex-row gap-x-5 w-full justify-end">
+                            <label className="w-48 text-right pt-2">Bio</label>
+                            <Input placeholder={'Bio'} isSingleLine={false} onChange={handleChangeBio} />
+                        </div>
+
+                        <div className="flex flex-row gap-x-5 w-full justify-start">
+                            <label className="w-48 text-right">Accounts</label>
+                            <div className="flex flex-row gap-x-2 w-full">
+                                {accountItems.map((item) => {
+                                    if (item.type == 'default') {
+                                        return <AccountItem size="sm" chain={item.value} />;
+                                    } else {
+                                        return <EVMpAccountItem size="sm" address={item.value} />;
+                                    }
+                                })}
+                            </div>
+                        </div>
+                        <div className="flex flex-row gap-x-3 pl-40 justify-center">
+                            <Button
+                                isOutlined={true}
+                                color={COLORS.primary}
+                                text={'Discard'}
+                                fontSize={'text-base'}
+                                width={'w-48'}
+                                onClick={() => handleDiscard()}
+                            />
+                            <Button
+                                isOutlined={false}
+                                color={COLORS.primary}
+                                text={'Save'}
+                                fontSize={'text-base'}
+                                width={'w-48'}
+                                onClick={() => handleSave()}
+                            />
+                        </div>
+                    </section>
                 </section>
             </div>
         </div>
