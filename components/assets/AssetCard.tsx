@@ -25,12 +25,11 @@ import Button from '../buttons/Button';
 interface AssetProps {
     title: string;
     color: 'nft' | 'donation' | 'footprint';
-    bodyCols: number;
     isShowingEditButton: boolean;
     children: React.ReactNode;
 }
 
-const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: AssetProps) => {
+const AssetCard = ({ title, color, isShowingEditButton, children }: AssetProps) => {
     return (
         <div className={`px-3.5 py-3 flex flex-col gap-2 ${colorClasses[color].cardColorStyles}`}>
             <div className="flex flex-row justify-between">
@@ -49,7 +48,7 @@ const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: As
                 </div>
             </div>
 
-            <div className={`grid grid-cols-${bodyCols} gap-3`}>{children}</div>
+            <div>{children}</div>
         </div>
     );
 };
