@@ -85,7 +85,13 @@ const NFT = () => {
                                     ))}
                                 </ReactSortable>
                             </AssetCard>
-                            <AssetCard title="Unlisted" color="nft" isShowingEditButton={true} footerButton="List All">
+                            <AssetCard
+                                title="Unlisted"
+                                color="nft"
+                                isShowingEditButton={true}
+                                footerButton="List All"
+                                isSecondaryBG={true}
+                            >
                                 <div className="w-full mb-auto flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
                                     {[...Array(120)].map((_, i) => (
                                         <div

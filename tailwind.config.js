@@ -22,6 +22,10 @@ module.exports = {
                     DEFAULT: '#FFB426',
                     bg: '#FFF9F0',
                 },
+                secondary: {
+                    DEFAULT: '#0072ff',
+                    bg: '#F4F7F8',
+                },
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg
