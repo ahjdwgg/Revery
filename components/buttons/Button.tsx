@@ -11,6 +11,7 @@ interface ButtonInterface {
     isOutlined?: boolean;
     isDisabled?: boolean;
     width?: string;
+    onClick?: (param?: any) => void;
 }
 /**
  * This Button component supports 4 different kinds of buttons:
@@ -25,11 +26,12 @@ interface ButtonInterface {
  * @param {boolean} [isOutlined] - Specify if the button style is outlined
  * @param {boolean} [isDisabled] - Specify if the button style is disabled
  * @param {string} [width] - width if not wrapped around text
+ * @param {function} [onClick] - button onClick function
  * @example
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
 const Button = (props: ButtonInterface) => {
-    var { color, text, fontSize, icon, isOutlined, isDisabled, width } = props;
+    var { color, text, fontSize, icon, isOutlined, isDisabled, width, onClick } = props;
 
     var bgDefaultStyle = '';
     var bgAltStyle = '';
@@ -94,7 +96,7 @@ const Button = (props: ButtonInterface) => {
 
     return (
         <div>
-            <button className={className}>
+            <button onClick={onClick} className={className}>
                 {props.text} {iconSVG}
             </button>
         </div>
