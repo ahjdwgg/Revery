@@ -49,8 +49,7 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     detailUrl = fixSchemas(detailUrl);
 
     return (
-        <div className="flex">
-            {/*<DynamicModelViewer />*/}
+        <div className="flex flex-shrink-0">
             {getContentType(imageUrl) === 'html' && (
                 <iframe className={containerClasses} style={containerStyles} src={detailUrl} />
             )}

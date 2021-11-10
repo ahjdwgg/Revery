@@ -19,21 +19,33 @@ const NFT = () => {
 
                 <div className="pt-12 md:pt-16 flex flex-col max-w-7xl m-auto h-full">
                     <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit NFTs</h1>
-                    <section className="flex flex-col w-full h-full flex-grow items-center pt-10 pb-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 h-full w-full gap-4">
-                            <AssetCard title="Listed" color="nft" isShowingEditButton={true}>
-                                <div className="w-full grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
+                    <section className="flex flex-col w-full h-full flex-1 items-center pt-10 pb-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-4">
+                            <AssetCard
+                                title="Listed"
+                                color="nft"
+                                isShowingEditButton={true}
+                                footerTips="Drag to reorder"
+                                footerButton="Unlist All"
+                            >
+                                <div className="w-full mb-auto flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
                                     {[...Array(12)].map((_, i) => (
-                                        <div key={i} className="flex items-center justify-center relative m-auto">
+                                        <div
+                                            key={i}
+                                            className="flex items-center justify-center relative m-auto cursor-move"
+                                        >
                                             <NFTItem size={84} previewUrl="" detailUrl="" />
                                         </div>
                                     ))}
                                 </div>
                             </AssetCard>
-                            <AssetCard title="Unlisted" color="nft" isShowingEditButton={true}>
-                                <div className="w-full grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
+                            <AssetCard title="Unlisted" color="nft" isShowingEditButton={true} footerButton="List All">
+                                <div className="w-full mb-auto flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
                                     {[...Array(12)].map((_, i) => (
-                                        <div key={i} className="flex items-center justify-center relative m-auto">
+                                        <div
+                                            key={i}
+                                            className="flex items-center justify-center relative m-auto cursor-move"
+                                        >
                                             <NFTItem size={84} previewUrl="" detailUrl="" />
                                         </div>
                                     ))}

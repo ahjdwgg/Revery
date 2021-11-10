@@ -26,12 +26,16 @@ interface AssetProps {
     title: string;
     color: 'nft' | 'donation' | 'footprint';
     isShowingEditButton: boolean;
+    footerTips?: string;
+    footerButton?: string;
     children: React.ReactNode;
 }
 
-const AssetCard = ({ title, color, isShowingEditButton, children }: AssetProps) => {
+const AssetCard = ({ title, color, isShowingEditButton, footerTips, footerButton, children }: AssetProps) => {
     return (
-        <div className={`px-3.5 py-3 flex flex-col gap-2 ${colorClasses[color].cardColorStyles}`}>
+        <div
+            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${colorClasses[color].cardColorStyles}`}
+        >
             <div className="flex flex-row justify-between">
                 <div className={colorClasses[color].textColorStyles}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
@@ -48,7 +52,19 @@ const AssetCard = ({ title, color, isShowingEditButton, children }: AssetProps) 
                 </div>
             </div>
 
-            <div>{children}</div>
+            <div className="flex h-full w-full p-2 overflow-y-auto">{children}</div>
+
+            {(footerTips || footerButton) && (
+                <div className="flex justify-between">
+                    <div className="flex">{footerTips && <span className="flex text-nft">{footerTips}</span>}</div>
+
+                    <div className="flex">
+                        {footerButton && (
+                            <Button key="edit" color={color} text={footerButton} isOutlined={true} isDisabled={false} />
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
