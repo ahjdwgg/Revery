@@ -82,48 +82,64 @@ const Home: NextPage = () => {
                 </section>
                 <section className="flex flex-col gap-4 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
-                        <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
-                            {[...Array(4)].map((_, i) => (
-                                <ImageHolder
-                                    key={i}
-                                    imageUrl={
-                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                    }
-                                    isFullRound={false}
-                                    size={84}
-                                />
-                            ))}
+                        <AssetCard title="NFTs" color="nft" isShowingExpandButton={true} headerButtonMode={'edit'}>
+                            <div className="grid grid-cols-2 gap-4">
+                                {[...Array(4)].map((_, i) => (
+                                    <ImageHolder
+                                        key={i}
+                                        imageUrl={
+                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                        }
+                                        isFullRound={false}
+                                        size={84}
+                                    />
+                                ))}
+                            </div>
                         </AssetCard>
 
-                        <AssetCard title="Donations" color="donation" isShowingEditButton={true} bodyCols={2}>
-                            {[...Array(4)].map((_, i) => (
-                                <ImageHolder
-                                    key={i}
-                                    imageUrl={
-                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                    }
-                                    isFullRound={false}
-                                    size={84}
-                                />
-                            ))}
+                        <AssetCard
+                            title="Donations"
+                            color="donation"
+                            isShowingExpandButton={true}
+                            headerButtonMode={'edit'}
+                        >
+                            <div className="grid grid-cols-2 gap-4">
+                                {[...Array(4)].map((_, i) => (
+                                    <ImageHolder
+                                        key={i}
+                                        imageUrl={
+                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                        }
+                                        isFullRound={false}
+                                        size={84}
+                                    />
+                                ))}
+                            </div>
                         </AssetCard>
                     </div>
                     <div>
-                        <AssetCard title="Footprints" color="footprint" isShowingEditButton={true} bodyCols={1}>
-                            {[...Array(5)].map((_, i) => (
-                                <FootprintCard
-                                    key={i}
-                                    imageUrl={
-                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                    }
-                                    startDate={'0x61800f00'}
-                                    endDate={'0x61800f00'}
-                                    city={''}
-                                    country={''}
-                                    username={'RSS3Lover'}
-                                    activity={'Say hi. ' + content}
-                                />
-                            ))}
+                        <AssetCard
+                            title="Footprints"
+                            color="footprint"
+                            isShowingExpandButton={true}
+                            headerButtonMode={'edit'}
+                        >
+                            <div className="flex flex-col w-full">
+                                {[...Array(5)].map((_, i) => (
+                                    <FootprintCard
+                                        key={i}
+                                        imageUrl={
+                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                        }
+                                        startDate={'0x61800f00'}
+                                        endDate={'0x61800f00'}
+                                        city={''}
+                                        country={''}
+                                        username={'RSS3Lover'}
+                                        activity={'Say hi.'}
+                                    />
+                                ))}
+                            </div>
                         </AssetCard>
                     </div>
                     <RecommendSection groups={recommendGroups} />
