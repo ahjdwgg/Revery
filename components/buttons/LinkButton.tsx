@@ -1,6 +1,13 @@
 import { COLORTOSTYLE } from './variables';
 import { BiLinkAlt } from 'react-icons/bi';
 
+interface LinkButtonInterface {
+    text: string;
+    color?: string;
+    link?: boolean;
+    onClick?: (param?: any) => void;
+}
+
 /**
  * This component is used for profile link buttons
  * @param {string} text - The text of the button
@@ -9,8 +16,8 @@ import { BiLinkAlt } from 'react-icons/bi';
  * @example
  * <LinkButton text={"Edit Profile"} color={COLORS.primary}/>
  */
-const LinkButton = (props: { text: string; color?: string; link?: boolean }) => {
-    let { text, color, link } = props;
+const LinkButton = (props: LinkButtonInterface) => {
+    let { text, color, link, onClick } = props;
 
     // if color is not specified in props, use 'primary' as default
     color = color ? color : 'primary';
@@ -31,7 +38,7 @@ const LinkButton = (props: { text: string; color?: string; link?: boolean }) => 
 
     return (
         <div>
-            <button className={linkButtonClassName}>
+            <button onClick={onClick} className={linkButtonClassName}>
                 {link && <BiLinkAlt />}
                 {props.text}
             </button>
