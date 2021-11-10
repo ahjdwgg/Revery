@@ -55,7 +55,7 @@ interface InputStates {
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
-const EditProfile: NextPage = () => {
+const SetupProfile: NextPage = () => {
     const [avatarUrl, setAvatarUrl] = useState('https://i.imgur.com/GdWEt4z.jpg');
     const [link, setLink] = useState<string>('Fendi.github.io'); // this is a hard-coded placeholder link
 
@@ -122,7 +122,7 @@ const EditProfile: NextPage = () => {
                 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
             </Header>
             <div className="pt-12 md:pt-16 flex flex-col max-w-5xl m-auto">
-                <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit Profile</h1>
+                <h1 className="mt-4 font-bold text-left text-primary text-lg">Setup Profile</h1>
                 <section className="flex flex-col w-full items-center pt-10">
                     <div className="flex flex-row pb-5 pl-14 w-4/5 gap-x-3 justify-start items-end">
                         <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
@@ -230,4 +230,4 @@ const EditProfile: NextPage = () => {
     );
 };
 
-export default EditProfile;
+export default SetupProfile;
