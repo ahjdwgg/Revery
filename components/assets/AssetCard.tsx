@@ -25,31 +25,51 @@ import Button from '../buttons/Button';
 interface AssetProps {
     title: string;
     color: 'nft' | 'donation' | 'footprint';
-    isShowingEditButton: boolean;
+    headerButtonMode?: 'edit' | 'plus-minus';
+    isShowingExpandButton?: boolean;
     footerTips?: string;
     footerButton?: string;
     isSecondaryBG?: boolean;
     children: React.ReactNode;
 }
 
-const AssetCard = ({ title, color, isShowingEditButton, footerTips, footerButton, isSecondaryBG, children }: AssetProps) => {
+const AssetCard = ({
+    title,
+    color,
+    headerButtonMode,
+    isShowingExpandButton,
+    footerTips,
+    footerButton,
+    isSecondaryBG,
+    children,
+}: AssetProps) => {
     return (
         <div
-            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${colorClasses[isSecondaryBG ? 'secondary' : color].cardColorStyles}`}
+            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${
+                colorClasses[isSecondaryBG ? 'secondary' : color].cardColorStyles
+            }`}
         >
             <div className="flex flex-row justify-between">
                 <div className={colorClasses[color].textColorStyles}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
                 </div>
                 <div className="flex flex-row">
-                    {isShowingEditButton && (
+                    {headerButtonMode === 'edit' && (
                         <div>
                             <Button key="edit" color={color} text="Edit" isOutlined={true} isDisabled={false} />
                         </div>
                     )}
-                    <div className="ml-2">
-                        <Button key="expand" color={color} icon="expand" isOutlined={true} isDisabled={false} />
-                    </div>
+                    {headerButtonMode === 'plus-minus' && (
+                        <div className="flex flex-row gap-2">
+                            <Button key="minus" color={color} icon="minus" isOutlined={true} isDisabled={false} />
+                            <Button key="plus" color={color} icon="plus" isOutlined={false} isDisabled={false} />
+                        </div>
+                    )}
+                    {isShowingExpandButton && (
+                        <div className="ml-2">
+                            <Button key="expand" color={color} icon="expand" isOutlined={true} isDisabled={false} />
+                        </div>
+                    )}
                 </div>
             </div>
 
