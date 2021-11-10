@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-export const Thumb = ({ selected, onClick, imgSrc }: any) => (
+export const Thumb = ({ onClick, imgSrc }: any) => (
     <div className="relative pl-2 -mt-3 min-w-1/4">
         <button
             onClick={onClick}

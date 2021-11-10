@@ -64,7 +64,7 @@ const Home: NextPage = () => {
                         <AccountItem size="sm" chain="Misskey" />
                         <AccountItem size="sm" chain="Twitter" />
                     </Profile>
-                    {[...Array(4)].map((_, i) => (
+                    {[...Array(1)].map((_, i) => (
                         <ContentCard
                             key={i}
                             avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
@@ -80,7 +80,7 @@ const Home: NextPage = () => {
                     ))}
                     <div className="w-full py-8 text-sm text-center">That's all :p</div>
                 </section>
-                <section className="flex flex-col gap-4 w-4/11">
+                <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
                             {[...Array(4)].map((_, i) => (

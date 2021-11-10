@@ -2,6 +2,7 @@ import Expand from './icons/expand';
 import Plus from './icons/plus';
 import Minus from './icons/minus';
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
+import { FiArrowUpRight } from 'react-icons/fi';
 
 interface ButtonInterface {
     color: string;
@@ -91,6 +92,8 @@ const Button = (props: ButtonInterface) => {
             iconSVG = <Plus />;
         } else if (icon == BUTTON_ICONS.minus) {
             iconSVG = <Minus />;
+        } else if (icon == BUTTON_ICONS.external) {
+            iconSVG = <FiArrowUpRight className="w-full" />;
         }
     }
 
