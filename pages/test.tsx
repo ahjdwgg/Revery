@@ -272,7 +272,7 @@ const Test: NextPage = () => {
                     </div>
                 </section>
                 <section>
-                    <div className="nft-list grid gap-6 grid-cols-2 justify-items-center">
+                    <div className="grid gap-6 grid-cols-2 justify-items-center">
                         {[...Array(5)].map((_, i) => (
                             <div key={i} className="relative">
                                 <NFTItem size={208} previewUrl="" detailUrl="" />
