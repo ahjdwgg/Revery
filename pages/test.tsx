@@ -130,12 +130,14 @@ const Test: NextPage = () => {
         <div>
             <Head>
                 <title>Test page</title>
-                <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
             </Head>
             <Header>
-                <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                <div className="flex flex-row justify-end w-full gap-x-8">
+                    <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                    <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
+                </div>
             </Header>
-            <div className="pt-12 md:pt-16 flex flex-col max-w-lg m-auto">
+            <div className="flex flex-col max-w-lg pt-12 m-auto md:pt-16">
                 <h1 className="mt-4 font-bold text-center">Test Page</h1>
                 <section className="divide-y-2 divide-solid divide-opacity-5 divide-primary">
                     <Profile

@@ -33,6 +33,10 @@ module.exports = {
             borderRadius: {
                 DEFAULT: '5px',
             },
+            width: {
+                '4/11': '36.36363636%',
+                '7/11': '63.63636364%',
+            },
             height: {
                 md: '1.6rem',
             },
