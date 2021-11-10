@@ -77,7 +77,9 @@ const AssetCard = ({
 
             {(footerTips || footerButton) && (
                 <div className="flex justify-between">
-                    <div className="flex">{footerTips && <span className="flex text-nft">{footerTips}</span>}</div>
+                    <div className="flex">
+                        {footerTips && <span className={colorClasses[color].textColorStyles}>{footerTips}</span>}
+                    </div>
 
                     <div className="flex">
                         {footerButton && (
