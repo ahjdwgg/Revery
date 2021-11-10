@@ -28,13 +28,14 @@ interface AssetProps {
     isShowingEditButton: boolean;
     footerTips?: string;
     footerButton?: string;
+    isSecondaryBG?: boolean;
     children: React.ReactNode;
 }
 
-const AssetCard = ({ title, color, isShowingEditButton, footerTips, footerButton, children }: AssetProps) => {
+const AssetCard = ({ title, color, isShowingEditButton, footerTips, footerButton, isSecondaryBG, children }: AssetProps) => {
     return (
         <div
-            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${colorClasses[color].cardColorStyles}`}
+            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${colorClasses[isSecondaryBG ? 'secondary' : color].cardColorStyles}`}
         >
             <div className="flex flex-row justify-between">
                 <div className={colorClasses[color].textColorStyles}>
@@ -81,6 +82,10 @@ const colorClasses = {
     footprint: {
         cardColorStyles: 'bg-footprint-bg',
         textColorStyles: 'text-footprint',
+    },
+    secondary: {
+        cardColorStyles: 'bg-secondary-bg',
+        textColorStyles: 'text-secondary',
     },
 };
 

@@ -3,8 +3,8 @@ import config from '../../common/config';
 
 interface NFTItemProps {
     size: number;
-    previewUrl: string;
-    detailUrl: string;
+    previewUrl?: string | null;
+    detailUrl?: string | null;
     isShowingDetails?: boolean;
 }
 
@@ -45,8 +45,8 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
         return url;
     };
 
-    previewUrl = fixSchemas(previewUrl);
-    detailUrl = fixSchemas(detailUrl);
+    previewUrl = fixSchemas(previewUrl || '');
+    detailUrl = fixSchemas(detailUrl || '');
 
     return (
         <div className="flex flex-shrink-0">
