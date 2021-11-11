@@ -17,6 +17,7 @@ import Input from '../components/inputs/Input';
 import NFTBadges from '../components/assets/NFTBadges';
 import NFTItem from '../components/assets/NFTItem';
 import DonationCard from '../components/assets/DonationCard';
+import AccountCard from '../components/account/AccountCard';
 
 interface InputStates {
     website: string;
@@ -227,7 +228,7 @@ const Test: NextPage = () => {
                             <AssetCard title="NFTs" color="nft" isShowingEditButton={true}>
                                 <div className={`grid grid-cols-2 gap-3`}>
                                     {[...Array(5)].map((_, i) => (
-                                        <div key={i} className="flex items-center justify-center relative m-auto">
+                                        <div key={i} className="relative flex items-center justify-center m-auto">
                                             <NFTItem size={84} previewUrl="" detailUrl="" />
                                             {/*<NFTBadges location="overlay" chain="Ethereum" collectionImg='https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5' />*/}
                                         </div>
@@ -271,7 +272,7 @@ const Test: NextPage = () => {
                     </div>
                 </section>
                 <section>
-                    <div className="grid gap-6 grid-cols-2 justify-items-center">
+                    <div className="grid grid-cols-2 gap-6 justify-items-center">
                         {[...Array(5)].map((_, i) => (
                             <div key={i} className="relative">
                                 <NFTItem size={208} previewUrl="" detailUrl="" />
@@ -297,6 +298,14 @@ const Test: NextPage = () => {
                         ]}
                     />
                 </section>
+
+                <section className="flex flex-col gap-y-4">
+                    <AccountCard chain="EVM+" address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4" />
+                    <AccountCard chain="EVM+" address="0x0000000000000000000000000000000000000000" />
+                    <AccountCard chain="Misskey" address="Fendi" />
+                    <AccountCard chain="Twitter" address="Fendi" />
+                </section>
+
                 <section>
                     <div>
                         <RecommendSection

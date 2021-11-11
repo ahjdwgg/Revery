@@ -14,11 +14,11 @@ const DonationCard = ({ imageUrl, name, contribCount, contribDetails }: Donation
     };
 
     return (
-        <div className="flex flex-row items-center justify-start w-full text-body-text bg-body-bg border-card rounded">
-            <div className="flex-shrink m-0.5 w-64 h-32 bg-cover bg-center bg-no-repeat rounded-l" style={imageStyle} />
+        <div className="flex flex-row items-center justify-start w-full border-2 rounded text-body-text bg-body-bg border-donation-bg">
+            <div className="flex-shrink m-0.5 w-64 h-32 bg-cover bg-center bg-no-repeat rounded" style={imageStyle} />
             <div className="flex-1 px-8 w-45">
-                <p className="mb-2 w-full text-lg font-semibold truncate">{name}</p>
-                <div className="flex flex-row gap-x-6 w-full overflow-y-auto">
+                <p className="w-full mb-2 text-lg font-semibold truncate">{name}</p>
+                <div className="flex flex-row w-full overflow-y-auto gap-x-6">
                     <div className="text-donation">
                         <div className="font-semibold">{contribCount}</div>
                         <div className="font-normal">Contrib</div>

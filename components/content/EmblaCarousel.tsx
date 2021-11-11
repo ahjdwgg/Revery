@@ -49,20 +49,17 @@ const EmblaCarousel = ({ slides }: any) => {
                 </div>
             </div>
 
-            <div className={`relative max-w-screen-md mx-auto bg-white w-full pt-0`}>
-                <div className="w-full overflow-hidden" ref={thumbViewportRef}>
-                    <div className={`${style.embla__container} ${style.embla__container__thumb}`}>
-                        {slides.map((imgSrc: string, index: number) => (
-                            <Thumb
-                                onClick={() => onThumbClick(index)}
-                                selected={index === selectedIndex}
-                                imgSrc={imgSrc}
-                                key={index}
-                            />
-                        ))}
+            {slides.length > 1 && (
+                <div className={`relative max-w-screen-md mx-auto bg-white w-full pt-0`}>
+                    <div className="w-full overflow-hidden" ref={thumbViewportRef}>
+                        <div className={`${style.embla__container} ${style.embla__container__thumb}`}>
+                            {slides.map((imgSrc: string, index: number) => (
+                                <Thumb onClick={() => onThumbClick(index)} imgSrc={imgSrc} key={index} />
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };
