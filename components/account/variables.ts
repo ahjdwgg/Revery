@@ -2,6 +2,7 @@ export interface AccountItemProps {
     size?: string;
     chain?: string;
     address?: string;
+    outline?: string;
 }
 
 export const AccountSize = new Map([
@@ -17,3 +18,8 @@ export const AccountIcon = new Map([
     ['Misskey', 'bg-Misskey'],
     ['Twitter', 'bg-Twitter'],
 ]);
+
+export const AccountOutline = new Map([
+    ['default','border-primary'],
+    ['account','border-account'],
+])

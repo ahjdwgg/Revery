@@ -1,8 +1,12 @@
 import React from 'react';
 import { hex2rgb, hslToRgb, rgb2hex, rgbToHsl } from '../../utils/color';
-import { AccountItemProps, AccountSize } from './variables';
+import { AccountItemProps, AccountOutline, AccountSize } from './variables';
 
-const EVMpAccountItem = ({ size = 'sm', address = '0x0000000000000000000000000000000000000000' }: AccountItemProps) => {
+const EVMpAccountItem = ({
+    size = 'sm',
+    address = '0x0000000000000000000000000000000000000000',
+    outline = 'default',
+}: AccountItemProps) => {
     const style = {
         background: 'white',
     };
@@ -19,7 +23,10 @@ const EVMpAccountItem = ({ size = 'sm', address = '0x000000000000000000000000000
     }
 
     return (
-        <div className={`${AccountSize.get(size)} p-1 border rounded-full border-primary`} style={style}>
+        <div
+            className={`${AccountSize.get(size)} p-1 border rounded-full ${AccountOutline.get(outline)}`}
+            style={style}
+        >
             <div className="w-full h-full bg-center bg-no-repeat bg-cover bg-EVM bg-85 mix-blend-overlay" />
         </div>
     );

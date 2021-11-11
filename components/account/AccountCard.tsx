@@ -18,9 +18,9 @@ const AccountCard = ({ size = 'lg', chain, address }: AccountCardProps) => {
     return (
         <section className="grid items-center grid-cols-3">
             {chain !== 'EVM+' ? (
-                <AccountItem size={size} chain={chain} />
+                <AccountItem size={size} chain={chain} outline="account" />
             ) : (
-                <EVMpAccountItem size={size} address={address} />
+                <EVMpAccountItem size={size} address={address} outline="account" />
             )}
             <span className="text-lg font-bold text-left">{formatter(address)}</span>
             <div className="flex flex-row items-center gap-x-2">

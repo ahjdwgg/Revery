@@ -1,8 +1,6 @@
-import Expand from './icons/expand';
-import Plus from './icons/plus';
-import Minus from './icons/minus';
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
+import { BiExpandAlt, BiPlus, BiMinus } from 'react-icons/bi';
 
 interface ButtonInterface {
     color: string;
@@ -59,7 +57,7 @@ const Button = (props: ButtonInterface) => {
     // default = simple button filled with specified color
     const defaultClassName = `${bgDefaultStyle} ${hoverBgStyle} text-white font-medium ${
         fontSize ? fontSize : 'text-xs'
-    } ${hoverTextStyle} py-1 ${fontSize ? 'px-6' : 'px-3'} ${width} border ${borderStyle} ${hoverBorderStyle} rounded`;
+    } ${hoverTextStyle} py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} border ${borderStyle} ${hoverBorderStyle} rounded`;
 
     const outlinedClassName = `${bgAltStyle} ${textStyle} text-opacity-70 font-medium ${
         fontSize ? fontSize : 'text-xs'
@@ -80,20 +78,20 @@ const Button = (props: ButtonInterface) => {
     }
 
     if (icon != undefined) {
-        className = (className + ` h-6 w-6`).replace('px-3', 'px-1.5');
+        className = (className + ` h-6 w-6`).replace('py-sm px-3', 'p-1');
     }
 
     var iconSVG = null;
 
     if (icon != undefined) {
         if (icon == BUTTON_ICONS.expand) {
-            iconSVG = <Expand />;
+            iconSVG = <BiExpandAlt className="w-full" />;
         } else if (icon == BUTTON_ICONS.plus) {
-            iconSVG = <Plus />;
+            iconSVG = <BiPlus className="w-full" />;
         } else if (icon == BUTTON_ICONS.minus) {
-            iconSVG = <Minus />;
+            iconSVG = <BiMinus className="w-full" />;
         } else if (icon == BUTTON_ICONS.external) {
-            iconSVG = <FiArrowUpRight className="w-full" />;
+            iconSVG = <FiArrowUpRight className="w-full h-full" />;
         }
     }
 
