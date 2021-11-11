@@ -24,39 +24,16 @@ import Button from '../buttons/Button';
  */
 interface AssetProps {
     title: string;
-    color: string;
-    bodyCols: number;
+    color: 'nft' | 'donation' | 'footprint';
     isShowingEditButton: boolean;
     children: React.ReactNode;
 }
 
-const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: AssetProps) => {
-    // Setup card colors
-    // Must use full strings
-    // Refer to https://tailwindcss.com/docs/optimizing-for-production#writing-purgeable-html
-    let cardColorStyles = '';
-    let textColorStyles = '';
-    switch (color) {
-        case 'nft':
-            cardColorStyles = 'bg-nft-bg';
-            textColorStyles = 'text-nft';
-            break;
-        case 'donation':
-            cardColorStyles = 'bg-donation-bg';
-            textColorStyles = 'text-donation';
-            break;
-        case 'footprint':
-            cardColorStyles = 'bg-footprint-bg';
-            textColorStyles = 'text-footprint';
-            break;
-        default:
-            break;
-    }
-
+const AssetCard = ({ title, color, isShowingEditButton, children }: AssetProps) => {
     return (
-        <div className={`px-3.5 py-3 flex flex-col gap-2 ${cardColorStyles}`}>
+        <div className={`px-3.5 py-3 flex flex-col gap-2 ${colorClasses[color].cardColorStyles}`}>
             <div className="flex flex-row justify-between">
-                <div className={textColorStyles}>
+                <div className={colorClasses[color].textColorStyles}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
                 </div>
                 <div className="flex flex-row">
@@ -71,9 +48,24 @@ const AssetCard = ({ title, color, bodyCols, isShowingEditButton, children }: As
                 </div>
             </div>
 
-            <div className={`grid grid-cols-${bodyCols} gap-3`}>{children}</div>
+            <div>{children}</div>
         </div>
     );
+};
+
+const colorClasses = {
+    nft: {
+        cardColorStyles: 'bg-nft-bg',
+        textColorStyles: 'text-nft',
+    },
+    donation: {
+        cardColorStyles: 'bg-donation-bg',
+        textColorStyles: 'text-donation',
+    },
+    footprint: {
+        cardColorStyles: 'bg-footprint-bg',
+        textColorStyles: 'text-footprint',
+    },
 };
 
 export default AssetCard;

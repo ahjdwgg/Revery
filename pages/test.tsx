@@ -14,6 +14,10 @@ import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
 import Input from '../components/inputs/Input';
+import NFTBadges from '../components/assets/NFTBadges';
+import NFTItem from '../components/assets/NFTItem';
+import DonationCard from '../components/assets/DonationCard';
+import AccountCard from '../components/account/AccountCard';
 
 interface InputStates {
     website: string;
@@ -112,19 +116,6 @@ const Test: NextPage = () => {
 
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
-    const recommendGroups = [...Array(3)].map((_, gid) => ({
-        name: 'RSS3',
-        intro: 'Want to keep updated on RSS3 news? Follow any of the crew members!',
-        avatarUrl: `https://http.cat/10${gid}`,
-        users: [...Array(5)].map((_, uid) => ({
-            username: `anniiii@${gid}-${uid}`,
-            avatarUrl: `https://http.cat/${gid + 2}0${uid}`,
-            bio: "CXO @ RSS3, Cat's name's Fendi" + content,
-            ethAddress: `0x${gid}${uid}`,
-            rns: 'anniiii',
-        })),
-    }));
 
     return (
         <div>
@@ -234,34 +225,34 @@ const Test: NextPage = () => {
                 <section>
                     <div className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
-                                {[...Array(5)].map((_, i) => (
-                                    <ImageHolder
-                                        key={i}
-                                        imageUrl={
-                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                        }
-                                        isFullRound={false}
-                                        size={84}
-                                    />
-                                ))}
+                            <AssetCard title="NFTs" color="nft" isShowingEditButton={true}>
+                                <div className={`grid grid-cols-2 gap-3`}>
+                                    {[...Array(5)].map((_, i) => (
+                                        <div key={i} className="relative flex items-center justify-center m-auto">
+                                            <NFTItem size={84} previewUrl="" detailUrl="" />
+                                            {/*<NFTBadges location="overlay" chain="Ethereum" collectionImg='https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5' />*/}
+                                        </div>
+                                    ))}
+                                </div>
                             </AssetCard>
 
-                            <AssetCard title="Donations" color="donation" isShowingEditButton={true} bodyCols={2}>
-                                {[...Array(5)].map((_, i) => (
-                                    <ImageHolder
-                                        key={i}
-                                        imageUrl={
-                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                        }
-                                        isFullRound={false}
-                                        size={84}
-                                    />
-                                ))}
+                            <AssetCard title="Donations" color="donation" isShowingEditButton={true}>
+                                <div className={`grid grid-cols-2 gap-3`}>
+                                    {[...Array(5)].map((_, i) => (
+                                        <ImageHolder
+                                            key={i}
+                                            imageUrl={
+                                                'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                            }
+                                            isFullRound={false}
+                                            size={84}
+                                        />
+                                    ))}
+                                </div>
                             </AssetCard>
                         </div>
                         <div>
-                            <AssetCard title="Footprints" color="footprint" isShowingEditButton={true} bodyCols={1}>
+                            <AssetCard title="Footprints" color="footprint" isShowingEditButton={true}>
                                 {[...Array(5)].map((_, i) => (
                                     <FootprintCard
                                         key={i}
@@ -279,9 +270,58 @@ const Test: NextPage = () => {
                             </AssetCard>
                         </div>
                     </div>
+                </section>
+                <section>
+                    <div className="grid grid-cols-2 gap-6 justify-items-center">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="relative">
+                                <NFTItem size={208} previewUrl="" detailUrl="" />
+                                <NFTBadges
+                                    location="overlay"
+                                    chain="Ethereum"
+                                    collectionImg="https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+                <section>
+                    <DonationCard
+                        imageUrl="https://c.gitcoin.co/grants/546622657b597ce151666ed2e2ecbd92/rss3_square_blue.png"
+                        name="RSS3 - RSS with human curation"
+                        contribCount={1}
+                        contribDetails={[
+                            {
+                                token: 'ETH',
+                                amount: 0.1,
+                            },
+                        ]}
+                    />
+                </section>
 
+                <section className="flex flex-col gap-y-4">
+                    <AccountCard chain="EVM+" address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4" />
+                    <AccountCard chain="EVM+" address="0x0000000000000000000000000000000000000000" />
+                    <AccountCard chain="Misskey" address="Fendi" />
+                    <AccountCard chain="Twitter" address="Fendi" />
+                </section>
+
+                <section>
                     <div>
-                        <RecommendSection groups={recommendGroups} />
+                        <RecommendSection
+                            groups={[...Array(3)].map((_, gid) => ({
+                                name: 'RSS3',
+                                intro: 'Want to keep updated on RSS3 news? Follow any of the crew members!',
+                                avatarUrl: `https://http.cat/10${gid}`,
+                                users: [...Array(5)].map((_, uid) => ({
+                                    username: `anniiii@${gid}-${uid}`,
+                                    avatarUrl: `https://http.cat/${gid + 2}0${uid}`,
+                                    bio: "CXO @ RSS3, Cat's name's Fendi" + content,
+                                    ethAddress: `0x${gid}${uid}`,
+                                    rns: 'anniiii',
+                                })),
+                            }))}
+                        />
                     </div>
                 </section>
             </div>

@@ -10,6 +10,7 @@ export const BUTTON_ICONS = {
     expand: 'expand',
     plus: 'plus',
     minus: 'minus',
+    external: 'external',
 };
 
 interface colorToStyleInterface {

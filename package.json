@@ -12,6 +12,7 @@
         "**/*": "prettier --write --ignore-unknown"
     },
     "dependencies": {
+        "@google/model-viewer": "1.9.2",
         "@tailwindcss/aspect-ratio": "0.3.0",
         "embla-carousel-react": "5.0.1",
         "next": "12.0.2",
