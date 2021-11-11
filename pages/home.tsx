@@ -71,9 +71,6 @@ const Home: NextPage = () => {
                             username="Fendi"
                             content={content}
                             images={slides}
-                            like={7}
-                            comment={4}
-                            share={6}
                             timeStamp={0x60de434e}
                             type="Twitter"
                         />
@@ -82,34 +79,38 @@ const Home: NextPage = () => {
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
-                        <AssetCard title="NFTs" color="nft" isShowingEditButton={true} bodyCols={2}>
-                            {[...Array(4)].map((_, i) => (
-                                <ImageHolder
-                                    key={i}
-                                    imageUrl={
-                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                    }
-                                    isFullRound={false}
-                                    size={84}
-                                />
-                            ))}
+                        <AssetCard title="NFTs" color="nft" isShowingEditButton={true}>
+                            <div className={`grid grid-cols-2 gap-3`}>
+                                {[...Array(4)].map((_, i) => (
+                                    <ImageHolder
+                                        key={i}
+                                        imageUrl={
+                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                        }
+                                        isFullRound={false}
+                                        size={84}
+                                    />
+                                ))}
+                            </div>
                         </AssetCard>
 
-                        <AssetCard title="Donations" color="donation" isShowingEditButton={true} bodyCols={2}>
-                            {[...Array(4)].map((_, i) => (
-                                <ImageHolder
-                                    key={i}
-                                    imageUrl={
-                                        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
-                                    }
-                                    isFullRound={false}
-                                    size={84}
-                                />
-                            ))}
+                        <AssetCard title="Donations" color="donation" isShowingEditButton={true}>
+                            <div className={`grid grid-cols-2 gap-3`}>
+                                {[...Array(4)].map((_, i) => (
+                                    <ImageHolder
+                                        key={i}
+                                        imageUrl={
+                                            'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'
+                                        }
+                                        isFullRound={false}
+                                        size={84}
+                                    />
+                                ))}
+                            </div>
                         </AssetCard>
                     </div>
                     <div>
-                        <AssetCard title="Footprints" color="footprint" isShowingEditButton={true} bodyCols={1}>
+                        <AssetCard title="Footprints" color="footprint" isShowingEditButton={true}>
                             {[...Array(5)].map((_, i) => (
                                 <FootprintCard
                                     key={i}

@@ -160,9 +160,6 @@ const Test: NextPage = () => {
                         username="Fendi"
                         content="hello world:)"
                         images={slides}
-                        like={7}
-                        comment={4}
-                        share={6}
                         timeStamp={0x60de434e}
                         type="Twitter"
                     />
@@ -170,9 +167,6 @@ const Test: NextPage = () => {
                         avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                         username="Fendi"
                         content="hello world:)"
-                        like={3}
-                        comment={2}
-                        share={1}
                         timeStamp={0x60de1fce}
                         type="Misskey"
                     />

@@ -20,7 +20,7 @@ const footprint: NextPage = () => {
                 </section>
                 <section className="grid grid-cols-5 gap-4 py-4 justify-items-center">
                     {[...Array(7)].map((_, i) => (
-                        <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={208} />
+                        <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={208} key={i} />
                     ))}
                 </section>
             </div>
