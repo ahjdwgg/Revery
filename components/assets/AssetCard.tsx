@@ -24,12 +24,13 @@ import Button from '../buttons/Button';
  */
 interface AssetProps {
     title: string;
-    color: 'nft' | 'donation' | 'footprint';
+    color: 'account' | 'nft' | 'donation' | 'footprint';
     headerButtonMode?: 'edit' | 'plus-minus';
     isShowingExpandButton?: boolean;
     footerTips?: string;
     footerButton?: string;
     isSecondaryBG?: boolean;
+    isTransparentBG?: boolean;
     children: React.ReactNode;
 }
 
@@ -41,16 +42,18 @@ const AssetCard = ({
     footerTips,
     footerButton,
     isSecondaryBG,
+    isTransparentBG,
     children,
 }: AssetProps) => {
+    let cardBackgroundColorClass = '';
+    if (!isTransparentBG) {
+        cardBackgroundColorClass = colorClasses[isSecondaryBG ? 'secondary' : color].cardColorClass;
+    }
+
     return (
-        <div
-            className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${
-                colorClasses[isSecondaryBG ? 'secondary' : color].cardColorStyles
-            }`}
-        >
+        <div className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${cardBackgroundColorClass}`}>
             <div className="flex flex-row justify-between">
-                <div className={colorClasses[color].textColorStyles}>
+                <div className={colorClasses[color].textColorClass}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
                 </div>
                 <div className="flex flex-row">
@@ -78,7 +81,7 @@ const AssetCard = ({
             {(footerTips || footerButton) && (
                 <div className="flex justify-between">
                     <div className="flex">
-                        {footerTips && <span className={colorClasses[color].textColorStyles}>{footerTips}</span>}
+                        {footerTips && <span className={colorClasses[color].textColorClass}>{footerTips}</span>}
                     </div>
 
                     <div className="flex">
@@ -93,21 +96,25 @@ const AssetCard = ({
 };
 
 const colorClasses = {
+    account: {
+        cardColorClass: 'bg-account-bg',
+        textColorClass: 'text-account',
+    },
     nft: {
-        cardColorStyles: 'bg-nft-bg',
-        textColorStyles: 'text-nft',
+        cardColorClass: 'bg-nft-bg',
+        textColorClass: 'text-nft',
     },
     donation: {
-        cardColorStyles: 'bg-donation-bg',
-        textColorStyles: 'text-donation',
+        cardColorClass: 'bg-donation-bg',
+        textColorClass: 'text-donation',
     },
     footprint: {
-        cardColorStyles: 'bg-footprint-bg',
-        textColorStyles: 'text-footprint',
+        cardColorClass: 'bg-footprint-bg',
+        textColorClass: 'text-footprint',
     },
     secondary: {
-        cardColorStyles: 'bg-secondary-bg',
-        textColorStyles: 'text-secondary',
+        cardColorClass: 'bg-secondary-bg',
+        textColorClass: 'text-secondary',
     },
 };
 
