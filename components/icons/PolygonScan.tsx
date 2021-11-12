@@ -17,7 +17,7 @@ export default function PolygonScan() {
             </defs>
             <g id="logo" transform="translate(-220 -218)">
                 <g id="favicon" transform="translate(-165 -127)">
-                    <g id="Mask_Group_3" data-name="Mask Group 3" clip-path="url(#clip-path)">
+                    <g id="Mask_Group_3" data-name="Mask Group 3" clipPath="url(#clip-path)">
                         <path
                             id="Path_151"
                             data-name="Path 151"

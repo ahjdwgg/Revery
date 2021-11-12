@@ -21,6 +21,8 @@ import AccountCard from '../components/accounts/AccountCard';
 import MarketTag from '../components/tags/MarketTag';
 import ScanTag from '../components/tags/ScanTag';
 import Trait from '../components/details/Trait';
+import NFTDetail from '../components/details/NFTDetail';
+import Payment from '../components/details/Payment';
 
 interface InputStates {
     website: string;
@@ -334,6 +336,14 @@ const Test: NextPage = () => {
                             }))}
                         />
                     </div>
+                </section>
+
+                <section>
+                    <NFTDetail></NFTDetail>
+                </section>
+
+                <section>
+                    <Payment></Payment>
                 </section>
             </div>
         </div>
