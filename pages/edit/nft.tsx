@@ -85,9 +85,9 @@ const NFT = () => {
                                 </ReactSortable>
                             </AssetCard>
                             <AssetCard title="Unlisted" color="nft" footerButton="List All" isSecondaryBG={true}>
-                                <div className="w-full content-start flex-shrink-0 justify-items-center text-nft">
+                                <div className="w-full content-start flex-shrink-0 justify-items-center">
                                     {[...Array(3)].map((_, i) => (
-                                        <details key={i}>
+                                        <details key={i} className="text-nft">
                                             <summary>{i}</summary>
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 mb-3">
                                                 {[...Array(6)].map((_, j) => (
