@@ -1,0 +1,27 @@
+summary {
+    display: block;
+    padding-left: 1rem;
+    position: relative;
+    cursor: pointer;
+}
+
+summary:before {
+    content: '';
+    border-width: 0.4rem;
+    border-style: solid;
+    border-color: transparent transparent transparent #7553ff;
+    position: absolute;
+    top: 0.3rem;
+    left: 0;
+    transform: rotate(0);
+    transform-origin: 0.2rem 50%;
+    transition: 0.25s transform ease;
+}
+
+details[open] > summary:before {
+    transform: rotate(90deg);
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}

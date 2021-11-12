@@ -85,14 +85,21 @@ const NFT = () => {
                                 </ReactSortable>
                             </AssetCard>
                             <AssetCard title="Unlisted" color="nft" footerButton="List All" isSecondaryBG={true}>
-                                <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
-                                    {[...Array(120)].map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className="flex items-center justify-center relative m-auto cursor-move"
-                                        >
-                                            <NFTItem size={84} previewUrl="" detailUrl="" />
-                                        </div>
+                                <div className="w-full content-start flex-shrink-0 justify-items-center text-nft">
+                                    {[...Array(3)].map((_, i) => (
+                                        <details key={i}>
+                                            <summary>{i}</summary>
+                                            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 mb-3">
+                                                {[...Array(6)].map((_, j) => (
+                                                    <div
+                                                        key={j}
+                                                        className="flex items-center justify-center relative m-auto cursor-move"
+                                                    >
+                                                        <NFTItem size={84} previewUrl="" detailUrl="" />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </details>
                                     ))}
                                 </div>
                             </AssetCard>
