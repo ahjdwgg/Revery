@@ -7,7 +7,7 @@ export default function NFTDetail() {
     const subtitle = 'text-lg font-medium capitalize text-nft my-2';
 
     return (
-        <div className="flex flex-col items-start justify-start gap-5 px-5 py-4 filter">
+        <div className="flex flex-col items-start justify-start gap-5 filter">
             <h2 className="overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
                 Cool cat #233
             </h2>
