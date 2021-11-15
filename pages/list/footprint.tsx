@@ -1,10 +1,14 @@
 import { NextPage } from 'next';
+import FootprintCard from '../../components/assets/FootprintCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
 
 const footprint: NextPage = () => {
+    let content =
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ';
+
     return (
         <>
             <Header>
@@ -18,9 +22,18 @@ const footprint: NextPage = () => {
                     <h1 className="text-lg font-bold text-left text-footprint">Joshua's NFTs</h1>
                     <Button isOutlined={true} color={COLORS.footprint} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-5 gap-4 py-4 justify-items-center">
-                    {[...Array(7)].map((_, i) => (
-                        <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={208} key={i} />
+                <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                    {[...Array(5)].map((_, i) => (
+                        <FootprintCard
+                            key={i}
+                            imageUrl={'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5'}
+                            startDate={'0x61800f00'}
+                            endDate={'0x61800f00'}
+                            city={''}
+                            country={''}
+                            username={'RSS3Lover'}
+                            activity={'Say hi. ' + content}
+                        />
                     ))}
                 </section>
             </div>

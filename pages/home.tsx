@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import React from 'react';
-import AccountItem from '../components/account/AccountItem';
+import AccountItem from '../components/accounts/AccountItem';
 import AssetCard from '../components/assets/AssetCard';
 import FootprintCard from '../components/assets/FootprintCard';
 import Button from '../components/buttons/Button';

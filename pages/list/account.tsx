@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import AccountCard from '../../components/account/AccountCard';
+import AccountCard from '../../components/accounts/AccountCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
 import Header from '../../components/Header';
