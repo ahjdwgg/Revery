@@ -1,0 +1,337 @@
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { ethers } from 'ethers';
+import RSS3 from 'rss3-next';
+import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
+import axios from 'axios';
+import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
+import config from './config';
+
+let RSS3PageOwner: RSS3DetailPersona;
+let RSS3LoginUser: RSS3DetailPersona;
+let assets: Map<string, IAssetProfile> = new Map();
+let walletConnectProvider: WalletConnectProvider;
+let ethersProvider: ethers.providers.Web3Provider | null;
+
+export type IRSS3 = RSS3;
+
+export interface IAssetProfile {
+    assets: GeneralAsset[];
+    status?: boolean;
+}
+
+export interface RSS3DetailPersona {
+    persona: RSS3 | null;
+    address: string;
+    profile: RSS3Profile | null;
+}
+
+function setStorage(key: string, value: string) {
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+function getStorage(key: string): string {
+    return localStorage.getItem(key) || '';
+}
+
+const KeyNames = {
+    ConnectMethod: 'CONNECT_METHOD',
+    ConnectAddress: 'CONNECT_ADDRESS',
+    MetaMask: 'MetaMask',
+    WalletConnect: 'WalletConnect',
+    AgentID: 'AGENT_ID',
+    AgentSecret: 'AGENT_SECRET',
+};
+
+async function wcConn() {
+    // WalletConnect Connect
+    walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
+
+    //  Enable session (triggers QR Code modal)
+    let session;
+    try {
+        session = await walletConnectProvider.enable();
+    } catch (e) {}
+    if (!session) {
+        return null;
+    }
+
+    ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
+
+    if (!ethersProvider) {
+        return null;
+    }
+
+    // Subscribe to session disconnection
+    walletConnectProvider.on('disconnect', (code: number, reason: string) => {
+        console.log(code, reason);
+        disconnect();
+    });
+
+    let address = getStorage(KeyNames.ConnectAddress);
+    if (!address) {
+        address = await ethersProvider.getSigner().getAddress();
+    }
+
+    RSS3LoginUser.persona = new RSS3({
+        endpoint: config.hubEndpoint,
+        address: address,
+        agentSign: true,
+        sign: async (data: string) => {
+            alert('Ready to sign... You may need to prepare your wallet.');
+            return (
+                (await ethersProvider?.send('personal_sign', [
+                    ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
+                    address.toLowerCase(),
+                ])) || ''
+            );
+        },
+    });
+    await initUser(RSS3LoginUser);
+
+    return RSS3LoginUser;
+}
+
+async function mmConn() {
+    // MetaMask Connect
+    if (!(window as any).ethereum) {
+        return null;
+    }
+
+    const metamaskEthereum = (window as any).ethereum;
+    ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+
+    let address = getStorage(KeyNames.ConnectAddress);
+    if (!address) {
+        const accounts = await metamaskEthereum.request({
+            method: 'eth_requestAccounts',
+        });
+        address = ethers.utils.getAddress(accounts[0]);
+    }
+
+    RSS3LoginUser.persona = new RSS3({
+        endpoint: config.hubEndpoint,
+        address: address,
+        agentSign: true,
+        sign: async (data: string) => (await ethersProvider?.getSigner().signMessage(data)) || '',
+    });
+    await initUser(RSS3LoginUser);
+
+    return RSS3LoginUser;
+}
+
+function saveConnect(method: string) {
+    if (isValidRSS3()) {
+        setStorage(KeyNames.ConnectMethod, method);
+        setStorage(KeyNames.ConnectAddress, RSS3LoginUser.address);
+        setStorage(KeyNames.AgentID, '');
+        setStorage(KeyNames.AgentSecret, '');
+    }
+}
+
+async function initUser(user: RSS3DetailPersona) {
+    const RSS3APIUser = apiUser();
+    if (user.persona) {
+        if (!user.address) {
+            user.address = user.persona.account.address;
+        }
+        user.persona.files.set(await user.persona.files.get(user.address));
+    }
+    user.profile = await RSS3APIUser.profile.get(user.address);
+}
+
+function apiUser(): RSS3 {
+    return (
+        RSS3LoginUser.persona ||
+        new RSS3({
+            endpoint: config.hubEndpoint,
+        })
+    );
+}
+
+function isValidRSS3() {
+    return !!RSS3LoginUser.persona;
+}
+
+async function disconnect() {
+    RSS3LoginUser = {
+        persona: null,
+        address: '',
+        profile: null,
+    };
+    ethersProvider = null;
+    if (walletConnectProvider) {
+        await walletConnectProvider.disconnect();
+    }
+    setStorage(KeyNames.ConnectMethod, '');
+    setStorage(KeyNames.ConnectAddress, '');
+    setStorage(KeyNames.AgentID, '');
+    setStorage(KeyNames.AgentSecret, '');
+}
+
+function reconnect() {
+    const address = getStorage(KeyNames.ConnectAddress);
+    const agentID = getStorage(KeyNames.AgentID);
+    const agentKey = getStorage(KeyNames.AgentSecret);
+
+    // todo: Init persona with address and agent pair
+
+    return !!(address && agentID && agentKey);
+}
+
+export default {
+    connect: {
+        walletConnect: async () => {
+            await wcConn();
+            saveConnect(KeyNames.WalletConnect);
+            return RSS3LoginUser;
+        },
+        metamask: async () => {
+            await mmConn();
+            saveConnect(KeyNames.MetaMask);
+            return RSS3LoginUser;
+        },
+    },
+    disconnect: disconnect,
+    reconnect: reconnect,
+    apiUser: (): RSS3DetailPersona => {
+        return {
+            persona: apiUser(),
+            address: '',
+            profile: null,
+        };
+    },
+    getLoginUser: () => {
+        return RSS3LoginUser;
+    },
+    setPageOwner: async (address: string) => {
+        RSS3PageOwner.address = address;
+        await initUser(RSS3PageOwner);
+    },
+    getPageOwner: () => {
+        return RSS3PageOwner;
+    },
+
+    getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
+        if (assets.has(address + type) && !refresh) {
+            return <IAssetProfile>assets.get(address + type);
+        } else {
+            let data: IAssetProfile | null = null;
+            try {
+                const res = await axios.get(`/assets/list`, {
+                    baseURL: config.hubEndpoint,
+                    params: {
+                        personaID: address,
+                        type: type,
+                    },
+                });
+                if (res && res.data) {
+                    data = <IAssetProfile>res.data;
+                    assets.set(address + type, data);
+                }
+            } catch (error) {
+                data = null;
+            }
+            return data;
+        }
+    },
+    getNFTDetails: async (address: string, platform: string, identity: string, id: string, type: string) => {
+        let data: NFTResponse | null = null;
+        try {
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
+                params: {
+                    personaID: address,
+                    platform: 'EVM+',
+                    id,
+                    identity,
+                    type,
+                },
+            });
+            if (res && res.data) {
+                data = <NFTResponse>res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+    getGitcoinDonation: async (address: string, platform: string, identity: string, id: string) => {
+        let data: GitcoinResponse | null = null;
+        try {
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
+                params: {
+                    personaID: address,
+                    platform: 'EVM+',
+                    id: id,
+                    identity: identity,
+                    type: 'Gitcoin-Donation',
+                },
+            });
+            if (res && res.data) {
+                data = <GitcoinResponse>res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+    getFootprintDetail: async (address: string, platform: string, identity: string, id: string) => {
+        let data: POAPResponse | null = null;
+        try {
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
+                params: {
+                    personaID: address,
+                    platform: 'EVM+',
+                    id: id,
+                    identity: identity,
+                    type: 'xDai-POAP',
+                },
+            });
+            if (res && res.data) {
+                data = <POAPResponse>res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+
+    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
+        // js don't support multiple return values,
+        // so here I'm using signature as a message provider
+        if (!RSS3LoginUser.persona) {
+            return {
+                platform: '',
+                identity: '',
+                signature: 'Not logged in',
+            };
+        }
+        const metamaskEthereum = (window as any).ethereum;
+        ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+        const accounts = await metamaskEthereum.request({
+            method: 'eth_requestAccounts',
+        });
+        const address = ethers.utils.getAddress(accounts[0]);
+
+        const newTmpAddress: RSS3Account = {
+            platform: 'EVM+',
+            identity: address,
+        };
+
+        const signature =
+            (await ethersProvider
+                ?.getSigner()
+                .signMessage(RSS3LoginUser.persona.accounts.getSigMessage(newTmpAddress))) || '';
+
+        return {
+            platform: 'EVM+',
+            identity: address,
+            signature: signature,
+        };
+    },
+};
