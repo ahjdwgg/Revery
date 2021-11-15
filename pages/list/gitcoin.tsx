@@ -22,6 +22,7 @@ const gitcoin: NextPage = () => {
                 <section className="grid grid-cols-2 gap-4 py-4">
                     {[...Array(7)].map((_, i) => (
                         <DonationCard
+                            key={i}
                             imageUrl="https://c.gitcoin.co/grants/546622657b597ce151666ed2e2ecbd92/rss3_square_blue.png"
                             name="RSS3 - RSS with human curation"
                             contribCount={1}

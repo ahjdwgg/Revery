@@ -12,9 +12,6 @@ interface ContentProps {
     username: string;
     content: string;
     images?: string[];
-    like?: number;
-    comment?: number;
-    share?: number;
     timeStamp: number;
     type: string;
 }
@@ -34,17 +31,7 @@ const timeDifferent = (timeStamp: number): string => {
     }
 };
 
-const ContentCard = ({
-    avatarUrl,
-    username,
-    content,
-    images,
-    like = 0,
-    comment = 0,
-    share = 0,
-    timeStamp,
-    type,
-}: ContentProps) => {
+const ContentCard = ({ avatarUrl, username, content, images, timeStamp, type }: ContentProps) => {
     let iconSVG = null;
 
     if (type) {
@@ -71,28 +58,12 @@ const ContentCard = ({
             </div>
             <div className="mt-2 text-base leading-5 whitespace-pre-line select-none">{content}</div>
             {images && images?.length > 0 && <EmblaCarousel slides={images} />}
-            <section className="flex flex-row justify-between mt-2 text-sm">
-                <div className="flex flex-row gap-x-2.5 opacity-20">
-                    <div className="flex flex-row items-center gap-x-1">
-                        <BiHeart />
-                        <span>{like}</span>
-                    </div>
-                    <div className="flex flex-row items-center gap-x-1">
-                        <BiMessage />
-                        <span>{comment}</span>
-                    </div>
-                    <div className="flex flex-row items-center gap-x-1">
-                        <BiShare />
-                        <span>{share}</span>
-                    </div>
-                </div>
-                <div className="flex flex-row items-center justify-end gap-x-2">
-                    <span className="opacity-20">{timeDifferent(timeStamp)}</span>
-                    {type && iconSVG && (
-                        <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
-                    )}
-                </div>
-            </section>
+            <div className="flex flex-row items-center justify-end mt-2 text-sm gap-x-2">
+                <span className="opacity-20">{timeDifferent(timeStamp)}</span>
+                {type && iconSVG && (
+                    <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
+                )}
+            </div>
         </div>
     );
 };

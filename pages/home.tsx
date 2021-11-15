@@ -71,9 +71,6 @@ const Home: NextPage = () => {
                             username="Fendi"
                             content={content}
                             images={slides}
-                            like={7}
-                            comment={4}
-                            share={6}
                             timeStamp={0x60de434e}
                             type="Twitter"
                         />
@@ -83,7 +80,7 @@ const Home: NextPage = () => {
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="nft" isShowingExpandButton={true} headerButtonMode={'edit'}>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 {[...Array(4)].map((_, i) => (
                                     <ImageHolder
                                         key={i}
@@ -103,7 +100,7 @@ const Home: NextPage = () => {
                             isShowingExpandButton={true}
                             headerButtonMode={'edit'}
                         >
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 {[...Array(4)].map((_, i) => (
                                     <ImageHolder
                                         key={i}
