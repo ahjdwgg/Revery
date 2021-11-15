@@ -25,10 +25,10 @@ const NFTBadges = ({ location, chain, collectionImg }: NFTBadgesProps) => {
 };
 
 const classes = {
-    containerBase: 'flex flex-row gap-1 items-center justify-end absolute',
+    containerBase: 'flex flex-row gap-1 items-center justify-end',
     containerExtend: {
-        overlay: 'right-2.5 top-2.5',
-        header: 'right-0',
+        overlay: 'absolute right-2.5 top-2.5',
+        header: '',
     },
     badgeBase: 'bg-center bg-no-repeat bg-cover rounded-full bg-item-bg border-sm border-item-border shadow-nft',
     badgeExtend: {

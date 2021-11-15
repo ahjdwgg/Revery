@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import React, { ChangeEvent, useState } from 'react';
-import AccountItem from '../components/account/AccountItem';
-import EVMpAccountItem from '../components/account/EVMpAccountItem';
+import AccountItem from '../components/accounts/AccountItem';
+import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
 import Header from '../components/Header';
 import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
@@ -121,10 +121,10 @@ const EditProfile: NextPage = () => {
                 </div>
                 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
             </Header>
-            <div className="pt-12 md:pt-16 flex flex-col max-w-5xl m-auto">
-                <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit Profile</h1>
-                <section className="flex flex-col w-full items-center pt-10">
-                    <div className="flex flex-row pb-5 pl-14 w-4/5 gap-x-3 justify-start items-end">
+            <div className="flex flex-col max-w-5xl pt-12 m-auto md:pt-16">
+                <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Profile</h1>
+                <section className="flex flex-col items-center w-full pt-10">
+                    <div className="flex flex-row items-end justify-start w-4/5 pb-5 pl-14 gap-x-3">
                         <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
                         <div className="flex flex-col gap-y-5">
                             <Button
@@ -146,8 +146,8 @@ const EditProfile: NextPage = () => {
                         </div>
                     </div>
                     <section className="flex flex-col w-4/5 gap-y-5">
-                        <div className="flex flex-row gap-x-5 w-full justify-end">
-                            <label className="w-48 text-right pt-2">Username</label>
+                        <div className="flex flex-row justify-end w-full gap-x-5">
+                            <label className="w-48 pt-2 text-right">Username</label>
                             <Input
                                 placeholder={'Username'}
                                 isSingleLine={true}
@@ -155,8 +155,8 @@ const EditProfile: NextPage = () => {
                                 onChange={handleChangeUsername}
                             />
                         </div>
-                        <div className="flex flex-row gap-x-5 w-full justify-end">
-                            <label className="w-48 text-right pt-2">Personal Website</label>
+                        <div className="flex flex-row justify-end w-full gap-x-5">
+                            <label className="w-48 pt-2 text-right">Personal Website</label>
                             <Input
                                 placeholder={'Personal Website'}
                                 isSingleLine={true}
@@ -165,14 +165,14 @@ const EditProfile: NextPage = () => {
                             />
                         </div>
 
-                        <div className="flex flex-row gap-x-5 w-full justify-end">
-                            <label className="w-48 text-right pt-2">Bio</label>
+                        <div className="flex flex-row justify-end w-full gap-x-5">
+                            <label className="w-48 pt-2 text-right">Bio</label>
                             <Input placeholder={'Bio'} isSingleLine={false} onChange={handleChangeBio} />
                         </div>
 
-                        <div className="flex flex-row gap-x-5 w-full justify-start">
+                        <div className="flex flex-row justify-start w-full gap-x-5">
                             <label className="w-48 text-right">Accounts</label>
-                            <div className="flex flex-row gap-x-2 w-4/5">
+                            <div className="flex flex-row w-4/5 gap-x-2">
                                 {accountItems.map((item) => {
                                     if (item.type == 'default') {
                                         return <AccountItem size="sm" chain={item.value} />;
@@ -204,7 +204,7 @@ const EditProfile: NextPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex flex-row gap-x-3 pl-40 justify-center">
+                        <div className="flex flex-row justify-center pl-40 gap-x-3">
                             <Button
                                 isOutlined={true}
                                 color={COLORS.primary}

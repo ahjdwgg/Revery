@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import React, { ChangeEvent } from 'react';
-import AccountItem from '../components/account/AccountItem';
-import EVMpAccountItem from '../components/account/EVMpAccountItem';
+import AccountItem from '../components/accounts/AccountItem';
+import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
 import ContentCard from '../components/content/ContentCard';
 import Profile from '../components/profile/Profile';
 import AssetCard from '../components/assets/AssetCard';
@@ -17,7 +17,12 @@ import Input from '../components/inputs/Input';
 import NFTBadges from '../components/assets/NFTBadges';
 import NFTItem from '../components/assets/NFTItem';
 import DonationCard from '../components/assets/DonationCard';
-import AccountCard from '../components/account/AccountCard';
+import AccountCard from '../components/accounts/AccountCard';
+import MarketTag from '../components/tags/MarketTag';
+import ScanTag from '../components/tags/ScanTag';
+import Trait from '../components/details/Trait';
+import NFTDetail from '../components/details/NFTDetail';
+import Payment from '../components/details/Payment';
 
 interface InputStates {
     website: string;
@@ -300,6 +305,20 @@ const Test: NextPage = () => {
                     <AccountCard chain="Twitter" address="Fendi" />
                 </section>
 
+                <section className="flex flex-col items-start p-4 rounded-lg gap-y-2">
+                    <MarketTag market="opensea" />
+                    <MarketTag market="rarible" />
+                    <ScanTag chain="Ethereum" />
+                    <ScanTag chain="BSC" />
+                    <ScanTag chain="Polygon" />
+                </section>
+
+                <section className="flex flex-row flex-wrap items-start gap-2 p-4 m-4 rounded-lg">
+                    <Trait traitType="body" traitValue="blue cat skin"></Trait>
+                    <Trait traitType="face" traitValue="heart"></Trait>
+                    <Trait traitType="hats" traitValue="beret red"></Trait>
+                </section>
+
                 <section>
                     <div>
                         <RecommendSection
@@ -317,6 +336,14 @@ const Test: NextPage = () => {
                             }))}
                         />
                     </div>
+                </section>
+
+                <section>
+                    <NFTDetail></NFTDetail>
+                </section>
+
+                <section>
+                    <Payment></Payment>
                 </section>
             </div>
         </div>
