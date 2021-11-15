@@ -1,11 +1,24 @@
 import { NextPage } from 'next';
+import { useState } from 'react';
 import DonationCard from '../../components/assets/DonationCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
+import SingleDonation from '../../components/details/SingleDonation';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
+import Model from '../../components/Model';
 
 const Donation: NextPage = () => {
+    const [modelHidden, setModelHidden] = useState(true);
+
+    const openModel = () => {
+        setModelHidden(false);
+    };
+
+    const closeModel = () => {
+        setModelHidden(true);
+    };
+
     return (
         <>
             <Header>
@@ -32,10 +45,14 @@ const Donation: NextPage = () => {
                                     amount: 0.1,
                                 },
                             ]}
+                            clickEvent={openModel}
                         />
                     ))}
                 </section>
             </div>
+            <Model hidden={modelHidden} closeEvent={closeModel} theme={'gitcoin'}>
+                <SingleDonation />
+            </Model>
         </>
     );
 };

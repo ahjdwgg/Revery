@@ -6,8 +6,8 @@ import Button from '../../components/buttons/Button';
 import { ReactSortable } from 'react-sortablejs';
 import { RSS3Account } from 'rss3-next/types/rss3';
 import config from '../../common/config';
-import EVMpAccountItem from '../../components/account/EVMpAccountItem';
-import AccountItem from '../../components/account/AccountItem';
+import EVMpAccountItem from '../../components/accounts/EVMpAccountItem';
+import AccountItem from '../../components/accounts/AccountItem';
 
 interface RSS3AccountWithID extends RSS3Account {
     id: string;
@@ -46,10 +46,10 @@ const Account = () => {
             </Head>
             <div className="h-full">
                 <Header></Header>
-                <div className="pt-12 md:pt-16 flex flex-col w-max max-w-7xl m-auto h-full">
-                    <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit Accounts</h1>
-                    <section className="flex flex-col w-full h-0 flex-1 items-center pt-10 pb-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-4">
+                <div className="flex flex-col h-full pt-12 m-auto md:pt-16 w-max max-w-7xl">
+                    <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Accounts</h1>
+                    <section className="flex flex-col items-center flex-1 w-full h-0 pt-10 pb-8">
+                        <div className="grid w-full h-full grid-cols-1 gap-4 lg:grid-cols-2">
                             <div className="flex flex-col gap-5">
                                 <div className="flex">
                                     <AssetCard title="Default" color="account" isTransparentBG={true}>
@@ -78,7 +78,7 @@ const Account = () => {
                                         {listedAccounts.map((account, index) => (
                                             <div
                                                 key={account.platform + account.identity}
-                                                className="flex items-center justify-center relative m-auto cursor-move"
+                                                className="relative flex items-center justify-center m-auto cursor-move"
                                             >
                                                 {account.platform === 'EVM+' ? (
                                                     <EVMpAccountItem
@@ -106,7 +106,7 @@ const Account = () => {
                                     {unlistedAccounts.map((account, index) => (
                                         <div
                                             key={account.platform + account.identity}
-                                            className="flex items-center justify-center relative m-auto cursor-move"
+                                            className="relative flex items-center justify-center m-auto cursor-move"
                                         >
                                             {account.platform === 'EVM+' ? (
                                                 <EVMpAccountItem
@@ -125,7 +125,7 @@ const Account = () => {
                     </section>
 
                     <footer className="flex w-full mb-11">
-                        <div className="flex flex-row gap-x-3 w-full justify-center">
+                        <div className="flex flex-row justify-center w-full gap-x-3">
                             <Button
                                 isOutlined={true}
                                 color="primary"

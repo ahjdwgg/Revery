@@ -1,11 +1,24 @@
 import { NextPage } from 'next';
+import { useState } from 'react';
 import FootprintCard from '../../components/assets/FootprintCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
+import SingleFootprint from '../../components/details/SingleFootprint';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
+import Model from '../../components/Model';
 
 const footprint: NextPage = () => {
+    const [modelHidden, setModelHidden] = useState(true);
+
+    const openModel = () => {
+        setModelHidden(false);
+    };
+
+    const closeModel = () => {
+        setModelHidden(true);
+    };
+
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ';
 
@@ -33,10 +46,14 @@ const footprint: NextPage = () => {
                             country={''}
                             username={'RSS3Lover'}
                             activity={'Say hi. ' + content}
+                            clickEvent={openModel}
                         />
                     ))}
                 </section>
             </div>
+            <Model hidden={modelHidden} closeEvent={closeModel} theme={'footprint'}>
+                <SingleFootprint />
+            </Model>
         </>
     );
 };

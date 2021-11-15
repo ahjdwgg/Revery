@@ -8,15 +8,16 @@ interface AccountCardProps {
     size?: string;
     chain: string;
     address: string;
+    clickEvent?: () => void;
 }
 
 const formatter = (address: string): string => {
     return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
 };
 
-const AccountCard = ({ size = 'lg', chain, address }: AccountCardProps) => {
+const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: AccountCardProps) => {
     return (
-        <section className="grid items-center grid-cols-3">
+        <section className="grid items-center grid-cols-3 cursor-pointer" onClick={clickEvent}>
             {chain !== 'EVM+' ? (
                 <AccountItem size={size} chain={chain} outline="account" />
             ) : (

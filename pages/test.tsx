@@ -224,7 +224,7 @@ const Test: NextPage = () => {
                 <section>
                     <div className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <AssetCard title="NFTs" color="nft" isShowingEditButton={true}>
+                            <AssetCard title="NFTs" color="nft">
                                 <div className={`grid grid-cols-2 gap-3`}>
                                     {[...Array(5)].map((_, i) => (
                                         <div key={i} className="relative flex items-center justify-center m-auto">
@@ -235,7 +235,7 @@ const Test: NextPage = () => {
                                 </div>
                             </AssetCard>
 
-                            <AssetCard title="Donations" color="donation" isShowingEditButton={true}>
+                            <AssetCard title="Donations" color="donation">
                                 <div className={`grid grid-cols-2 gap-3`}>
                                     {[...Array(5)].map((_, i) => (
                                         <ImageHolder
@@ -251,7 +251,7 @@ const Test: NextPage = () => {
                             </AssetCard>
                         </div>
                         <div>
-                            <AssetCard title="Footprints" color="footprint" isShowingEditButton={true}>
+                            <AssetCard title="Footprints" color="footprint">
                                 {[...Array(5)].map((_, i) => (
                                     <FootprintCard
                                         key={i}

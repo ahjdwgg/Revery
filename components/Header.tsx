@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Button from '../components/buttons/Button';
-import { COLORS } from '../components/buttons/variables';
 
 function Header(props: any) {
     const [top, setTop] = useState(true);

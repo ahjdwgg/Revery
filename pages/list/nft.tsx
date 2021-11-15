@@ -1,12 +1,25 @@
 import { NextPage } from 'next';
+import { useState } from 'react';
 import NFTBadges from '../../components/assets/NFTBadges';
 import NFTItem from '../../components/assets/NFTItem';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
+import SingleNFT from '../../components/details/SingleNFT';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
+import Model from '../../components/Model';
 
 const nft: NextPage = () => {
+    const [modelHidden, setModelHidden] = useState(true);
+
+    const openModel = () => {
+        setModelHidden(false);
+    };
+
+    const closeModel = () => {
+        setModelHidden(true);
+    };
+
     return (
         <>
             <Header>
@@ -22,7 +35,7 @@ const nft: NextPage = () => {
                 </section>
                 <section className="grid grid-cols-5 gap-4 py-4 justify-items-center">
                     {[...Array(7)].map((_, i) => (
-                        <div key={i} className="relative">
+                        <div key={i} className="relative" onClick={openModel}>
                             <NFTItem size={208} previewUrl="https://i.imgur.com/GdWEt4z.jpg" detailUrl="" />
                             <NFTBadges
                                 location="overlay"
@@ -33,6 +46,9 @@ const nft: NextPage = () => {
                     ))}
                 </section>
             </div>
+            <Model hidden={modelHidden} closeEvent={closeModel} theme={'nft'}>
+                <SingleNFT />
+            </Model>
         </>
     );
 };

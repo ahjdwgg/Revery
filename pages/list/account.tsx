@@ -1,11 +1,24 @@
 import { NextPage } from 'next';
+import { useState } from 'react';
 import AccountCard from '../../components/accounts/AccountCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
+import SingleAccount from '../../components/details/SingleAccount';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
+import Model from '../../components/Model';
 
 const account: NextPage = () => {
+    const [modelHidden, setModelHidden] = useState(true);
+
+    const openModel = () => {
+        setModelHidden(false);
+    };
+
+    const closeModel = () => {
+        setModelHidden(true);
+    };
+
     return (
         <>
             <Header>
@@ -20,12 +33,21 @@ const account: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.account} text={'Edit'} />
                 </section>
                 <section className="grid items-center justify-start grid-cols-2 gap-4 py-4 gap-x-12">
-                    <AccountCard chain="EVM+" address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4" />
-                    <AccountCard chain="EVM+" address="0x0000000000000000000000000000000000000000" />
-                    <AccountCard chain="Misskey" address="Fendi" />
-                    <AccountCard chain="Twitter" address="Fendi" />
+                    <AccountCard
+                        chain="EVM+"
+                        address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4"
+                        clickEvent={openModel}
+                    />
+                    <AccountCard
+                        chain="EVM+"
+                        address="0x0000000000000000000000000000000000000000"
+                        clickEvent={openModel}
+                    />
                 </section>
             </div>
+            <Model hidden={modelHidden} closeEvent={closeModel} theme={'account'}>
+                <SingleAccount chain="EVM+" address="0x0000000000000000000000000000000000000000" />
+            </Model>
         </>
     );
 };

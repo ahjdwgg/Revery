@@ -6,15 +6,19 @@ interface DonationCardProps {
         token: string;
         amount: number;
     }[];
+    clickEvent?: () => void;
 }
 
-const DonationCard = ({ imageUrl, name, contribCount, contribDetails }: DonationCardProps) => {
+const DonationCard = ({ imageUrl, name, contribCount, contribDetails, clickEvent = () => {} }: DonationCardProps) => {
     const imageStyle = {
         backgroundImage: `url(${imageUrl})`,
     };
 
     return (
-        <div className="flex flex-row items-center justify-start w-full border-2 rounded text-body-text bg-body-bg border-donation-bg">
+        <div
+            className="flex flex-row items-center justify-start w-full border-2 rounded cursor-pointer text-body-text bg-body-bg border-donation-bg"
+            onClick={clickEvent}
+        >
             <div className="flex-shrink m-0.5 w-64 h-32 bg-cover bg-center bg-no-repeat rounded" style={imageStyle} />
             <div className="flex-1 px-8 w-45">
                 <p className="w-full mb-2 text-lg font-semibold truncate">{name}</p>
