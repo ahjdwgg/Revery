@@ -5,7 +5,7 @@ import { COLORS } from '../../components/buttons/variables';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
 
-const gitcoin: NextPage = () => {
+const Donation: NextPage = () => {
     return (
         <>
             <Header>
@@ -40,4 +40,4 @@ const gitcoin: NextPage = () => {
     );
 };
 
-export default gitcoin;
+export default Donation;
