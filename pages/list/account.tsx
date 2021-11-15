@@ -6,17 +6,17 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleAccount from '../../components/details/SingleAccount';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Model from '../../components/Model';
+import Modal from '../../components/Modal';
 
 const account: NextPage = () => {
-    const [modelHidden, setModelHidden] = useState(true);
+    const [modalHidden, setModalHidden] = useState(true);
 
-    const openModel = () => {
-        setModelHidden(false);
+    const openModal = () => {
+        setModalHidden(false);
     };
 
-    const closeModel = () => {
-        setModelHidden(true);
+    const closeModal = () => {
+        setModalHidden(true);
     };
 
     return (
@@ -36,18 +36,18 @@ const account: NextPage = () => {
                     <AccountCard
                         chain="EVM+"
                         address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4"
-                        clickEvent={openModel}
+                        clickEvent={openModal}
                     />
                     <AccountCard
                         chain="EVM+"
                         address="0x0000000000000000000000000000000000000000"
-                        clickEvent={openModel}
+                        clickEvent={openModal}
                     />
                 </section>
             </div>
-            <Model hidden={modelHidden} closeEvent={closeModel} theme={'account'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'account'}>
                 <SingleAccount chain="EVM+" address="0x0000000000000000000000000000000000000000" />
-            </Model>
+            </Modal>
         </>
     );
 };

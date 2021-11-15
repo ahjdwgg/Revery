@@ -7,17 +7,17 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleNFT from '../../components/details/SingleNFT';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Model from '../../components/Model';
+import Modal from '../../components/Modal';
 
 const nft: NextPage = () => {
-    const [modelHidden, setModelHidden] = useState(true);
+    const [modalHidden, setModalHidden] = useState(true);
 
-    const openModel = () => {
-        setModelHidden(false);
+    const openModal = () => {
+        setModalHidden(false);
     };
 
-    const closeModel = () => {
-        setModelHidden(true);
+    const closeModal = () => {
+        setModalHidden(true);
     };
 
     return (
@@ -35,7 +35,7 @@ const nft: NextPage = () => {
                 </section>
                 <section className="grid grid-cols-5 gap-4 py-4 justify-items-center">
                     {[...Array(7)].map((_, i) => (
-                        <div key={i} className="relative" onClick={openModel}>
+                        <div key={i} className="relative" onClick={openModal}>
                             <NFTItem size={208} previewUrl="https://i.imgur.com/GdWEt4z.jpg" detailUrl="" />
                             <NFTBadges
                                 location="overlay"
@@ -46,9 +46,9 @@ const nft: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Model hidden={modelHidden} closeEvent={closeModel} theme={'nft'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'}>
                 <SingleNFT />
-            </Model>
+            </Modal>
         </>
     );
 };

@@ -6,17 +6,17 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleFootprint from '../../components/details/SingleFootprint';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Model from '../../components/Model';
+import Modal from '../../components/Modal';
 
 const footprint: NextPage = () => {
-    const [modelHidden, setModelHidden] = useState(true);
+    const [modalHidden, setModalHidden] = useState(true);
 
-    const openModel = () => {
-        setModelHidden(false);
+    const openModal = () => {
+        setModalHidden(false);
     };
 
-    const closeModel = () => {
-        setModelHidden(true);
+    const closeModal = () => {
+        setModalHidden(true);
     };
 
     let content =
@@ -46,14 +46,14 @@ const footprint: NextPage = () => {
                             country={''}
                             username={'RSS3Lover'}
                             activity={'Say hi. ' + content}
-                            clickEvent={openModel}
+                            clickEvent={openModal}
                         />
                     ))}
                 </section>
             </div>
-            <Model hidden={modelHidden} closeEvent={closeModel} theme={'footprint'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'}>
                 <SingleFootprint />
-            </Model>
+            </Modal>
         </>
     );
 };

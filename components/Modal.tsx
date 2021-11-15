@@ -1,14 +1,14 @@
 import { ReactNode } from 'react';
 import { BiX } from 'react-icons/bi';
 
-interface ModelProps {
+interface ModalProps {
     theme: 'account' | 'nft' | 'gitcoin' | 'footprint';
     hidden: boolean;
     children: ReactNode;
     closeEvent: () => void;
 }
 
-export default function Model({ theme, hidden, children, closeEvent }: ModelProps) {
+export default function Modal({ theme, hidden, children, closeEvent }: ModalProps) {
     return (
         <div
             className={`absolute top-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 ${

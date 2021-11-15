@@ -6,17 +6,17 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleDonation from '../../components/details/SingleDonation';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Model from '../../components/Model';
+import Modal from '../../components/Modal';
 
 const Donation: NextPage = () => {
-    const [modelHidden, setModelHidden] = useState(true);
+    const [modalHidden, setModalHidden] = useState(true);
 
-    const openModel = () => {
-        setModelHidden(false);
+    const openModal = () => {
+        setModalHidden(false);
     };
 
-    const closeModel = () => {
-        setModelHidden(true);
+    const closeModal = () => {
+        setModalHidden(true);
     };
 
     return (
@@ -45,14 +45,14 @@ const Donation: NextPage = () => {
                                     amount: 0.1,
                                 },
                             ]}
-                            clickEvent={openModel}
+                            clickEvent={openModal}
                         />
                     ))}
                 </section>
             </div>
-            <Model hidden={modelHidden} closeEvent={closeModel} theme={'gitcoin'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'}>
                 <SingleDonation />
-            </Model>
+            </Modal>
         </>
     );
 };
