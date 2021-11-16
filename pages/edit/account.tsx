@@ -78,7 +78,14 @@ const Account = () => {
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
-                                        footerButton="Unlist All"
+                                        footerButtons={[
+                                            {
+                                                text: 'Unlist All',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                                onClick: () => {},
+                                            },
+                                        ]}
                                     >
                                         <ReactSortable
                                             className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
@@ -134,7 +141,14 @@ const Account = () => {
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
-                                        footerButton="Unlist All"
+                                        footerButtons={[
+                                            {
+                                                text: 'Unlist All',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                                onClick: () => {},
+                                            },
+                                        ]}
                                         isSecondaryBG={true}
                                     >
                                         <div className="w-full content-middle flex-shrink-0 flex flex-col gap-6">
@@ -179,7 +193,14 @@ const Account = () => {
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
-                                        footerButton="Unlist All"
+                                        footerButtons={[
+                                            {
+                                                text: 'Unlist All',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                                onClick: () => {},
+                                            },
+                                        ]}
                                         isSecondaryBG={true}
                                     >
                                         <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
@@ -210,7 +231,19 @@ const Account = () => {
                                     </AssetCard>
                                 )}
                             </div>
-                            <AssetCard title="Unlisted" color="account" footerButton="List All" isSecondaryBG={true}>
+                            <AssetCard
+                                title="Unlisted"
+                                color="account"
+                                footerButtons={[
+                                    {
+                                        text: 'List All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
+                                isSecondaryBG={true}
+                            >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
                                     list={unlistedAccounts}

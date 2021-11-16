@@ -66,7 +66,14 @@ const Donation = () => {
                                 title="Listed"
                                 color="donation"
                                 footerTips="Drag to reorder"
-                                footerButton="Unlist All"
+                                footerButtons={[
+                                    {
+                                        text: 'Unlist All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
@@ -95,7 +102,19 @@ const Donation = () => {
                                     ))}
                                 </ReactSortable>
                             </AssetCard>
-                            <AssetCard title="Unlisted" color="donation" footerButton="List All" isSecondaryBG={true}>
+                            <AssetCard
+                                title="Unlisted"
+                                color="donation"
+                                footerButtons={[
+                                    {
+                                        text: 'List All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
+                                isSecondaryBG={true}
+                            >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
                                     list={unlistedDonations}

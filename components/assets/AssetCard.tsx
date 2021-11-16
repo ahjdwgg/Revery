@@ -14,7 +14,7 @@ interface AssetProps {
     color: 'account' | 'nft' | 'donation' | 'footprint';
     headerButtons?: ButtonMode[];
     footerTips?: string;
-    footerButton?: string;
+    footerButtons?: ButtonMode[];
     isSecondaryBG?: boolean;
     isTransparentBG?: boolean;
     children: React.ReactNode;
@@ -25,7 +25,7 @@ const AssetCard = ({
     color,
     headerButtons,
     footerTips,
-    footerButton,
+    footerButtons,
     isSecondaryBG,
     isTransparentBG,
     children,
@@ -58,16 +58,26 @@ const AssetCard = ({
 
             <div className="flex h-full w-full p-2 overflow-y-auto">{children}</div>
 
-            {(footerTips || footerButton) && (
+            {(footerTips || footerButtons?.length) && (
                 <div className="flex justify-between">
                     <div className="flex">
-                        {footerTips && <span className={colorClasses[color].textColorClass}>{footerTips}</span>}
+                        {typeof footerTips !== 'undefined' && (
+                            <span className={colorClasses[color].textColorClass}>{footerTips}</span>
+                        )}
                     </div>
 
-                    <div className="flex">
-                        {footerButton && (
-                            <Button key="edit" color={color} text={footerButton} isOutlined={true} isDisabled={false} />
-                        )}
+                    <div className="flex flex-row gap-2 items-end">
+                        {footerButtons?.map((btn, i) => (
+                            <Button
+                                key={i}
+                                color={color}
+                                icon={btn.icon}
+                                text={btn.text}
+                                isOutlined={btn.isOutlined}
+                                isDisabled={btn.isDisabled}
+                                onClick={btn.onClick}
+                            />
+                        ))}
                     </div>
                 </div>
             )}

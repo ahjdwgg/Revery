@@ -59,7 +59,14 @@ const NFT = () => {
                                 title="Listed"
                                 color="nft"
                                 footerTips="Drag to reorder"
-                                footerButton="Unlist All"
+                                footerButtons={[
+                                    {
+                                        text: 'Unlist All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
@@ -84,7 +91,19 @@ const NFT = () => {
                                     ))}
                                 </ReactSortable>
                             </AssetCard>
-                            <AssetCard title="Unlisted" color="nft" footerButton="List All" isSecondaryBG={true}>
+                            <AssetCard
+                                title="Unlisted"
+                                color="nft"
+                                footerButtons={[
+                                    {
+                                        text: 'List All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
+                                isSecondaryBG={true}
+                            >
                                 <div className="w-full content-start flex-shrink-0 justify-items-center">
                                     {[...Array(3)].map((_, i) => (
                                         <details key={i} className="text-nft">
