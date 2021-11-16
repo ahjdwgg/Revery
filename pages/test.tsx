@@ -196,9 +196,10 @@ const Test: NextPage = () => {
                         <b>Components Samples</b>
                     </h1>
                     <Button isOutlined={false} color={COLORS.account} icon={'minus'} />
+                    <Button isOutlined={false} color={COLORS.account} icon={'minus'} isFullRound={true}/>
+                    <Button isOutlined={false} color={COLORS.account} icon={'minus'} isFullRound={true} width='w-4 h-4'/>
                     <Button isOutlined={true} color={COLORS.account} icon={'plus'} />
                     <Button isOutlined={true} color={COLORS.donation} icon={'expand'} />
-                    <Button isOutlined={true} color={COLORS.donation} icon={'delete'} />
                     <Button isOutlined={true} color={COLORS.donation} icon={'check'} />
                     <Button isOutlined={true} color={COLORS.nft} text={'Edit'} />
                     <Button isOutlined={true} color={COLORS.donation} text={'Edit'} />
