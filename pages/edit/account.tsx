@@ -14,34 +14,15 @@ interface RSS3AccountWithID extends RSS3Account {
 }
 
 const Account = () => {
-    const [listedAccounts, setListedAccounts] = useState<RSS3AccountWithID[]>(
-        [
-            {
-                platform: 'Misskey',
-                identity: 'Candinya@nya.one',
-                tags: ['pass:order:0'],
-            },
-            {
-                platform: 'Twitter',
-                identity: 'CandiiRua',
-                tags: ['pass:order:1'],
-            },
-        ].map((account) => {
-            return {
-                id: '',
-                ...account,
-            };
-        }),
-    );
-
-    const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
-
     const ModeTypes = {
         default: 'default',
         add: 'add',
         delete: 'delete',
     };
 
+    const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
+
+    const [listedAccounts, setListedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
 
