@@ -51,7 +51,7 @@ const NFT = () => {
             </Head>
             <div className="h-full">
                 <Header></Header>
-                <div className="pt-12 md:pt-16 flex flex-col w-max max-w-7xl m-auto h-full">
+                <div className="flex flex-col h-full m-auto px-12 pt-12 md:pt-16 w-full max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
                     <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit NFTs</h1>
                     <section className="flex flex-col w-full h-0 flex-1 items-center pt-10 pb-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-4">
