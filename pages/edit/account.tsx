@@ -34,7 +34,14 @@ const Account = () => {
         }),
     );
 
+    const ModeTypes = {
+        normal: 'normal',
+        add: 'add',
+        delete: 'delete',
+    };
+
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
+    const [mode, setMode] = useState(ModeTypes.normal);
 
     return (
         <div style={{ height: '100vh' }}>
@@ -52,7 +59,12 @@ const Account = () => {
                         <div className="grid w-full h-full grid-cols-1 gap-4 lg:grid-cols-2">
                             <div className="flex flex-col gap-5">
                                 <div className="flex">
-                                    <AssetCard title="Default" color="account" isTransparentBG={true}>
+                                    <AssetCard
+                                        title="Default"
+                                        color="account"
+                                        headerButtons={[]}
+                                        isTransparentBG={true}
+                                    >
                                         <EVMpAccountItem
                                             size="lg"
                                             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
@@ -60,39 +72,142 @@ const Account = () => {
                                         />
                                     </AssetCard>
                                 </div>
-                                <AssetCard
-                                    title="Listed"
-                                    color="account"
-                                    headerButtonMode={'plus-minus'}
-                                    footerTips="Drag to reorder"
-                                    footerButton="Unlist All"
-                                >
-                                    <ReactSortable
-                                        className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
-                                        list={listedAccounts}
-                                        setList={setListedAccounts}
-                                        group="asset"
-                                        animation={200}
-                                        delay={2}
+                                {mode === ModeTypes.normal && (
+                                    <AssetCard
+                                        title="Listed"
+                                        color="account"
+                                        headerButtons={[
+                                            {
+                                                icon: 'minus',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                            },
+                                            {
+                                                icon: 'plus',
+                                                isOutlined: false,
+                                                isDisabled: false,
+                                            },
+                                        ]}
+                                        footerTips="Drag to reorder"
+                                        footerButton="Unlist All"
                                     >
-                                        {listedAccounts.map((account, index) => (
-                                            <div
-                                                key={account.platform + account.identity}
-                                                className="relative flex items-center justify-center m-auto cursor-move"
-                                            >
-                                                {account.platform === 'EVM+' ? (
-                                                    <EVMpAccountItem
-                                                        size="lg"
-                                                        address={account.identity}
-                                                        outline="account"
-                                                    />
-                                                ) : (
-                                                    <AccountItem size="lg" chain={account.platform} outline="account" />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </ReactSortable>
-                                </AssetCard>
+                                        <ReactSortable
+                                            className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
+                                            list={listedAccounts}
+                                            setList={setListedAccounts}
+                                            group="asset"
+                                            animation={200}
+                                            delay={2}
+                                        >
+                                            {listedAccounts.map((account, index) => (
+                                                <div
+                                                    key={account.platform + account.identity}
+                                                    className="relative flex items-center justify-center m-auto cursor-move"
+                                                >
+                                                    {account.platform === 'EVM+' ? (
+                                                        <EVMpAccountItem
+                                                            size="lg"
+                                                            address={account.identity}
+                                                            outline="account"
+                                                        />
+                                                    ) : (
+                                                        <AccountItem
+                                                            size="lg"
+                                                            chain={account.platform}
+                                                            outline="account"
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </ReactSortable>
+                                    </AssetCard>
+                                )}
+                                {mode === ModeTypes.add && (
+                                    <AssetCard
+                                        title="Listed"
+                                        color="account"
+                                        headerButtons={[
+                                            {
+                                                icon: 'minus',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                            },
+                                            {
+                                                icon: 'check',
+                                                isOutlined: false,
+                                                isDisabled: false,
+                                            },
+                                        ]}
+                                        footerTips="Drag to reorder"
+                                        footerButton="Unlist All"
+                                    >
+                                        <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
+                                            {listedAccounts.map((account, index) => (
+                                                <div
+                                                    key={account.platform + account.identity}
+                                                    className="relative flex items-center justify-center m-auto cursor-move"
+                                                >
+                                                    {account.platform === 'EVM+' ? (
+                                                        <EVMpAccountItem
+                                                            size="lg"
+                                                            address={account.identity}
+                                                            outline="account"
+                                                        />
+                                                    ) : (
+                                                        <AccountItem
+                                                            size="lg"
+                                                            chain={account.platform}
+                                                            outline="account"
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </AssetCard>
+                                )}
+                                {mode === ModeTypes.delete && (
+                                    <AssetCard
+                                        title="Listed"
+                                        color="account"
+                                        headerButtons={[
+                                            {
+                                                icon: 'check',
+                                                isOutlined: true,
+                                                isDisabled: false,
+                                            },
+                                            {
+                                                icon: 'plus',
+                                                isOutlined: false,
+                                                isDisabled: false,
+                                            },
+                                        ]}
+                                        footerTips="Drag to reorder"
+                                        footerButton="Unlist All"
+                                    >
+                                        <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
+                                            {listedAccounts.map((account, index) => (
+                                                <div
+                                                    key={account.platform + account.identity}
+                                                    className="relative flex items-center justify-center m-auto cursor-move"
+                                                >
+                                                    {account.platform === 'EVM+' ? (
+                                                        <EVMpAccountItem
+                                                            size="lg"
+                                                            address={account.identity}
+                                                            outline="account"
+                                                        />
+                                                    ) : (
+                                                        <AccountItem
+                                                            size="lg"
+                                                            chain={account.platform}
+                                                            outline="account"
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </AssetCard>
+                                )}
                             </div>
                             <AssetCard title="Unlisted" color="account" footerButton="List All" isSecondaryBG={true}>
                                 <ReactSortable
