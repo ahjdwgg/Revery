@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import { useState } from 'react';
+import { RSS3Account } from 'rss3-next/types/rss3';
 import AccountCard from '../../components/accounts/AccountCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
@@ -8,16 +9,29 @@ import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
 import Modal from '../../components/Modal';
 
+interface ModalDetail {
+    hidden: boolean;
+    account?: RSS3Account;
+}
+
 const account: NextPage = () => {
-    const [modalHidden, setModalHidden] = useState(true);
+    const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([
+        {
+            platform: 'Misskey',
+            identity: 'Candinya@nya.one',
+            tags: ['pass:order:0'],
+        },
+        {
+            platform: 'Twitter',
+            identity: 'CandiiRua',
+            tags: ['pass:order:1'],
+        },
+    ]);
 
-    const openModal = () => {
-        setModalHidden(false);
-    };
-
-    const closeModal = () => {
-        setModalHidden(true);
-    };
+    const [modal, setModal] = useState<ModalDetail>({
+        hidden: true,
+        account: undefined,
+    });
 
     return (
         <>
@@ -33,20 +47,31 @@ const account: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.account} text={'Edit'} />
                 </section>
                 <section className="grid items-center justify-start grid-cols-2 gap-4 py-4 gap-x-12">
-                    <AccountCard
-                        chain="EVM+"
-                        address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4"
-                        clickEvent={openModal}
-                    />
-                    <AccountCard
-                        chain="EVM+"
-                        address="0x0000000000000000000000000000000000000000"
-                        clickEvent={openModal}
-                    />
+                    {listedAccounts.map((account, index) => (
+                        <AccountCard
+                            key={index}
+                            chain={account.platform}
+                            address={account.identity}
+                            clickEvent={() => {
+                                setModal({
+                                    hidden: false,
+                                    account: account,
+                                });
+                            }}
+                        />
+                    ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'account'}>
-                <SingleAccount chain="EVM+" address="0x0000000000000000000000000000000000000000" />
+            <Modal
+                hidden={modal.hidden}
+                theme={'account'}
+                closeEvent={() => {
+                    setModal({
+                        hidden: true,
+                    });
+                }}
+            >
+                <SingleAccount chain={modal.account?.platform} address={modal.account?.identity} />
             </Modal>
         </>
     );

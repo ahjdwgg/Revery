@@ -1,7 +1,7 @@
 interface NFTBadgesProps {
     location: 'overlay' | 'header';
     chain: 'BSC' | 'Ethereum' | 'Polygon' | 'Ronin';
-    collectionImg?: string;
+    collectionImg?: string | null;
 }
 
 const NFTBadges = ({ location, chain, collectionImg }: NFTBadgesProps) => {
