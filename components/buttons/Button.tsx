@@ -1,6 +1,6 @@
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
-import { BiExpandAlt, BiPlus, BiMinus, BiX, BiCheck } from 'react-icons/bi';
+import { BiExpandAlt, BiPlus, BiMinus, BiCheck } from 'react-icons/bi';
 
 interface ButtonInterface {
     color: string;
@@ -8,6 +8,7 @@ interface ButtonInterface {
     fontSize?: string;
     icon?: string;
     isOutlined?: boolean;
+    isFullRound?: boolean;
     isDisabled?: boolean;
     width?: string;
     onClick?: (param?: any) => void;
@@ -30,7 +31,7 @@ interface ButtonInterface {
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
 const Button = (props: ButtonInterface) => {
-    var { color, text, fontSize, icon, isOutlined, isDisabled, width, onClick } = props;
+    var { color, text, fontSize, icon, isOutlined, isDisabled, isFullRound, width, onClick } = props;
 
     var bgDefaultStyle = '';
     var bgAltStyle = '';
@@ -77,6 +78,10 @@ const Button = (props: ButtonInterface) => {
         className = outlinedClassName;
     }
 
+    if(isFullRound){
+        className = className.replace('rounded','rounded-full');
+    }
+
     var iconSVG = null;
 
     if (icon != undefined) {
@@ -101,7 +106,6 @@ const iconSVGMap = new Map([
     [BUTTON_ICONS.minus, <BiMinus className={iconClass} />],
     [BUTTON_ICONS.external, <FiArrowUpRight className={iconClass} />],
     [BUTTON_ICONS.check, <BiCheck className={iconClass} />],
-    [BUTTON_ICONS.delete, <BiX className={iconClass} />],
 ]);
 
 export default Button;
