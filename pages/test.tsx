@@ -196,8 +196,14 @@ const Test: NextPage = () => {
                         <b>Components Samples</b>
                     </h1>
                     <Button isOutlined={false} color={COLORS.account} icon={'minus'} />
-                    <Button isOutlined={false} color={COLORS.account} icon={'minus'} isFullRound={true}/>
-                    <Button isOutlined={false} color={COLORS.account} icon={'minus'} isFullRound={true} width='w-4 h-4'/>
+                    <Button isOutlined={false} color={COLORS.account} icon={'minus'} isFullRound={true} />
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.account}
+                        icon={'minus'}
+                        isFullRound={true}
+                        width="w-4 h-4"
+                    />
                     <Button isOutlined={true} color={COLORS.account} icon={'plus'} />
                     <Button isOutlined={true} color={COLORS.donation} icon={'expand'} />
                     <Button isOutlined={true} color={COLORS.donation} icon={'check'} />
@@ -306,6 +312,7 @@ const Test: NextPage = () => {
                     <AccountCard chain="EVM+" address="0x0000000000000000000000000000000000000000" />
                     <AccountCard chain="Misskey" address="Fendi" />
                     <AccountCard chain="Twitter" address="Fendi" />
+                    <EVMpAccountItem size="lg" />
                 </section>
 
                 <section className="flex flex-col items-start p-4 rounded-lg gap-y-2">
