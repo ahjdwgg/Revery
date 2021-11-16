@@ -5,15 +5,18 @@ import AssetCard from '../../components/assets/AssetCard';
 import Button from '../../components/buttons/Button';
 import { ReactSortable } from 'react-sortablejs';
 import { RSS3Account } from 'rss3-next/types/rss3';
-import config from '../../common/config';
 import EVMpAccountItem from '../../components/accounts/EVMpAccountItem';
 import AccountItem from '../../components/accounts/AccountItem';
+import config from '../../common/config';
+import RSS3, { IRSS3 } from '../../common/rss3';
+import utils from '../../common/utils';
 
-interface RSS3AccountWithID extends RSS3Account {
-    id: string;
+interface RSS3AccountWithID {
+    id: string; // For ReactSortable only
+    account: RSS3Account;
 }
 
-const Account = () => {
+const Account = async () => {
     const ModeTypes = {
         default: 'default',
         add: 'add',
@@ -26,6 +29,9 @@ const Account = () => {
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
 
+    const toAddAccounts: RSS3AccountWithID[] = [];
+    const toDeleteAccounts: RSS3AccountWithID[] = [];
+
     const unlistAll = () => {
         setUnlistedAccounts(unlistedAccounts.concat(listedAccounts));
         setListedAccounts([]);
@@ -35,6 +41,30 @@ const Account = () => {
         setListedAccounts(listedAccounts.concat(unlistedAccounts));
         setUnlistedAccounts([]);
     };
+
+    const init = async () => {
+        const listed: RSS3Account[] = [];
+        const unlisted: RSS3Account[] = [];
+
+        const pageOwner = RSS3.getPageOwner();
+        const apiUser = RSS3.apiUser();
+        const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
+
+        for (const account of allAccounts) {
+            if (account.tags?.includes(config.tags.hiddenTag)) {
+                unlisted.push(account);
+            } else {
+                listed.push(account);
+            }
+        }
+
+        setListedAccounts(utils.sortByOrderTag(listed).map((account) => ({ id: '', account })));
+        setUnlistedAccounts(utils.sortByOrderTag(unlisted).map((account) => ({ id: '', account })));
+    };
+
+    if (RSS3.getLoginUser().persona) {
+        await init();
+    }
 
     return (
         <div style={{ height: '100vh' }}>
@@ -107,7 +137,7 @@ const Account = () => {
                                             animation={200}
                                             delay={2}
                                         >
-                                            {listedAccounts.map((account, index) => (
+                                            {listedAccounts.map(({ account }, index) => (
                                                 <div
                                                     key={account.platform + account.identity}
                                                     className="relative flex items-center justify-center m-auto cursor-move"
@@ -220,7 +250,7 @@ const Account = () => {
                                         isSecondaryBG={true}
                                     >
                                         <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
-                                            {listedAccounts.map((account, index) => (
+                                            {listedAccounts.map(({ account }, index) => (
                                                 <div
                                                     key={account.platform + account.identity}
                                                     className="relative flex items-center justify-center m-auto"
@@ -270,7 +300,7 @@ const Account = () => {
                                     animation={200}
                                     delay={2}
                                 >
-                                    {unlistedAccounts.map((account, index) => (
+                                    {unlistedAccounts.map(({ account }, index) => (
                                         <div
                                             key={account.platform + account.identity}
                                             className="relative flex items-center justify-center m-auto cursor-move"
