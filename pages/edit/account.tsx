@@ -65,7 +65,6 @@ const Account = () => {
                                                 isOutlined: true,
                                                 isDisabled: false,
                                                 onClick: () => {
-                                                    console.log('delete');
                                                     setMode(ModeTypes.delete);
                                                 },
                                             },
