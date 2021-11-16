@@ -30,8 +30,8 @@ export interface RSS3DetailPersona {
     persona: RSS3 | null;
     address: string;
     profile: RSS3Profile | null;
-    followers: RSS3List[];
-    followings: RSS3List[];
+    followers: string[];
+    followings: string[];
 }
 
 function setStorage(key: string, value: string) {
@@ -214,7 +214,6 @@ async function reconnect() {
 }
 
 async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
-    const RSS3APIUser = apiUser();
     if (user.persona) {
         if (!user.address) {
             user.address = user.persona.account.address;
@@ -224,10 +223,13 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
             await user.persona.files.sync();
         }
     }
-    user.profile = await RSS3APIUser.profile.get(user.address);
+    const RSS3APIPersona = apiPersona();
+    user.profile = await RSS3APIPersona.profile.get(user.address);
+    user.followers = await RSS3APIPersona.backlinks.get(user.address, 'following');
+    user.followings = (await RSS3APIPersona.links.get(user.address, 'following'))?.list || [];
 }
 
-function apiUser(): RSS3 {
+function apiPersona(): RSS3 {
     return (
         RSS3LoginUser.persona ||
         new RSS3({
@@ -267,7 +269,7 @@ export default {
     reconnect: reconnect,
     apiUser: (): RSS3DetailPersona => {
         const user = Object.create(EMPTY_RSS3_DP);
-        user.persona = apiUser();
+        user.persona = apiPersona();
         return user;
     },
     getLoginUser: () => {
