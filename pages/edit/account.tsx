@@ -107,6 +107,39 @@ const Account = async () => {
         }
     };
 
+    const addEVMpAccount = async () => {
+        if (!(window as any).ethereum) {
+            // No metamask
+            // addAccountNotice = 'Adding an EVM+ account is now only supported with MetaMask browser extension enabled. (PC recommended)';
+            return;
+        }
+        const newAccount = await RSS3.addNewMetamaskAccount();
+        if (newAccount.identity) {
+            const equalDefaultAccount =
+                newAccount.platform === 'EVM+' && newAccount.identity === RSS3.getLoginUser().address;
+            const listedIndex = listedAccounts.findIndex(
+                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+            );
+            const unlistedIndex = unlistedAccounts.findIndex(
+                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+            );
+            if (equalDefaultAccount || listedIndex !== -1 || unlistedIndex !== -1) {
+                // addAccountNotice = Account already exist
+            } else {
+                const newAccountWithId = {
+                    id: '',
+                    account: newAccount,
+                };
+                setListedAccounts(listedAccounts.concat([newAccountWithId]));
+                toAddAccounts.push(newAccountWithId);
+            }
+        } else {
+            // addAccountNotice = newAccount.signature
+        }
+    };
+
+    // Initialize
+
     if (RSS3.getLoginUser().persona) {
         await init();
     }
@@ -243,7 +276,11 @@ const Account = async () => {
                                         <div className="w-full content-middle flex-shrink-0 flex flex-col gap-6">
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
                                                 <div className="relative flex items-center justify-center m-auto cursor-pointer">
-                                                    <EVMpAccountItem size="lg" outline="account" />
+                                                    <EVMpAccountItem
+                                                        size="lg"
+                                                        outline="account"
+                                                        onClick={addEVMpAccount}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
