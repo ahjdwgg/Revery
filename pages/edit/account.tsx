@@ -206,7 +206,7 @@ const Account = () => {
                                             {listedAccounts.map((account, index) => (
                                                 <div
                                                     key={account.platform + account.identity}
-                                                    className="relative flex items-center justify-center m-auto cursor-move"
+                                                    className="relative flex items-center justify-center m-auto"
                                                 >
                                                     {account.platform === 'EVM+' ? (
                                                         <EVMpAccountItem
@@ -221,6 +221,9 @@ const Account = () => {
                                                             outline="account"
                                                         />
                                                     )}
+                                                    <div className="absolute right-0 top-0">
+                                                        <Button color="account" icon="minus" isFullRound={true} />
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
