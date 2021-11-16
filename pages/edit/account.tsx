@@ -62,6 +62,51 @@ const Account = async () => {
         setUnlistedAccounts(utils.sortByOrderTag(unlisted).map((account) => ({ id: '', account })));
     };
 
+    const save = async () => {
+        const newListed: RSS3Account[] = await utils.setOrderTag(listedAccounts.map((wrapper) => wrapper.account));
+        const newUnlisted: RSS3Account[] = await utils.setHiddenTag(unlistedAccounts.map((wrapper) => wrapper.account));
+
+        // Add and delete
+        for (const { account } of toAddAccounts) {
+            const showIndex = toDeleteAccounts.findIndex(
+                (wrapper) =>
+                    account.platform === wrapper.account.platform && account.identity === wrapper.account.identity,
+            );
+            if (showIndex === -1) {
+                await (RSS3.getLoginUser().persona as IRSS3).accounts.post(account);
+            } else {
+                toDeleteAccounts.splice(showIndex, 1);
+            }
+        }
+        for (const { account } of toDeleteAccounts) {
+            await (RSS3.getLoginUser().persona as IRSS3).accounts.delete(account);
+        }
+
+        // Update tags
+        await Promise.all(
+            newListed.concat(newUnlisted).map((account) => {
+                (RSS3.getLoginUser().persona as IRSS3).accounts.patchTags(
+                    {
+                        platform: account.platform,
+                        identity: account.identity,
+                    },
+                    account.tags || [],
+                );
+            }),
+        );
+
+        // Empty array
+        toAddAccounts.splice(0, toAddAccounts.length);
+        toDeleteAccounts.splice(0, toDeleteAccounts.length);
+
+        // Sync
+        try {
+            await (RSS3.getLoginUser().persona as IRSS3).files.sync();
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     if (RSS3.getLoginUser().persona) {
         await init();
     }
@@ -338,7 +383,7 @@ const Account = async () => {
                                 fontSize="text-base"
                                 width="w-48"
                                 // isDisabled={saveBtnDisabled}
-                                // onClick={() => handleSave()}
+                                onClick={() => save()}
                             />
                         </div>
                     </footer>

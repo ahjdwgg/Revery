@@ -18,7 +18,7 @@ const getTaggedOrder = (tagged: TypesWithTag): number => {
     return -1;
 };
 
-const setTaggedOrder = (tagged: TypesWithTag, order: number): void => {
+const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
     if (!tagged.tags) {
         tagged.tags = [];
     } else {
@@ -28,7 +28,11 @@ const setTaggedOrder = (tagged: TypesWithTag, order: number): void => {
             tagged.tags.splice(oldIndex, 1);
         }
     }
-    tagged.tags.push(`pass:order:${order}`);
+    if (order) {
+        tagged.tags.push(`pass:order:${order}`);
+    } else {
+        tagged.tags.push(config.tags.hiddenTag);
+    }
 };
 
 const sortByOrderTag = (taggeds: TypesWithTag[]): TypesWithTag[] => {
@@ -47,7 +51,17 @@ const setOrderTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => 
     return taggeds;
 };
 
+const setHiddenTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => {
+    await Promise.all(
+        taggeds.map(async (tagged) => {
+            setTaggedOrder(tagged);
+        }),
+    );
+    return taggeds;
+};
+
 export default {
     sortByOrderTag,
     setOrderTag,
+    setHiddenTag,
 };
