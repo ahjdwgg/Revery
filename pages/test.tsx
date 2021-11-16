@@ -198,6 +198,8 @@ const Test: NextPage = () => {
                     <Button isOutlined={false} color={COLORS.account} icon={'minus'} />
                     <Button isOutlined={true} color={COLORS.account} icon={'plus'} />
                     <Button isOutlined={true} color={COLORS.donation} icon={'expand'} />
+                    <Button isOutlined={true} color={COLORS.donation} icon={'delete'} />
+                    <Button isOutlined={true} color={COLORS.donation} icon={'check'} />
                     <Button isOutlined={true} color={COLORS.nft} text={'Edit'} />
                     <Button isOutlined={true} color={COLORS.donation} text={'Edit'} />
                     <Button isOutlined={true} color={COLORS.footprint} text={'Edit'} />
