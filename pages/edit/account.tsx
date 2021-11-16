@@ -26,6 +26,16 @@ const Account = () => {
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
 
+    const unlistAll = () => {
+        setUnlistedAccounts(unlistedAccounts.concat(listedAccounts));
+        setListedAccounts([]);
+    };
+
+    const listAll = () => {
+        setListedAccounts(listedAccounts.concat(unlistedAccounts));
+        setUnlistedAccounts([]);
+    };
+
     return (
         <div style={{ height: '100vh' }}>
             <Head>
@@ -83,7 +93,9 @@ const Account = () => {
                                                 text: 'Unlist All',
                                                 isOutlined: true,
                                                 isDisabled: false,
-                                                onClick: () => {},
+                                                onClick: () => {
+                                                    unlistAll();
+                                                },
                                             },
                                         ]}
                                     >
@@ -146,7 +158,9 @@ const Account = () => {
                                                 text: 'Unlist All',
                                                 isOutlined: true,
                                                 isDisabled: false,
-                                                onClick: () => {},
+                                                onClick: () => {
+                                                    unlistAll();
+                                                },
                                             },
                                         ]}
                                         isSecondaryBG={true}
@@ -198,7 +212,9 @@ const Account = () => {
                                                 text: 'Unlist All',
                                                 isOutlined: true,
                                                 isDisabled: false,
-                                                onClick: () => {},
+                                                onClick: () => {
+                                                    unlistAll();
+                                                },
                                             },
                                         ]}
                                         isSecondaryBG={true}
@@ -239,7 +255,9 @@ const Account = () => {
                                         text: 'List All',
                                         isOutlined: true,
                                         isDisabled: false,
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            listAll();
+                                        },
                                     },
                                 ]}
                                 isSecondaryBG={true}
