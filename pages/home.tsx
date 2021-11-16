@@ -6,9 +6,29 @@ import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
 import RecommendSection from '../components/recommends/RecommendSection';
+import Modal from '../components/Modal';
+import WalletConnect from '../components/icons/WalletConnect';
+import Metamask from '../components/icons/Metamask';
 
 const Home: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [modalHidden, setModalHidden] = useState(true);
+
+    const openModal = () => {
+        setModalHidden(false);
+    };
+
+    const closeModal = () => {
+        setModalHidden(true);
+    };
+
+    const handleWalletConnect = () => {
+        console.log('walletconnect');
+    };
+
+    const handleMetamask = () => {
+        console.log('metamask connect');
+    };
 
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -47,10 +67,36 @@ const Home: NextPage = () => {
                             <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
                         </>
                     ) : (
-                        <Button isOutlined={false} color={COLORS.primary} text={'Register Now'} />
+                        <Button isOutlined={false} color={COLORS.primary} text={'Connect Wallet'} onClick={openModal} />
                     )}
                 </div>
             </Header>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'}>
+                <div className="flex flex-col gap-y-6 mx-14 my-8">
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.primary}
+                        onClick={handleWalletConnect}
+                        fontSize={'text-md'}
+                        width={'w-60'}
+                        height={'h-14'}
+                    >
+                        <WalletConnect size={30} />
+                        <span>WalletConnect</span>
+                    </Button>
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.metamask}
+                        onClick={handleMetamask}
+                        fontSize={'text-md'}
+                        width={'w-60'}
+                        height={'h-14'}
+                    >
+                        <Metamask size={30} />
+                        <span>Metamask</span>
+                    </Button>
+                </div>
+            </Modal>
             <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
                 <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
                     {[...Array(2)].map((_, i) => (

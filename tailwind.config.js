@@ -26,6 +26,10 @@ module.exports = {
                     DEFAULT: '#0072ff',
                     bg: '#F4F7F8',
                 },
+                metamask: {
+                    text: '#944300',
+                    bg: '#fff4eb',
+                },
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg
