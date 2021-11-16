@@ -1,14 +1,21 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3 from 'rss3-next';
-import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
 import axios from 'axios';
+import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
 
-let RSS3PageOwner: RSS3DetailPersona;
-let RSS3LoginUser: RSS3DetailPersona;
-let assets: Map<string, IAssetProfile> = new Map();
+const EMPTY_RSS3_DP: RSS3DetailPersona = {
+    persona: null,
+    address: '',
+    profile: null,
+    followers: [],
+    followings: [],
+};
+let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+let assetsProfileCache: Map<string, IAssetProfile> = new Map();
 let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
 
@@ -23,6 +30,8 @@ export interface RSS3DetailPersona {
     persona: RSS3 | null;
     address: string;
     profile: RSS3Profile | null;
+    followers: RSS3List[];
+    followings: RSS3List[];
 }
 
 function setStorage(key: string, value: string) {
@@ -41,11 +50,9 @@ const KeyNames = {
     ConnectAddress: 'CONNECT_ADDRESS',
     MetaMask: 'MetaMask',
     WalletConnect: 'WalletConnect',
-    AgentID: 'AGENT_ID',
-    AgentSecret: 'AGENT_SECRET',
 };
 
-async function wcConn() {
+async function wcConn(skipSignSync: boolean = false) {
     // WalletConnect Connect
     walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
 
@@ -89,12 +96,12 @@ async function wcConn() {
             );
         },
     });
-    await initUser(RSS3LoginUser);
+    await initUser(RSS3LoginUser, skipSignSync);
 
     return RSS3LoginUser;
 }
 
-async function mmConn() {
+async function mmConn(skipSignSync: boolean = false) {
     // MetaMask Connect
     if (!(window as any).ethereum) {
         return null;
@@ -117,7 +124,7 @@ async function mmConn() {
         agentSign: true,
         sign: async (data: string) => (await ethersProvider?.getSigner().signMessage(data)) || '',
     });
-    await initUser(RSS3LoginUser);
+    await initUser(RSS3LoginUser, skipSignSync);
 
     return RSS3LoginUser;
 }
@@ -126,18 +133,96 @@ function saveConnect(method: string) {
     if (isValidRSS3()) {
         setStorage(KeyNames.ConnectMethod, method);
         setStorage(KeyNames.ConnectAddress, RSS3LoginUser.address);
-        setStorage(KeyNames.AgentID, '');
-        setStorage(KeyNames.AgentSecret, '');
     }
 }
 
-async function initUser(user: RSS3DetailPersona) {
+async function reconnect() {
+    const lastConnect = getStorage(KeyNames.ConnectMethod);
+    const address = getStorage(KeyNames.ConnectAddress);
+    if (address) {
+        switch (lastConnect) {
+            case KeyNames.WalletConnect:
+                ethersProvider = null;
+                RSS3LoginUser.persona = new RSS3({
+                    endpoint: config.hubEndpoint,
+                    address: address,
+                    agentSign: true,
+                    sign: async (data: string) => {
+                        if (!ethersProvider) {
+                            walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
+                            let session;
+                            try {
+                                session = await walletConnectProvider.enable();
+                            } catch (e) {}
+                            if (!session) {
+                                return '';
+                            }
+                            ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
+                            if (!ethersProvider) {
+                                return '';
+                            }
+                            walletConnectProvider.on('disconnect', (code: number, reason: string) => {
+                                console.log(code, reason);
+                                disconnect();
+                            });
+                        }
+                        alert('Ready to sign... You may need to prepare your wallet.');
+                        return (
+                            (await ethersProvider?.send('personal_sign', [
+                                ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
+                                address.toLowerCase(),
+                            ])) || ''
+                        );
+                    },
+                });
+                break;
+            case KeyNames.MetaMask:
+                ethersProvider = null;
+                RSS3LoginUser.persona = new RSS3({
+                    endpoint: config.hubEndpoint,
+                    address: address,
+                    agentSign: true,
+                    sign: async (data: string) => {
+                        if (!ethersProvider) {
+                            const metamaskEthereum = (window as any).ethereum;
+                            ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+                            await metamaskEthereum.request({
+                                method: 'eth_requestAccounts',
+                            });
+                        }
+                        return (await ethersProvider?.getSigner().signMessage(data)) || '';
+                    },
+                });
+                break;
+        }
+        await initUser(RSS3LoginUser, true);
+    } else if (!isValidRSS3()) {
+        switch (lastConnect) {
+            case KeyNames.WalletConnect:
+                await wcConn(true);
+                break;
+            case KeyNames.MetaMask:
+                await mmConn(true);
+                break;
+            default:
+                setStorage(KeyNames.ConnectMethod, ''); // logout
+                break;
+        }
+        return isValidRSS3();
+    }
+    return true;
+}
+
+async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
     const RSS3APIUser = apiUser();
     if (user.persona) {
         if (!user.address) {
             user.address = user.persona.account.address;
         }
         user.persona.files.set(await user.persona.files.get(user.address));
+        if (!skipSignSync) {
+            await user.persona.files.sync();
+        }
     }
     user.profile = await RSS3APIUser.profile.get(user.address);
 }
@@ -156,29 +241,13 @@ function isValidRSS3() {
 }
 
 async function disconnect() {
-    RSS3LoginUser = {
-        persona: null,
-        address: '',
-        profile: null,
-    };
+    RSS3LoginUser = Object.create(EMPTY_RSS3_DP);
     ethersProvider = null;
     if (walletConnectProvider) {
         await walletConnectProvider.disconnect();
     }
     setStorage(KeyNames.ConnectMethod, '');
     setStorage(KeyNames.ConnectAddress, '');
-    setStorage(KeyNames.AgentID, '');
-    setStorage(KeyNames.AgentSecret, '');
-}
-
-function reconnect() {
-    const address = getStorage(KeyNames.ConnectAddress);
-    const agentID = getStorage(KeyNames.AgentID);
-    const agentKey = getStorage(KeyNames.AgentSecret);
-
-    // todo: Init persona with address and agent pair
-
-    return !!(address && agentID && agentKey);
 }
 
 export default {
@@ -197,11 +266,9 @@ export default {
     disconnect: disconnect,
     reconnect: reconnect,
     apiUser: (): RSS3DetailPersona => {
-        return {
-            persona: apiUser(),
-            address: '',
-            profile: null,
-        };
+        const user = Object.create(EMPTY_RSS3_DP);
+        user.persona = apiUser();
+        return user;
     },
     getLoginUser: () => {
         return RSS3LoginUser;
@@ -215,8 +282,8 @@ export default {
     },
 
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
-        if (assets.has(address + type) && !refresh) {
-            return <IAssetProfile>assets.get(address + type);
+        if (assetsProfileCache.has(address + type) && !refresh) {
+            return <IAssetProfile>assetsProfileCache.get(address + type);
         } else {
             let data: IAssetProfile | null = null;
             try {
@@ -229,7 +296,7 @@ export default {
                 });
                 if (res && res.data) {
                     data = <IAssetProfile>res.data;
-                    assets.set(address + type, data);
+                    assetsProfileCache.set(address + type, data);
                 }
             } catch (error) {
                 data = null;
