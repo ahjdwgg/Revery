@@ -1,6 +1,6 @@
 import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
-import { BiExpandAlt, BiPlus, BiMinus } from 'react-icons/bi';
+import { BiExpandAlt, BiPlus, BiMinus, BiX, BiCheck } from 'react-icons/bi';
 
 interface ButtonInterface {
     color: string;
@@ -77,22 +77,11 @@ const Button = (props: ButtonInterface) => {
         className = outlinedClassName;
     }
 
-    if (icon != undefined) {
-        className = (className + ` h-6 w-6`).replace('py-sm px-3', 'p-1');
-    }
-
     var iconSVG = null;
 
     if (icon != undefined) {
-        if (icon == BUTTON_ICONS.expand) {
-            iconSVG = <BiExpandAlt className="w-full" />;
-        } else if (icon == BUTTON_ICONS.plus) {
-            iconSVG = <BiPlus className="w-full" />;
-        } else if (icon == BUTTON_ICONS.minus) {
-            iconSVG = <BiMinus className="w-full" />;
-        } else if (icon == BUTTON_ICONS.external) {
-            iconSVG = <FiArrowUpRight className="w-full h-full" />;
-        }
+        className = (className + ` h-6 w-6`).replace('py-sm px-3', 'p-0.5');
+        iconSVG = iconSVGMap.get(icon);
     }
 
     return (
@@ -103,5 +92,16 @@ const Button = (props: ButtonInterface) => {
         </div>
     );
 };
+
+var iconClass = 'w-full h-full';
+
+const iconSVGMap = new Map([
+    [BUTTON_ICONS.expand, <BiExpandAlt className={`${iconClass} p-0.5`} />],
+    [BUTTON_ICONS.plus, <BiPlus className={iconClass} />],
+    [BUTTON_ICONS.minus, <BiMinus className={iconClass} />],
+    [BUTTON_ICONS.external, <FiArrowUpRight className={iconClass} />],
+    [BUTTON_ICONS.check, <BiCheck className={iconClass} />],
+    [BUTTON_ICONS.delete, <BiX className={iconClass} />],
+]);
 
 export default Button;

@@ -11,6 +11,8 @@ export const BUTTON_ICONS = {
     plus: 'plus',
     minus: 'minus',
     external: 'external',
+    delete: 'delete',
+    check: 'check',
 };
 
 interface colorToStyleInterface {
