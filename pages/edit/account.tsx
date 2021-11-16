@@ -34,14 +34,16 @@ const Account = () => {
         }),
     );
 
+    const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
+
     const ModeTypes = {
-        normal: 'normal',
+        default: 'default',
         add: 'add',
         delete: 'delete',
     };
 
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
-    const [mode, setMode] = useState(ModeTypes.normal);
+    const [mode, setMode] = useState(ModeTypes.default);
 
     return (
         <div style={{ height: '100vh' }}>
@@ -72,7 +74,7 @@ const Account = () => {
                                         />
                                     </AssetCard>
                                 </div>
-                                {mode === ModeTypes.normal && (
+                                {mode === ModeTypes.default && (
                                     <AssetCard
                                         title="Listed"
                                         color="account"
@@ -81,11 +83,18 @@ const Account = () => {
                                                 icon: 'minus',
                                                 isOutlined: true,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    console.log('delete');
+                                                    setMode(ModeTypes.delete);
+                                                },
                                             },
                                             {
                                                 icon: 'plus',
                                                 isOutlined: false,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    setMode(ModeTypes.add);
+                                                },
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
@@ -124,65 +133,74 @@ const Account = () => {
                                 )}
                                 {mode === ModeTypes.add && (
                                     <AssetCard
-                                        title="Listed"
+                                        title="Add"
                                         color="account"
                                         headerButtons={[
                                             {
                                                 icon: 'minus',
                                                 isOutlined: true,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    setMode(ModeTypes.delete);
+                                                },
                                             },
                                             {
                                                 icon: 'check',
                                                 isOutlined: false,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    setMode(ModeTypes.default);
+                                                },
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
                                         footerButton="Unlist All"
+                                        isSecondaryBG={true}
                                     >
-                                        <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
-                                            {listedAccounts.map((account, index) => (
-                                                <div
-                                                    key={account.platform + account.identity}
-                                                    className="relative flex items-center justify-center m-auto cursor-move"
-                                                >
-                                                    {account.platform === 'EVM+' ? (
-                                                        <EVMpAccountItem
-                                                            size="lg"
-                                                            address={account.identity}
-                                                            outline="account"
-                                                        />
-                                                    ) : (
-                                                        <AccountItem
-                                                            size="lg"
-                                                            chain={account.platform}
-                                                            outline="account"
-                                                        />
-                                                    )}
+                                        <div className="w-full content-middle flex-shrink-0 flex flex-col gap-6">
+                                            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
+                                                <div className="relative flex items-center justify-center m-auto cursor-pointer">
+                                                    <EVMpAccountItem size="lg" outline="account" />
                                                 </div>
-                                            ))}
+                                            </div>
+                                            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
+                                                {AdditionalNoSignAccounts.map((platform, i) => (
+                                                    <div
+                                                        className="relative flex items-center justify-center m-auto cursor-pointer"
+                                                        key={platform}
+                                                    >
+                                                        <AccountItem size="lg" chain={platform} outline="account" />
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </AssetCard>
                                 )}
                                 {mode === ModeTypes.delete && (
                                     <AssetCard
-                                        title="Listed"
+                                        title="Remove"
                                         color="account"
                                         headerButtons={[
                                             {
                                                 icon: 'check',
                                                 isOutlined: true,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    setMode(ModeTypes.default);
+                                                },
                                             },
                                             {
                                                 icon: 'plus',
                                                 isOutlined: false,
                                                 isDisabled: false,
+                                                onClick: () => {
+                                                    setMode(ModeTypes.add);
+                                                },
                                             },
                                         ]}
                                         footerTips="Drag to reorder"
                                         footerButton="Unlist All"
+                                        isSecondaryBG={true}
                                     >
                                         <div className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center">
                                             {listedAccounts.map((account, index) => (
