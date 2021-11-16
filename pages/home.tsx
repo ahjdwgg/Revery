@@ -9,10 +9,13 @@ import RecommendSection from '../components/recommends/RecommendSection';
 import Modal from '../components/Modal';
 import WalletConnect from '../components/icons/WalletConnect';
 import Metamask from '../components/icons/Metamask';
+import RSS3, { IRSS3 } from '../common/rss3';
+import { RSS3Profile } from 'rss3-next/types/rss3';
 
 const Home: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [modalHidden, setModalHidden] = useState(true);
+    let [rss3, setRss3] = useState<IRSS3 | null>(null);
 
     const openModal = () => {
         setModalHidden(false);
@@ -22,12 +25,29 @@ const Home: NextPage = () => {
         setModalHidden(true);
     };
 
-    const handleWalletConnect = () => {
-        console.log('walletconnect');
+    const handleWalletConnect = async () => {
+        try {
+            await RSS3.connect.walletConnect();
+        } catch (e) {
+            return null;
+        }
+        await verifyProfile();
     };
 
-    const handleMetamask = () => {
-        console.log('metamask connect');
+    const handleMetamask = async () => {
+        try {
+            await RSS3.connect.metamask();
+        } catch (e) {
+            console.log(e);
+            return;
+        }
+        await verifyProfile();
+    };
+
+    const verifyProfile = async () => {
+        if (RSS3) {
+            // await initRedirect();
+        }
     };
 
     let slides = [
@@ -67,7 +87,13 @@ const Home: NextPage = () => {
                             <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
                         </>
                     ) : (
-                        <Button isOutlined={false} color={COLORS.primary} text={'Connect Wallet'} onClick={openModal} />
+                        <Button
+                            isOutlined={false}
+                            color={COLORS.primary}
+                            text={'Connect Wallet'}
+                            height={'h-8'}
+                            onClick={openModal}
+                        />
                     )}
                 </div>
             </Header>
