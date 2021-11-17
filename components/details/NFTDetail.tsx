@@ -3,6 +3,7 @@ import MarketTag from '../tags/MarketTag';
 import ScanTag from '../tags/ScanTag';
 import Trait from './Trait';
 import { NFT } from '../../common/types';
+import style from '../../styles/content.module.css';
 
 interface NFTDetailProps {
     detail: NFT;
@@ -15,7 +16,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
     return (
         <div className="flex flex-col items-start justify-start gap-5 filter">
             <h2 className="overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
-                {detail.name}
+                {detail.name + ' #' + detail.token_id}
             </h2>
             <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start">
                 <MarketTag market={market} />
@@ -24,7 +25,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.description && (
                 <div>
                     <h3 className={subtitle}>Description</h3>
-                    <div>{detail.description}</div>
+                    <div className={style.content}>{detail.description}</div>
                 </div>
             )}
             {detail.traits && detail.traits.length > 0 && (
@@ -40,7 +41,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.collection?.description && (
                 <div>
                     <h3 className={subtitle}>About {detail.collection?.name}</h3>
-                    <div>{detail.collection?.description}</div>
+                    <div className={style.content}>{detail.collection?.description}</div>
                 </div>
             )}
         </div>

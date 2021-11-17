@@ -16,7 +16,7 @@ export default function SingleAccount({ chain, address }: SingleAccountProps) {
             ) : (
                 <EVMpAccountItem address={address} size="lg" outline="account" />
             )}
-            <span className="w-full text-lg font-bold text-center truncate">{address}</span>
+            <span className="w-full px-4 text-lg font-bold text-center break-all">{address}</span>
             <div className="flex flex-row items-center gap-x-2">
                 <Button isOutlined={true} color={COLORS.donation} text={'Copy'} />
                 <Button isOutlined={false} color={COLORS.account} icon={'external'} />

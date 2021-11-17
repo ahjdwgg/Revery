@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DonationCard from '../../components/assets/DonationCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
@@ -7,24 +7,76 @@ import SingleDonation from '../../components/details/SingleDonation';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
 import Modal from '../../components/modal/Modal';
-import { GitcoinResponse } from '../../common/types';
-import RSS3 from '../../common/rss3';
+import { GeneralAsset, GeneralAssetWithTags, GitcoinResponse } from '../../common/types';
+import RSS3, { IRSS3, RSS3DetailPersona } from '../../common/rss3';
 import ModalLoading from '../../components/modal/ModalLoading';
+import { RSS3Asset } from 'rss3-next/types/rss3';
+import config from '../../common/config';
+import utils from '../../common/utils';
 
 const Donation: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
-    const [Gitcoin, setGitcoin] = useState<GitcoinResponse | null>(null);
+    const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
+    const [donation, setDonation] = useState<GitcoinResponse | null>(null);
+    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
-    const openModal = async () => {
-        setModalHidden(false);
-        setGitcoin(null);
-        const res = await RSS3.getGitcoinDonation(
-            '0x55F110395C844963b075674e2956eb414018a7a7',
-            '',
-            '0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C',
-            '0x7dac9fc15c1db4379d75a6e3f330ae849dffce18',
+    const init = async () => {
+        // await RSS3.setPageOwner('RSS3 page owner address');
+        const pageOwner = RSS3.getPageOwner();
+        const apiUser = RSS3.apiUser();
+        const generalAsset = await RSS3.getAssetProfile(pageOwner.address, 'Gitcoin-Donation');
+        const rss3Asset = await (apiUser.persona as IRSS3).assets.get(pageOwner.address);
+        let orderAsset = await loadDonations(rss3Asset, generalAsset?.assets);
+        setlistedDonation(orderAsset);
+        setPersona(pageOwner);
+    };
+
+    const loadDonations = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[] | undefined) => {
+        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
+            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
+                const origType = ag.type;
+                if (config.hideUnlistedAsstes) {
+                    ag.type = 'Invalid'; // Using as a match mark
+                }
+                for (const airf of assetsInRSS3File) {
+                    if (
+                        airf.platform === ag.platform &&
+                        airf.identity === ag.identity &&
+                        airf.id === ag.id &&
+                        airf.type === origType
+                    ) {
+                        // Matched
+                        ag.type = origType; // Recover type
+                        if (airf.tags) {
+                            ag.tags = airf.tags;
+                        }
+                        break;
+                    }
+                }
+                return ag;
+            }),
         );
-        setGitcoin(res);
+
+        const GitcoinList: GeneralAssetWithTags[] = [];
+
+        for (const am of assetsMerge) {
+            if (am.type.includes('Gitcoin-Donation') && !am.tags?.includes('pass:hidden')) {
+                GitcoinList.push(am);
+            }
+        }
+
+        return utils.sortByOrderTag(GitcoinList) as GeneralAssetWithTags[];
+    };
+
+    useEffect(() => {
+        init();
+    }, []);
+
+    const openModal = async (address: string, platform: string, identity: string, id: string) => {
+        setModalHidden(false);
+        setDonation(null);
+        const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
+        setDonation(res);
     };
 
     const closeModal = () => {
@@ -41,29 +93,28 @@ const Donation: NextPage = () => {
             </Header>
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <h1 className="text-lg font-bold text-left text-donation">Joshua's Donations</h1>
+                    <h1 className="text-lg font-bold text-left text-donation">
+                        {persona ? persona.profile?.name + "'s Donations" : 'Donations'}
+                    </h1>
                     <Button isOutlined={true} color={COLORS.donation} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-2 gap-4 py-4">
-                    {[...Array(7)].map((_, i) => (
+                <section className="grid grid-cols-1 gap-4 py-4 lg:grid-cols-2">
+                    {listedDonation.map((asset, index) => (
                         <DonationCard
-                            key={i}
-                            imageUrl="https://c.gitcoin.co/grants/546622657b597ce151666ed2e2ecbd92/rss3_square_blue.png"
-                            name="RSS3 - RSS with human curation"
-                            contribCount={1}
-                            contribDetails={[
-                                {
-                                    token: 'ETH',
-                                    amount: 0.1,
-                                },
-                            ]}
-                            clickEvent={openModal}
+                            key={index}
+                            imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                            name={asset.info.title || 'Inactive Project'}
+                            contribCount={asset.info.total_contribs || 0}
+                            contribDetails={asset.info.token_contribs || []}
+                            clickEvent={() => {
+                                openModal(persona?.address || '', 'EVM+', asset.identity, asset.id);
+                            }}
                         />
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'}>
-                {Gitcoin ? <SingleDonation Gitcoin={Gitcoin} /> : <ModalLoading color="donation" />}
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'} isFixed={donation === null}>
+                {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="donation" />}
             </Modal>
         </>
     );

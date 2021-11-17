@@ -2,6 +2,7 @@ import React from 'react';
 import { BiLinkAlt } from 'react-icons/bi';
 import Payment from './Payment';
 import { GitcoinResponse } from '../../common/types';
+import style from '../../styles/content.module.css';
 
 interface DonationDetailProps {
     detail: GitcoinResponse;
@@ -34,7 +35,7 @@ export default function DonationDetail({ detail }: DonationDetailProps) {
             </section>
             <div>
                 <h3 className={`${subtitle} my-2`}>Description</h3>
-                <div className="break-words line-clamp-5">
+                <div className={`${style.content} line-clamp-5`}>
                     {detail.data.grant.description || 'No information provided by Gitcoin.'}
                 </div>
             </div>

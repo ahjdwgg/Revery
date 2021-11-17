@@ -1,6 +1,6 @@
 interface NFTBadgesProps {
     location: 'overlay' | 'header';
-    chain: 'BSC' | 'Ethereum' | 'Polygon' | 'Ronin';
+    chain: string;
     collectionImg?: string | null;
 }
 
@@ -8,9 +8,10 @@ const NFTBadges = ({ location, chain, collectionImg }: NFTBadgesProps) => {
     const containerClass = `${classes.containerBase} ${classes.containerExtend[location]}`;
     const badgeClass = `${classes.badgeBase} ${classes.badgeExtend[location]}`;
     const chainBaseClass = 'p-0.5 w-6 h-6 bg-white rounded-full';
-    const chainClass = `w-full h-full ${classes.badgeBase} ${classes.badgeChain[chain]}`;
+    const chainClass = `w-full h-full ${classes.badgeBase} ${badgeChain.get(chain)}`;
 
     const collectionImgStyle = {
+        backgroundColor: 'white',
         backgroundImage: `url(${collectionImg})`,
     };
 
@@ -35,12 +36,13 @@ const classes = {
         overlay: 'w-6 h-6',
         header: 'w-7 h-7',
     },
-    badgeChain: {
-        BSC: 'bg-BSC',
-        Ethereum: 'bg-Ethereum',
-        Polygon: 'bg-Polygon',
-        Ronin: 'bg-Ronin',
-    },
 };
+
+const badgeChain = new Map([
+    ['BSC', 'bg-BSC'],
+    ['Ethereum', 'bg-Ethereum'],
+    ['Polygon', 'bg-Polygon'],
+    ['Ronin', 'bg-Ronin'],
+]);
 
 export default NFTBadges;

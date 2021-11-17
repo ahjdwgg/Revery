@@ -14,7 +14,12 @@ export default function SingleNFT(props: { NFT: NFT }) {
                 </span>
                 <NFTBadges location="header" chain={NFT.chain} collectionImg={NFT.collection?.image_url} />
             </div>
-            <NFTItem size={640} previewUrl={NFT.image_preview_url} detailUrl={NFT.image_url} />
+            <NFTItem
+                size={640}
+                previewUrl={NFT.animation_url || NFT.image_preview_url}
+                detailUrl={NFT.animation_original_url || NFT.image_url}
+                isShowingDetails={true}
+            />
             <NFTDetail detail={NFT} market="opensea" />
         </div>
     );
