@@ -31,12 +31,12 @@ const Footprint = () => {
     };
 
     const save = async () => {
-        const loginUser = RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
 
         // Update tags
         await Promise.all(
             listedAssets.concat(unlistedAssets).map((asset) => {
-                (loginUser.persona as IRSS3).assets.patchTags(
+                loginUser.assets.patchTags(
                     {
                         ...asset,
                     },
@@ -47,7 +47,7 @@ const Footprint = () => {
 
         // Sync
         try {
-            await (loginUser.persona as IRSS3).files.sync();
+            await loginUser.files.sync();
         } catch (e) {
             console.log(e);
         }

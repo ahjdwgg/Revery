@@ -15,6 +15,7 @@ const config = {
         prefix: 'pass',
         hiddenTag: 'hidden',
     },
+    fieldMaxLength: 280,
     walletConnectOptions: {
         rpc: {
             1: 'https://cloudflare-eth.com',

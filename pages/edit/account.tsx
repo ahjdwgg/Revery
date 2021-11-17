@@ -96,7 +96,7 @@ const Account = () => {
     const save = async () => {
         setIsLoading(true);
 
-        const loginUser = RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
 
         const newListed: RSS3Account[] = await utils.setOrderTag(listedAccounts.map((wrapper) => wrapper.account));
         const newUnlisted: RSS3Account[] = await utils.setHiddenTag(unlistedAccounts.map((wrapper) => wrapper.account));
@@ -108,19 +108,19 @@ const Account = () => {
                     account.platform === wrapper.account.platform && account.identity === wrapper.account.identity,
             );
             if (showIndex === -1) {
-                await (loginUser.persona as IRSS3).accounts.post(account);
+                await loginUser.accounts.post(account);
             } else {
                 toDeleteAccounts.splice(showIndex, 1);
             }
         }
         for (const { account } of toDeleteAccounts) {
-            await (loginUser.persona as IRSS3).accounts.delete(account);
+            await loginUser.accounts.delete(account);
         }
 
         // Update tags
         await Promise.all(
             newListed.concat(newUnlisted).map((account) => {
-                (loginUser.persona as IRSS3).accounts.patchTags(
+                loginUser.accounts.patchTags(
                     {
                         ...account,
                     },
@@ -135,7 +135,7 @@ const Account = () => {
 
         // Sync
         try {
-            await (loginUser.persona as IRSS3).files.sync();
+            await loginUser.files.sync();
         } catch (e) {
             console.log(e);
         }
