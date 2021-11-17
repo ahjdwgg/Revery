@@ -267,7 +267,7 @@ export default {
     },
     disconnect: disconnect,
     reconnect: reconnect,
-    apiUser: (): RSS3DetailPersona => {
+    getAPIUser: (): RSS3DetailPersona => {
         const user = Object.create(EMPTY_RSS3_DP);
         user.persona = apiPersona();
         return user;

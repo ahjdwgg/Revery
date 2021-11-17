@@ -7,40 +7,57 @@ import { GeneralAssetWithTags } from '../../common/types';
 import { ReactSortable } from 'react-sortablejs';
 import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
+import utils from '../../common/utils';
+import RSS3, { IRSS3 } from '../../common/rss3';
 
 const Footprint = () => {
-    const [listedFootprints, setlistedFootprints] = useState<GeneralAssetWithTags[]>([
-        {
-            platform: 'EVM+',
-            identity: '0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA',
-            info: {
-                image_preview_url: 'https://assets.poap.xyz/rss3-fully-support-poap-2021-logo-1635826323177.png',
-                title: 'RSS3 Fully Supports POAP',
-                start_date: '0x61800f00',
-                end_date: '0x61800f00',
-                city: '',
-                country: '',
-            },
-            type: 'xDai-POAP',
-            id: '2443267',
-        },
-        {
-            platform: 'EVM+',
-            identity: '0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA',
-            info: {
-                image_preview_url: 'https://assets.poap.xyz/rss3-fully-support-poap-2021-logo-1635826323177.png',
-                title: 'RSS3 Fully Supports POAP',
-                start_date: '0x61800f00',
-                end_date: '0x61800f00',
-                city: '',
-                country: '',
-            },
-            type: 'xDai-POAP',
-            id: '2443267',
-        },
-    ]);
+    const [listedAssets, setListedAssets] = useState<GeneralAssetWithTags[]>([]);
+    const [unlistedAssets, setUnlistedAssets] = useState<GeneralAssetWithTags[]>([]);
 
-    const [unlistedFootprints, setUnlistedFootprints] = useState<GeneralAssetWithTags[]>([]);
+    const unlistAll = () => {
+        setUnlistedAssets(unlistedAssets.concat(listedAssets));
+        setListedAssets([]);
+    };
+
+    const listAll = () => {
+        setListedAssets(listedAssets.concat(unlistedAssets));
+        setUnlistedAssets([]);
+    };
+
+    const init = async () => {
+        const { listed, unlisted } = await utils.initAssets('POAP');
+        setListedAssets(listed);
+        setUnlistedAssets(unlisted);
+    };
+
+    const save = async () => {
+        const loginUser = RSS3.getLoginUser();
+
+        // Update tags
+        await Promise.all(
+            listedAssets.concat(unlistedAssets).map((asset) => {
+                (loginUser.persona as IRSS3).assets.patchTags(
+                    {
+                        ...asset,
+                    },
+                    asset.tags || [],
+                );
+            }),
+        );
+
+        // Sync
+        try {
+            await (loginUser.persona as IRSS3).files.sync();
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    // Initialize
+
+    if (RSS3.getLoginUser().persona) {
+        init();
+    }
 
     return (
         <div style={{ height: '100vh' }}>
@@ -65,19 +82,21 @@ const Footprint = () => {
                                         text: 'Unlist All',
                                         isOutlined: true,
                                         isDisabled: false,
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            unlistAll();
+                                        },
                                     },
                                 ]}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
-                                    list={listedFootprints}
-                                    setList={setlistedFootprints}
+                                    list={listedAssets}
+                                    setList={setListedAssets}
                                     group="asset"
                                     animation={200}
                                     delay={2}
                                 >
-                                    {listedFootprints.map((asset, index) => (
+                                    {listedAssets.map((asset, index) => (
                                         <div
                                             key={asset.id}
                                             className="relative flex items-center justify-center m-auto cursor-move"
@@ -104,20 +123,22 @@ const Footprint = () => {
                                         text: 'List All',
                                         isOutlined: true,
                                         isDisabled: false,
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            listAll();
+                                        },
                                     },
                                 ]}
                                 isSecondaryBG={true}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
-                                    list={unlistedFootprints}
-                                    setList={setUnlistedFootprints}
+                                    list={unlistedAssets}
+                                    setList={setUnlistedAssets}
                                     group="asset"
                                     animation={200}
                                     delay={2}
                                 >
-                                    {unlistedFootprints.map((asset, index) => (
+                                    {unlistedAssets.map((asset, index) => (
                                         <div
                                             key={asset.id}
                                             className="relative flex items-center justify-center m-auto cursor-move"
@@ -156,7 +177,7 @@ const Footprint = () => {
                                 fontSize="text-base"
                                 width="w-48"
                                 // isDisabled={saveBtnDisabled}
-                                // onClick={() => handleSave()}
+                                onClick={() => save()}
                             />
                         </div>
                     </footer>

@@ -78,7 +78,7 @@ const Account = () => {
         const unlisted: RSS3Account[] = [];
 
         const pageOwner = RSS3.getPageOwner();
-        const apiUser = RSS3.apiUser();
+        const apiUser = RSS3.getAPIUser();
         const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
 
         for (const account of allAccounts) {
@@ -96,6 +96,8 @@ const Account = () => {
     const save = async () => {
         setIsLoading(true);
 
+        const loginUser = RSS3.getLoginUser();
+
         const newListed: RSS3Account[] = await utils.setOrderTag(listedAccounts.map((wrapper) => wrapper.account));
         const newUnlisted: RSS3Account[] = await utils.setHiddenTag(unlistedAccounts.map((wrapper) => wrapper.account));
 
@@ -106,22 +108,21 @@ const Account = () => {
                     account.platform === wrapper.account.platform && account.identity === wrapper.account.identity,
             );
             if (showIndex === -1) {
-                await (RSS3.getLoginUser().persona as IRSS3).accounts.post(account);
+                await (loginUser.persona as IRSS3).accounts.post(account);
             } else {
                 toDeleteAccounts.splice(showIndex, 1);
             }
         }
         for (const { account } of toDeleteAccounts) {
-            await (RSS3.getLoginUser().persona as IRSS3).accounts.delete(account);
+            await (loginUser.persona as IRSS3).accounts.delete(account);
         }
 
         // Update tags
         await Promise.all(
             newListed.concat(newUnlisted).map((account) => {
-                (RSS3.getLoginUser().persona as IRSS3).accounts.patchTags(
+                (loginUser.persona as IRSS3).accounts.patchTags(
                     {
-                        platform: account.platform,
-                        identity: account.identity,
+                        ...account,
                     },
                     account.tags || [],
                 );
@@ -134,7 +135,7 @@ const Account = () => {
 
         // Sync
         try {
-            await (RSS3.getLoginUser().persona as IRSS3).files.sync();
+            await (loginUser.persona as IRSS3).files.sync();
         } catch (e) {
             console.log(e);
         }
