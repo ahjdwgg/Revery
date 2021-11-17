@@ -58,7 +58,7 @@ const Donation = () => {
             </Head>
             <div className="h-full">
                 <Header></Header>
-                <div className="pt-12 md:pt-16 flex flex-col w-max max-w-7xl m-auto h-full">
+                <div className="flex flex-col h-full m-auto px-12 pt-12 md:pt-16 w-full max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
                     <h1 className="mt-4 font-bold text-left text-primary text-lg">Edit Donations</h1>
                     <section className="flex flex-col w-full h-0 flex-1 items-center pt-10 pb-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-4">
@@ -66,7 +66,14 @@ const Donation = () => {
                                 title="Listed"
                                 color="donation"
                                 footerTips="Drag to reorder"
-                                footerButton="Unlist All"
+                                footerButtons={[
+                                    {
+                                        text: 'Unlist All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
@@ -95,7 +102,19 @@ const Donation = () => {
                                     ))}
                                 </ReactSortable>
                             </AssetCard>
-                            <AssetCard title="Unlisted" color="donation" footerButton="List All" isSecondaryBG={true}>
+                            <AssetCard
+                                title="Unlisted"
+                                color="donation"
+                                footerButtons={[
+                                    {
+                                        text: 'List All',
+                                        isOutlined: true,
+                                        isDisabled: false,
+                                        onClick: () => {},
+                                    },
+                                ]}
+                                isSecondaryBG={true}
+                            >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
                                     list={unlistedDonations}
