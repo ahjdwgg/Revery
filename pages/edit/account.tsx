@@ -11,6 +11,9 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
 import ContentProviders from '../../common/content-providers';
+import Modal from '../../components/Modal';
+import Input from '../../components/inputs/Input';
+import { BiCheckCircle, BiInfoCircle, BiPaste } from 'react-icons/bi';
 
 interface RSS3AccountWithID {
     id: string; // For ReactSortable only
@@ -19,7 +22,6 @@ interface RSS3AccountWithID {
 
 interface SpecifyNoSignAccount {
     platform: string;
-    identity: string;
     accountStyle: string;
     availableFields: string[];
     prefix: string;
@@ -39,13 +41,17 @@ const Account = () => {
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
     const [isLoading, setIsLoading] = useState(false);
+    const [notice, setNotice] = useState('');
+    const [isShowingNotice, setIsShowingNotice] = useState(false);
+    const [isAddingNoSignAccount, setIsAddingNoSignAccount] = useState(false);
+    const [isCopyingName, setIsCopyingName] = useState(false);
 
     const toAddAccounts: RSS3AccountWithID[] = [];
     const toDeleteAccounts: RSS3AccountWithID[] = [];
 
-    const [specifyNoSignAccount, setSpecifyNoSignAccount] = useState<SpecifyNoSignAccount>({
+    const [noSignAccountIdentity, setNoSignAccountIdentity] = useState('');
+    const [noSignAccountProviderInfo, setNoSignAccountProviderInfo] = useState<SpecifyNoSignAccount>({
         platform: '',
-        identity: '',
         accountStyle: '',
         availableFields: [],
         prefix: '',
@@ -60,6 +66,11 @@ const Account = () => {
     const listAll = () => {
         setListedAccounts(listedAccounts.concat(unlistedAccounts));
         setUnlistedAccounts([]);
+    };
+
+    const showNotice = (notice: string) => {
+        setNotice(notice);
+        setIsShowingNotice(true);
     };
 
     const init = async () => {
@@ -152,18 +163,21 @@ const Account = () => {
                 };
                 setListedAccounts(listedAccounts.concat([newAccountWithId]));
                 toAddAccounts.push(newAccountWithId);
+                setMode('default');
             } else {
-                // addAccountNotice = Account already exist
+                showNotice('Account already exist');
             }
         } else {
-            // addAccountNotice = newAccount.signature (using as err msg)
+            showNotice(newAccount.signature || 'No identity found.');
         }
     };
 
     const addEVMpAccount = async () => {
         if (!(window as any).ethereum) {
             // No metamask
-            // addAccountNotice = 'Adding an EVM+ account is now only supported with MetaMask browser extension enabled. (PC recommended)';
+            showNotice(
+                'Adding an EVM+ account is now only supported with MetaMask browser extension enabled. (PC recommended)',
+            );
             return;
         }
         const newAccount = await RSS3.addNewMetamaskAccount();
@@ -171,19 +185,21 @@ const Account = () => {
     };
 
     const addNoSignAccount = (platform: string) => {
-        setSpecifyNoSignAccount({
-            platform,
-            identity: '',
+        setNoSignAccountProviderInfo({
             ...ContentProviders[platform],
+            platform,
         });
+        setNoSignAccountIdentity('');
+        setIsAddingNoSignAccount(true);
     };
 
     const addNoSignAccountConfirm = () => {
         const newAccount: RSS3Account = {
+            ...noSignAccountProviderInfo,
+            identity: noSignAccountIdentity,
             signature: '',
-            ...specifyNoSignAccount,
         };
-
+        setIsAddingNoSignAccount(false);
         addNewAccountCommon(newAccount);
     };
 
@@ -494,6 +510,96 @@ const Account = () => {
                     </footer>
                 </div>
             </div>
+            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
+                <div className="flex flex-col w-full h-full justify-between">
+                    <div className="flex flex-start justify-center">
+                        <span className="mx-2 text-primary">Oops</span>
+                    </div>
+
+                    <div className="flex justify-center">{notice}</div>
+
+                    <div className="flex justify-center">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="OK"
+                            fontSize="text-base"
+                            width="w-48"
+                            onClick={() => setIsShowingNotice(false)}
+                        />
+                    </div>
+                </div>
+            </Modal>
+            <Modal theme="account" hidden={!isAddingNoSignAccount} closeEvent={() => setIsAddingNoSignAccount(false)}>
+                <div className="flex flex-col w-full h-full justify-between">
+                    <div className="flex flex-start justify-center">
+                        <span className="text-primary">{noSignAccountProviderInfo.platform}</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex">
+                            Input
+                            <span className="mx-2 text-primary">{noSignAccountProviderInfo.platform}</span>
+                            account:
+                        </div>
+                        <div className="flex">
+                            <Input
+                                placeholder={noSignAccountProviderInfo.accountStyle}
+                                isSingleLine={true}
+                                prefix={noSignAccountProviderInfo.prefix}
+                                suffix={noSignAccountProviderInfo.suffix}
+                                value={noSignAccountIdentity}
+                                onChange={(event) => {
+                                    setNoSignAccountIdentity(event.target.value);
+                                }}
+                            />
+                        </div>
+                        <div className="flex text-sm">
+                            <span className="text-primary text-lg mr-1">
+                                <BiInfoCircle />
+                            </span>
+                            <span>
+                                <span>You need to place your</span>
+                                <span
+                                    className="inline-flex mx-1 text-primary items-center cursor-pointer gap-1"
+                                    onClick={async () => {
+                                        setIsCopyingName(true);
+                                        await window.navigator.clipboard.writeText('...');
+                                        setTimeout(() => setIsCopyingName(false), 1500);
+                                    }}
+                                >
+                                    BioLink
+                                    {isCopyingName ? <BiCheckCircle /> : <BiPaste />}
+                                </span>
+                                <span>into one of :</span>
+                                <span className="ml-1">{noSignAccountProviderInfo.availableFields.join(', ')}</span>.
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex justify-center gap-4">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="Discard"
+                            fontSize="text-base"
+                            width="w-32"
+                            onClick={() => {
+                                setNoSignAccountIdentity('');
+                                setIsAddingNoSignAccount(false);
+                            }}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color="primary"
+                            text="Confirm"
+                            fontSize="text-base"
+                            width="w-32"
+                            onClick={() => {
+                                addNoSignAccountConfirm();
+                            }}
+                        />
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
