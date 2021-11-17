@@ -7,7 +7,7 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleAccount from '../../components/details/SingleAccount';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
 
 interface ModalDetail {
     hidden: boolean;

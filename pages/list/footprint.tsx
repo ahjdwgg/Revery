@@ -1,18 +1,30 @@
 import { NextPage } from 'next';
 import { useState } from 'react';
+import { POAPResponse } from '../../common/types';
 import FootprintCard from '../../components/assets/FootprintCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
 import SingleFootprint from '../../components/details/SingleFootprint';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
+import RSS3 from '../../common/rss3';
+import ModalLoading from '../../components/modal/ModalLoading';
 
 const footprint: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
+    const [footprint, setFootprint] = useState<POAPResponse | null>(null);
 
-    const openModal = () => {
+    const openModal = async () => {
         setModalHidden(false);
+        setFootprint(null);
+        const res = await RSS3.getFootprintDetail(
+            '0xDA048BED40d40B1EBd9239Cdf56ca0c2F018ae65',
+            '',
+            '0xDA048BED40d40B1EBd9239Cdf56ca0c2F018ae65',
+            '2150249',
+        );
+        setFootprint(res);
     };
 
     const closeModal = () => {
@@ -52,7 +64,7 @@ const footprint: NextPage = () => {
                 </section>
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'}>
-                <SingleFootprint />
+                {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="footprint" />}
             </Modal>
         </>
     );

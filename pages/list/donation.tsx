@@ -6,13 +6,25 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleDonation from '../../components/details/SingleDonation';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
+import { GitcoinResponse } from '../../common/types';
+import RSS3 from '../../common/rss3';
+import ModalLoading from '../../components/modal/ModalLoading';
 
 const Donation: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
+    const [Gitcoin, setGitcoin] = useState<GitcoinResponse | null>(null);
 
-    const openModal = () => {
+    const openModal = async () => {
         setModalHidden(false);
+        setGitcoin(null);
+        const res = await RSS3.getGitcoinDonation(
+            '0x55F110395C844963b075674e2956eb414018a7a7',
+            '',
+            '0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C',
+            '0x7dac9fc15c1db4379d75a6e3f330ae849dffce18',
+        );
+        setGitcoin(res);
     };
 
     const closeModal = () => {
@@ -51,7 +63,7 @@ const Donation: NextPage = () => {
                 </section>
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'}>
-                <SingleDonation />
+                {Gitcoin ? <SingleDonation Gitcoin={Gitcoin} /> : <ModalLoading color="donation" />}
             </Modal>
         </>
     );

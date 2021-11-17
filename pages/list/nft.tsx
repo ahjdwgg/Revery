@@ -7,13 +7,26 @@ import { COLORS } from '../../components/buttons/variables';
 import SingleNFT from '../../components/details/SingleNFT';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
+import { NFT } from '../../common/types';
+import RSS3 from '../../common/rss3';
+import ModalLoading from '../../components/modal/ModalLoading';
 
 const nft: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
+    const [NFT, setNFT] = useState<NFT | undefined>(undefined);
 
-    const openModal = () => {
+    const openModal = async () => {
         setModalHidden(false);
+        setNFT(undefined);
+        const res = await RSS3.getNFTDetails(
+            '0x55F110395C844963b075674e2956eb414018a7a7',
+            '',
+            '0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C',
+            '0xe8227e29d61889dd04a4f0f87cf609936ad70d76-15',
+            'Ethereum-NFT',
+        );
+        setNFT(res?.data);
     };
 
     const closeModal = () => {
@@ -33,7 +46,7 @@ const nft: NextPage = () => {
                     <h1 className="text-lg font-bold text-left text-nft">Joshua's NFTs</h1>
                     <Button isOutlined={true} color={COLORS.nft} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-5 gap-4 py-4 justify-items-center">
+                <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
                     {[...Array(7)].map((_, i) => (
                         <div key={i} className="relative" onClick={openModal}>
                             <NFTItem size={208} previewUrl="https://i.imgur.com/GdWEt4z.jpg" detailUrl="" />
@@ -47,7 +60,7 @@ const nft: NextPage = () => {
                 </section>
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'}>
-                <SingleNFT />
+                {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="nft" />}
             </Modal>
         </>
     );
