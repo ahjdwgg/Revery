@@ -26,6 +26,8 @@ interface SpecifyNoSignAccount {
     suffix: string;
 }
 
+const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
+
 const Account = () => {
     const ModeTypes = {
         default: 'default',
@@ -33,11 +35,10 @@ const Account = () => {
         delete: 'delete',
     };
 
-    const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
-
     const [listedAccounts, setListedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
+    const [isLoading, setIsLoading] = useState(false);
 
     const toAddAccounts: RSS3AccountWithID[] = [];
     const toDeleteAccounts: RSS3AccountWithID[] = [];
@@ -82,6 +83,8 @@ const Account = () => {
     };
 
     const save = async () => {
+        setIsLoading(true);
+
         const newListed: RSS3Account[] = await utils.setOrderTag(listedAccounts.map((wrapper) => wrapper.account));
         const newUnlisted: RSS3Account[] = await utils.setHiddenTag(unlistedAccounts.map((wrapper) => wrapper.account));
 
@@ -124,6 +127,8 @@ const Account = () => {
         } catch (e) {
             console.log(e);
         }
+
+        setIsLoading(false);
     };
 
     const checkDup = (newAccount: RSS3Account) => {
@@ -339,8 +344,8 @@ const Account = () => {
                                                             size="lg"
                                                             chain={platform}
                                                             outline="account"
-                                                            onClick={async () => {
-                                                                await addNoSignAccount(platform);
+                                                            onClick={() => {
+                                                                addNoSignAccount(platform);
                                                             }}
                                                         />
                                                     </div>
@@ -466,15 +471,25 @@ const Account = () => {
                                 width="w-48"
                                 // onClick={() => handleDiscard()}
                             />
-                            <Button
-                                isOutlined={false}
-                                color="primary"
-                                text="Save"
-                                fontSize="text-base"
-                                width="w-48"
-                                // isDisabled={saveBtnDisabled}
-                                onClick={() => save()}
-                            />
+                            {isLoading ? (
+                                <Button
+                                    isOutlined={false}
+                                    color="primary"
+                                    icon="check"
+                                    fontSize="text-base"
+                                    width="w-48"
+                                    isDisabled={true}
+                                />
+                            ) : (
+                                <Button
+                                    isOutlined={false}
+                                    color="primary"
+                                    text="Save"
+                                    fontSize="text-base"
+                                    width="w-48"
+                                    onClick={() => save()}
+                                />
+                            )}
                         </div>
                     </footer>
                 </div>

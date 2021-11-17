@@ -25,12 +25,14 @@ export interface PlatformSettings {
     prefix: string;
     suffix: string;
 
-    getContent?: (address: string, untilTimeStamp: number) => Content[];
+    getContent?: (address: string, untilTimeStamp?: number) => Promise<Content[]>;
     getAccountLink?: (account: string) => string;
 }
 
-export default {
+const Providers: { [key: string]: PlatformSettings } = {
     Hub: hub,
     Misskey: misskey,
     Twitter: twitter,
 };
+
+export default Providers;
