@@ -1,4 +1,4 @@
-import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
+import { BUTTON_ICONS, COLORS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { BiExpandAlt, BiPlus, BiMinus } from 'react-icons/bi';
 import { ReactNode } from 'react';
@@ -58,19 +58,19 @@ const Button = (props: ButtonInterface) => {
     }
 
     // default = simple button filled with specified color
-    const defaultClassName = `flex flex-row gap-x-2 justify-center items-center ${bgDefaultStyle} ${hoverBgStyle} ${textStyle} font-medium ${
-        fontSize ? fontSize : 'text-xs'
-    } ${hoverTextStyle} py-sm ${
+    const defaultClassName = `flex flex-row gap-x-2 justify-center items-center ${bgDefaultStyle} ${hoverBgStyle} ${
+        color == COLORS.metamask ? textStyle : 'text-white'
+    } font-medium ${fontSize ? fontSize : 'text-xs'} ${hoverTextStyle} py-sm ${
         fontSize ? 'px-6' : 'px-3'
     } ${width} ${height} border ${borderStyle} ${hoverBorderStyle} rounded`;
 
-    const outlinedClassName = `flex ${bgAltStyle} ${textStyle} text-opacity-70 font-medium ${
+    const outlinedClassName = `${bgAltStyle} ${textStyle} text-opacity-70 font-medium ${
         fontSize ? fontSize : 'text-xs'
     } hover:text-opacity-80 py-sm ${
         fontSize ? 'px-6' : 'px-3'
     } ${width} border ${borderStyle} border-opacity-70 hover:border-opacity-40 rounded`;
 
-    const disabledClassName = `flex ${bgDefaultStyle} ${textStyle} text-opacity-40 ${
+    const disabledClassName = `${bgDefaultStyle} ${textStyle} text-opacity-40 ${
         fontSize ? fontSize : 'text-xs'
     } font-medium py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} rounded bg-opacity-5 cursor-not-allowed`;
 

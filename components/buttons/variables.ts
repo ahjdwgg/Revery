@@ -30,7 +30,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         name: 'primary',
         bgDefault: 'bg-primary',
         bgAlt: 'bg-white',
-        text: 'text-white',
+        text: 'text-primary',
         border: 'border-primary',
         hoverBg: 'hover:opacity-90',
         hoverText: 'hover:text-white',

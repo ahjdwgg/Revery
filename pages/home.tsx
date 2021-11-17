@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import Button from '../components/buttons/Button';
 import { COLORS } from '../components/buttons/variables';
@@ -9,13 +10,46 @@ import RecommendSection from '../components/recommends/RecommendSection';
 import Modal from '../components/Modal';
 import WalletConnect from '../components/icons/WalletConnect';
 import Metamask from '../components/icons/Metamask';
-import RSS3, { IRSS3 } from '../common/rss3';
+import RSS3, { EMPTY_RSS3_DP, IRSS3, RSS3DetailPersona } from '../common/rss3';
 import { RSS3Profile } from 'rss3-next/types/rss3';
-
 const Home: NextPage = () => {
+    const router = useRouter();
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [modalHidden, setModalHidden] = useState(true);
+
     let [rss3, setRss3] = useState<IRSS3 | null>(null);
+    let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+
+    // default avatar
+    const [avatarURL, setAvatarURL] = useState(
+        'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    );
+
+    const initRedirect = async () => {
+        let profile: RSS3Profile | null = null;
+        let address: string = '';
+        try {
+            console.log('init: ', rss3);
+            profile = RSS3LoginUser.profile;
+            address = RSS3LoginUser.address;
+            console.log('profile: ', profile, address);
+        } catch (e) {
+            console.log(e);
+        }
+
+        if (!(profile?.name || profile?.bio || profile?.avatar?.length)) {
+            console.log('no profile');
+            // direct to setup page
+            await router.push('/setup');
+        } else {
+            // login
+            console.log('login');
+            closeModal();
+            setAvatarURL(profile?.avatar?.[0] || avatarURL);
+            setIsLoggedIn(true);
+        }
+    };
 
     const openModal = () => {
         setModalHidden(false);
@@ -27,7 +61,7 @@ const Home: NextPage = () => {
 
     const handleWalletConnect = async () => {
         try {
-            await RSS3.connect.walletConnect();
+            RSS3LoginUser = await RSS3.connect.walletConnect();
         } catch (e) {
             return null;
         }
@@ -36,7 +70,7 @@ const Home: NextPage = () => {
 
     const handleMetamask = async () => {
         try {
-            await RSS3.connect.metamask();
+            RSS3LoginUser = await RSS3.connect.metamask();
         } catch (e) {
             console.log(e);
             return;
@@ -45,8 +79,11 @@ const Home: NextPage = () => {
     };
 
     const verifyProfile = async () => {
-        if (RSS3) {
-            // await initRedirect();
+        // RSS3LoginUser = await RSS3.apiUser();
+        if (RSS3LoginUser.persona) {
+            await initRedirect();
+        } else {
+            console.log('verification failed');
         }
     };
 
@@ -84,7 +121,7 @@ const Home: NextPage = () => {
                     {isLoggedIn ? (
                         <>
                             <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                            <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
+                            <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
                         </>
                     ) : (
                         <Button
