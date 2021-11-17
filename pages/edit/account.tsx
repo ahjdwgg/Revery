@@ -10,13 +10,23 @@ import AccountItem from '../../components/accounts/AccountItem';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
+import ContentProviders from '../../common/content-providers';
 
 interface RSS3AccountWithID {
     id: string; // For ReactSortable only
     account: RSS3Account;
 }
 
-const Account = async () => {
+interface SpecifyNoSignAccount {
+    platform: string;
+    identity: string;
+    accountStyle: string;
+    availableFields: string[];
+    prefix: string;
+    suffix: string;
+}
+
+const Account = () => {
     const ModeTypes = {
         default: 'default',
         add: 'add',
@@ -31,6 +41,15 @@ const Account = async () => {
 
     const toAddAccounts: RSS3AccountWithID[] = [];
     const toDeleteAccounts: RSS3AccountWithID[] = [];
+
+    const [specifyNoSignAccount, setSpecifyNoSignAccount] = useState<SpecifyNoSignAccount>({
+        platform: '',
+        identity: '',
+        accountStyle: '',
+        availableFields: [],
+        prefix: '',
+        suffix: '',
+    });
 
     const unlistAll = () => {
         setUnlistedAccounts(unlistedAccounts.concat(listedAccounts));
@@ -107,6 +126,35 @@ const Account = async () => {
         }
     };
 
+    const checkDup = (newAccount: RSS3Account) => {
+        const equalDefaultAccount =
+            newAccount.platform === 'EVM+' && newAccount.identity === RSS3.getLoginUser().address;
+        const listedIndex = listedAccounts.findIndex(
+            ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        const unlistedIndex = unlistedAccounts.findIndex(
+            ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        return equalDefaultAccount || listedIndex !== -1 || unlistedIndex !== -1;
+    };
+
+    const addNewAccountCommon = (newAccount: RSS3Account) => {
+        if (newAccount.identity) {
+            if (!checkDup(newAccount)) {
+                const newAccountWithId = {
+                    id: '',
+                    account: newAccount,
+                };
+                setListedAccounts(listedAccounts.concat([newAccountWithId]));
+                toAddAccounts.push(newAccountWithId);
+            } else {
+                // addAccountNotice = Account already exist
+            }
+        } else {
+            // addAccountNotice = newAccount.signature (using as err msg)
+        }
+    };
+
     const addEVMpAccount = async () => {
         if (!(window as any).ethereum) {
             // No metamask
@@ -114,34 +162,30 @@ const Account = async () => {
             return;
         }
         const newAccount = await RSS3.addNewMetamaskAccount();
-        if (newAccount.identity) {
-            const equalDefaultAccount =
-                newAccount.platform === 'EVM+' && newAccount.identity === RSS3.getLoginUser().address;
-            const listedIndex = listedAccounts.findIndex(
-                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
-            const unlistedIndex = unlistedAccounts.findIndex(
-                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
-            if (equalDefaultAccount || listedIndex !== -1 || unlistedIndex !== -1) {
-                // addAccountNotice = Account already exist
-            } else {
-                const newAccountWithId = {
-                    id: '',
-                    account: newAccount,
-                };
-                setListedAccounts(listedAccounts.concat([newAccountWithId]));
-                toAddAccounts.push(newAccountWithId);
-            }
-        } else {
-            // addAccountNotice = newAccount.signature
-        }
+        addNewAccountCommon(newAccount);
+    };
+
+    const addNoSignAccount = (platform: string) => {
+        setSpecifyNoSignAccount({
+            platform,
+            identity: '',
+            ...ContentProviders[platform],
+        });
+    };
+
+    const addNoSignAccountConfirm = () => {
+        const newAccount: RSS3Account = {
+            signature: '',
+            ...specifyNoSignAccount,
+        };
+
+        addNewAccountCommon(newAccount);
     };
 
     // Initialize
 
     if (RSS3.getLoginUser().persona) {
-        await init();
+        init();
     }
 
     return (
@@ -279,7 +323,9 @@ const Account = async () => {
                                                     <EVMpAccountItem
                                                         size="lg"
                                                         outline="account"
-                                                        onClick={addEVMpAccount}
+                                                        onClick={async () => {
+                                                            await addEVMpAccount();
+                                                        }}
                                                     />
                                                 </div>
                                             </div>
@@ -289,7 +335,14 @@ const Account = async () => {
                                                         className="relative flex items-center justify-center m-auto cursor-pointer"
                                                         key={platform}
                                                     >
-                                                        <AccountItem size="lg" chain={platform} outline="account" />
+                                                        <AccountItem
+                                                            size="lg"
+                                                            chain={platform}
+                                                            outline="account"
+                                                            onClick={async () => {
+                                                                await addNoSignAccount(platform);
+                                                            }}
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>

@@ -3,12 +3,13 @@ export interface AccountItemProps {
     chain?: string;
     address?: string;
     outline?: string;
+    onClick?: () => void;
 }
 
 export const AccountSize = new Map([
     ['sm', 'w-6 h-6 p-0.5'],
     ['md', 'w-12 h-12 p-2'],
-    ['lg', 'w-24 h-24 p-4']
+    ['lg', 'w-24 h-24 p-4'],
 ]);
 
 export const AccountIcon = new Map([
@@ -20,6 +21,6 @@ export const AccountIcon = new Map([
 ]);
 
 export const AccountOutline = new Map([
-    ['default','border-primary'],
-    ['account','border-account'],
-])
+    ['default', 'border-primary'],
+    ['account', 'border-account'],
+]);
