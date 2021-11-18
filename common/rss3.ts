@@ -14,6 +14,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     profile: null,
     followers: [],
     followings: [],
+    isReady: false,
 };
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
@@ -35,6 +36,7 @@ export interface RSS3DetailPersona {
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
+    isReady: boolean;
 }
 
 function setStorage(key: string, value: string) {
@@ -140,6 +142,9 @@ function saveConnect(method: string) {
 }
 
 async function reconnect() {
+    if (isValidRSS3()) {
+        return true;
+    }
     const lastConnect = getStorage(KeyNames.ConnectMethod);
     const address = getStorage(KeyNames.ConnectAddress);
     if (address) {
@@ -236,6 +241,7 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.get(user.address, 'following');
     user.followings = (await RSS3APIPersona.links.get(user.address, 'following'))?.list || [];
+    user.isReady = true;
 }
 
 function apiPersona(): RSS3 {
@@ -285,12 +291,21 @@ export default {
         return RSS3LoginUser;
     },
     setPageOwner: async (addrOrName: string) => {
+        let isReloadRequired = false;
         if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
-            RSS3PageOwner.address = addrOrName;
+            if (RSS3PageOwner.address !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.address = addrOrName;
+            }
         } else {
-            RSS3PageOwner.name = addrOrName;
+            if (RSS3PageOwner.name !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.name = addrOrName;
+            }
         }
-        await initUser(RSS3PageOwner);
+        if (isReloadRequired) {
+            await initUser(RSS3PageOwner);
+        }
         return RSS3PageOwner;
     },
     getPageOwner: () => {

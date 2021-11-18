@@ -24,6 +24,7 @@ type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Profile: NextPage = () => {
     const router = useRouter();
+    const loginUser = RSS3.getLoginUser();
 
     const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
@@ -96,28 +97,27 @@ const Profile: NextPage = () => {
     };
 
     const init = async () => {
-        const loginUser = RSS3.getLoginUser();
+        console.log(loginUser);
         const profile = loginUser.profile;
-        if (profile || (await RSS3.reconnect())) {
-            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+        console.log(profile);
+        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
 
-            setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
-            setUsername(profile?.name || '');
-            setBio(extracted);
-            setWebsite(fieldsMatch?.['SITE'] || '');
-            setLink(loginUser.name);
+        setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
+        setUsername(profile?.name || '');
+        setBio(extracted);
+        setWebsite(fieldsMatch?.['SITE'] || '');
+        setLink(loginUser.name);
 
-            await RSS3.setPageOwner(loginUser.address);
-            const { listed } = await utils.initAccounts();
-            setAccountItems(
-                [
-                    {
-                        platform: 'EVM+',
-                        identity: RSS3.getLoginUser().address,
-                    },
-                ].concat(listed),
-            );
-        }
+        await RSS3.setPageOwner(loginUser.address);
+        const { listed } = await utils.initAccounts();
+        setAccountItems(
+            [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(listed),
+        );
     };
 
     const handleSave = async () => {
@@ -167,8 +167,10 @@ const Profile: NextPage = () => {
     // Initialize
 
     useEffect(() => {
-        init();
-    }, []);
+        if (loginUser.isReady) {
+            init();
+        }
+    }, [loginUser.isReady]);
 
     return (
         <div>
