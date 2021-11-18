@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './modal/Modal';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
 import WalletConnect from './icons/WalletConnect';
 import Metamask from './icons/Metamask';
 import ImageHolder from './ImageHolder';
-import RSS3, { IRSS3 } from '../common/rss3';
+import RSS3 from '../common/rss3';
 import { useRouter } from 'next/router';
 import config from '../common/config';
 
@@ -94,19 +94,23 @@ function Header(props: any) {
                             <div className="flex flex-row justify-end w-full gap-x-8">
                                 {isLoggedIn ? (
                                     <>
-                                        <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                                        <div className="flex items-center">
+                                            <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                                        </div>
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
                                         </div>
                                     </>
                                 ) : (
-                                    <Button
-                                        isOutlined={false}
-                                        color={COLORS.primary}
-                                        text={'Connect Wallet'}
-                                        height={'h-8'}
-                                        onClick={openModal}
-                                    />
+                                    <div className="flex items-center">
+                                        <Button
+                                            isOutlined={false}
+                                            color={COLORS.primary}
+                                            text={'Connect Wallet'}
+                                            height={'h-8'}
+                                            onClick={openModal}
+                                        />
+                                    </div>
                                 )}
                             </div>
                         </nav>
