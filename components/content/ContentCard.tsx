@@ -1,11 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
 import EmblaCarousel from './EmblaCarousel';
-import { BiHeart, BiMessage, BiShare } from 'react-icons/bi';
 import Arweave from '../icons/Arweave';
 import Twitter from '../icons/Twitter';
 import Mirror from '../icons/Mirror';
 import Misskey from '../icons/Misskey';
+import { timeDifferent } from '../../common/timeStamp';
 
 interface ContentProps {
     avatarUrl: string;
@@ -15,21 +15,6 @@ interface ContentProps {
     timeStamp: number;
     type: string;
 }
-
-const timeDifferent = (timeStamp: number): string => {
-    const date1: any = new Date(timeStamp * 1000);
-    const date2: any = Date.now();
-    const diffTime = Math.abs(date2 - date1);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const diffHours = Math.ceil((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    if (diffDays == 0) {
-        return diffHours + ' hours ago';
-    } else if (diffDays > 99 || diffHours == 0) {
-        return diffDays + ' days ago';
-    } else {
-        return diffDays + ' days ' + diffHours + ' hours ago';
-    }
-};
 
 const ContentCard = ({ avatarUrl, username, content, images, timeStamp, type }: ContentProps) => {
     let iconSVG = null;

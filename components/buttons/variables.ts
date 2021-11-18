@@ -4,6 +4,7 @@ export const COLORS = {
     nft: 'nft',
     donation: 'donation',
     footprint: 'footprint',
+    metamask: 'metamask',
 };
 
 export const BUTTON_ICONS = {
@@ -75,5 +76,15 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverBg: 'hover:opacity-90',
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-footprint',
+    },
+    {
+        name: 'metamask',
+        bgDefault: 'bg-metamask-bg',
+        bgAlt: 'bg-metamask-bg',
+        text: 'text-metamask-text',
+        border: 'border-metamask-bg',
+        hoverBg: 'hover:opacity-90',
+        hoverText: 'hover:text-metamask-text',
+        hoverBorder: 'hover:border-metamask-bg',
     },
 ];

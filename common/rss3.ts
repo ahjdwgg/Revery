@@ -6,7 +6,7 @@ import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
 
-const EMPTY_RSS3_DP: RSS3DetailPersona = {
+export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
     address: '',
     profile: null,
@@ -250,6 +250,16 @@ async function disconnect() {
     }
     setStorage(KeyNames.ConnectMethod, '');
     setStorage(KeyNames.ConnectAddress, '');
+}
+
+async function visitor(): Promise<RSS3> {
+    if (RSS3LoginUser.persona) {
+        return RSS3LoginUser.persona;
+    } else {
+        return new RSS3({
+            endpoint: config.hubEndpoint,
+        });
+    }
 }
 
 export default {
