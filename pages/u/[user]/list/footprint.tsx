@@ -11,16 +11,19 @@ import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
+import { useRouter } from 'next/router';
 
-const footprint: NextPage = () => {
+const Footprint: NextPage = () => {
+    const router = useRouter();
+    const addrOrName = (router.query.user as string) || '';
+
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<POAPResponse | null>(null);
     const [listedFootprint, setListedFootprint] = useState<GeneralAssetWithTags[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
     const init = async () => {
-        // await RSS3.setPageOwner('RSS3 page owner address');
-        const pageOwner = RSS3.getPageOwner();
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadFootprints();
         setListedFootprint(orderAsset);
         setPersona(pageOwner);
@@ -82,4 +85,4 @@ const footprint: NextPage = () => {
     );
 };
 
-export default footprint;
+export default Footprint;

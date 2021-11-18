@@ -9,19 +9,22 @@ import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
 import RSS3, { IRSS3, RSS3DetailPersona } from '../../../../common/rss3';
 import config from '../../../../common/config';
+import { useRouter } from 'next/router';
 
 interface ModalDetail {
     hidden: boolean;
     account?: RSS3Account;
 }
 
-const account: NextPage = () => {
+const Account: NextPage = () => {
+    const router = useRouter();
+    const addrOrName = (router.query.user as string) || '';
+
     const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
     const init = async () => {
-        // await RSS3.setPageOwner('RSS3 page owner address');
-        const pageOwner = RSS3.getPageOwner();
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
         const apiUser = RSS3.getAPIUser();
         const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
         const listed: RSS3Account[] = [];
@@ -86,4 +89,4 @@ const account: NextPage = () => {
     );
 };
 
-export default account;
+export default Account;
