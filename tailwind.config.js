@@ -47,6 +47,7 @@ module.exports = {
             },
             height: {
                 md: '1.6rem',
+                modal: '60vh',
             },
             padding: {
                 sm: '0.2rem',
@@ -68,5 +69,5 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [require('@tailwindcss/aspect-ratio')],
+    plugins: [require('@tailwindcss/aspect-ratio'), require('@tailwindcss/line-clamp')],
 };

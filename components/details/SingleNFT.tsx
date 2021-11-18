@@ -1,22 +1,26 @@
 import NFTBadges from '../assets/NFTBadges';
 import NFTItem from '../assets/NFTItem';
 import NFTDetail from './NFTDetail';
+import { NFT } from '../../common/types';
 
-export default function SingleNFT() {
+export default function SingleNFT(props: { NFT: NFT }) {
+    let { NFT } = props;
+
     return (
         <div className="flex flex-col max-w-screen-sm m-auto gap-y-4">
             <div className="relative flex flex-row items-center justify-between">
                 <span className="flex-1 w-0 text-xl font-semibold text-left capitalize truncate text-nft">
-                    Cool Cats NFT
+                    {NFT.name}
                 </span>
-                <NFTBadges
-                    location="header"
-                    chain="Ethereum"
-                    collectionImg="https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5"
-                />
+                <NFTBadges location="header" chain={NFT.chain} collectionImg={NFT.collection?.image_url} />
             </div>
-            <NFTItem size={640} previewUrl="https://i.imgur.com/GdWEt4z.jpg" detailUrl="" />
-            <NFTDetail />
+            <NFTItem
+                size={640}
+                previewUrl={NFT.animation_url || NFT.image_preview_url}
+                detailUrl={NFT.animation_original_url || NFT.image_url}
+                isShowingDetails={true}
+            />
+            <NFTDetail detail={NFT} market="opensea" />
         </div>
     );
 }

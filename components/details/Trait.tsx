@@ -1,6 +1,6 @@
 interface TraitProps {
-    traitType: String;
-    traitValue: String;
+    traitType?: String | null;
+    traitValue?: String | null;
 }
 
 export default function Trait({ traitType, traitValue }: TraitProps) {

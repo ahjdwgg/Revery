@@ -4,10 +4,10 @@ import { BiCalendar, BiLocationPlus } from 'react-icons/bi';
 
 interface FootprintProps {
     imageUrl: string;
-    startDate: string;
-    endDate: string;
-    city: string;
-    country: string;
+    startDate: string | undefined;
+    endDate: string | undefined;
+    city: string | undefined;
+    country: string | undefined;
     username: string;
     activity: string;
     clickEvent?: () => void;
@@ -28,9 +28,14 @@ const FootprintCard = ({
     clickEvent = () => {},
 }: FootprintProps) => {
     // Calc display date
-    let displayDate = formatDate(startDate);
-    if (endDate !== startDate) {
-        displayDate += ' ~ ' + formatDate(endDate);
+    let displayDate;
+    if (startDate && endDate) {
+        displayDate = formatDate(startDate);
+        if (endDate !== startDate) {
+            displayDate += ' ~ ' + formatDate(endDate);
+        }
+    } else {
+        displayDate = 'No activity time';
     }
 
     // Calc location
