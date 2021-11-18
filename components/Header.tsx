@@ -94,23 +94,19 @@ function Header(props: any) {
                             <div className="flex flex-row justify-end w-full gap-x-8">
                                 {isLoggedIn ? (
                                     <>
-                                        <div className="flex items-center">
-                                            <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                                        </div>
+                                        <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="flex items-center">
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            text={'Connect Wallet'}
-                                            height={'h-8'}
-                                            onClick={openModal}
-                                        />
-                                    </div>
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        text={'Connect Wallet'}
+                                        height={'h-8'}
+                                        onClick={openModal}
+                                    />
                                 )}
                             </div>
                         </nav>

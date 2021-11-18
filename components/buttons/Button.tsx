@@ -95,7 +95,7 @@ const Button = (props: ButtonInterface) => {
     }
 
     return (
-        <div>
+        <div className="flex items-center">
             <button onClick={onClick} className={className}>
                 {props.text} {iconSVG} {children}
             </button>
