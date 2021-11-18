@@ -93,18 +93,8 @@ const Profile: NextPage = () => {
     };
 
     const init = async () => {
-        const listed: RSS3Account[] = [];
-
-        const loginUser = RSS3.getLoginUser().persona as IRSS3;
-        const allAccounts = await loginUser.accounts.get();
-
-        for (const account of allAccounts) {
-            if (!account.tags?.includes(config.tags.hiddenTag)) {
-                listed.push(account);
-            }
-        }
-
-        setAccountItems(utils.sortByOrderTag(listed));
+        const { listed } = await utils.initAccounts();
+        setAccountItems(listed);
     };
 
     const handleSave = async () => {

@@ -99,8 +99,8 @@ async function initAssets(type: string) {
     const unlisted: GeneralAssetWithTags[] = [];
 
     const pageOwner = RSS3.getPageOwner();
-    const apiUser = RSS3.getAPIUser();
-    const assetInRSS3 = await (apiUser.persona as IRSS3).assets.get(pageOwner.address);
+    const apiUser = RSS3.getAPIUser().persona as IRSS3;
+    const assetInRSS3 = await apiUser.assets.get(pageOwner.address);
     const assetInAssetProfile = (await RSS3.getAssetProfile(pageOwner.address, type))?.assets || [];
     const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
 
@@ -116,7 +116,29 @@ async function initAssets(type: string) {
 
     return {
         listed: utils.sortByOrderTag(listed),
-        unlisted: utils.sortByOrderTag(unlisted),
+        unlisted,
+    };
+}
+
+async function initAccounts() {
+    const listed: RSS3Account[] = [];
+    const unlisted: RSS3Account[] = [];
+
+    const pageOwner = RSS3.getPageOwner();
+    const apiUser = RSS3.getAPIUser().persona as IRSS3;
+    const allAccounts = await apiUser.accounts.get(pageOwner.address);
+
+    for (const account of allAccounts) {
+        if (account.tags?.includes(config.tags.hiddenTag)) {
+            unlisted.push(account);
+        } else {
+            listed.push(account);
+        }
+    }
+
+    return {
+        listed: utils.sortByOrderTag(listed),
+        unlisted,
     };
 }
 
@@ -126,6 +148,7 @@ const utils = {
     setHiddenTag,
     mergeAssetsTags,
     initAssets,
+    initAccounts,
 };
 
 export default utils;

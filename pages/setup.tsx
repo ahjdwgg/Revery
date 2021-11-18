@@ -9,37 +9,10 @@ import LinkButton from '../components/buttons/LinkButton';
 import { COLORS } from '../components/buttons/variables';
 import Input from '../components/inputs/Input';
 import ImageHolder from '../components/ImageHolder';
-
-const AccountItems = [
-    {
-        type: 'evmp',
-        value: '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4',
-    },
-    {
-        type: 'default',
-        value: 'BSC',
-    },
-    {
-        type: 'default',
-        value: 'Ethereum',
-    },
-    {
-        type: 'default',
-        value: 'Ronin',
-    },
-    {
-        type: 'default',
-        value: 'Misskey',
-    },
-    {
-        type: 'default',
-        value: 'Twitter',
-    },
-    {
-        type: 'evmp',
-        value: '0x0000000000000000000000000000000000000000',
-    },
-];
+import config from '../common/config';
+import RSS3, { IRSS3 } from '../common/rss3';
+import utils from '../common/utils';
+import { RSS3Account } from 'rss3-next/types/rss3';
 
 interface AccountItemInterface {
     type: string;
@@ -56,15 +29,28 @@ interface InputStates {
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Setup: NextPage = () => {
-    const [avatarUrl, setAvatarUrl] = useState('https://i.imgur.com/GdWEt4z.jpg');
-    const [link, setLink] = useState<string>('Fendi.github.io'); // this is a hard-coded placeholder link
+    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
+    const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
-    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>(AccountItems); // this is a hard-coded placeholder array
+
+    const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
+
+    const [notice, setNotice] = useState('');
+    const [isShowingNotice, setIsShowingNotice] = useState(false);
 
     const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+
+    const showNotice = (notice: string) => {
+        setNotice(notice);
+        setIsShowingNotice(true);
+    };
+
+    const setOversizeNotice = (field: string) => {
+        showNotice(`${field} cannot be longer than ${config.fieldMaxLength} chars`);
+    };
 
     const handleChangeAvatar = () => {
         console.log('Change Avatar');
@@ -104,12 +90,34 @@ const Setup: NextPage = () => {
         console.log('Discard Clicked');
     };
 
-    const handleSave = () => {
-        console.log({
+    const init = async () => {
+        const { listed } = await utils.initAccounts();
+        setAccountItems(listed);
+    };
+
+    const handleSave = async () => {
+        const profile = {
+            avatar: [avatarUrl],
             username: username,
-            bio: bio,
-            website: website,
-        });
+            bio: bio + (website ? `<SITE#${website}>` : ''),
+        };
+
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
+        if (profile.username.length > config.fieldMaxLength) {
+            setOversizeNotice('Name');
+            return;
+        }
+        if (profile.bio.length) {
+            setOversizeNotice('Bio');
+            return;
+        }
+
+        try {
+            await loginUser.profile.patch(profile);
+        } catch (e) {
+            console.log(e);
+            showNotice('Failed to save profile');
+        }
     };
 
     return (
@@ -173,13 +181,13 @@ const Setup: NextPage = () => {
                         <div className="flex flex-row justify-start w-full gap-x-5">
                             <label className="w-48 text-right">Accounts</label>
                             <div className="flex flex-row w-4/5 gap-x-2">
-                                {accountItems.map((item) => {
-                                    if (item.type == 'default') {
-                                        return <AccountItem size="sm" chain={item.value} />;
-                                    } else {
-                                        return <EVMpAccountItem size="sm" address={item.value} />;
-                                    }
-                                })}
+                                {accountItems.map((account) =>
+                                    account.platform === 'EVM+' ? (
+                                        <EVMpAccountItem size="sm" address={account.identity} />
+                                    ) : (
+                                        <AccountItem size="sm" chain={account.platform} />
+                                    ),
+                                )}
                             </div>
                             <div className="flex flex-row">
                                 <div>
