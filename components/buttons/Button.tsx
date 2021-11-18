@@ -1,6 +1,7 @@
-import { BUTTON_ICONS, COLORTOSTYLE } from './variables';
+import { BUTTON_ICONS, COLORS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { BiExpandAlt, BiPlus, BiMinus, BiCheck } from 'react-icons/bi';
+import { ReactNode } from 'react';
 
 interface ButtonInterface {
     color: string;
@@ -11,7 +12,9 @@ interface ButtonInterface {
     isFullRound?: boolean;
     isDisabled?: boolean;
     width?: string;
+    height?: string;
     onClick?: (param?: any) => void;
+    children?: ReactNode;
 }
 /**
  * This Button component supports 4 different kinds of buttons:
@@ -31,7 +34,7 @@ interface ButtonInterface {
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
 const Button = (props: ButtonInterface) => {
-    var { color, text, fontSize, icon, isOutlined, isDisabled, isFullRound, width, onClick } = props;
+    var { color, text, children, fontSize, icon, isOutlined, isDisabled, isFullRound, width, height, onClick } = props;
 
     var bgDefaultStyle = '';
     var bgAltStyle = '';
@@ -56,9 +59,11 @@ const Button = (props: ButtonInterface) => {
     }
 
     // default = simple button filled with specified color
-    const defaultClassName = `${bgDefaultStyle} ${hoverBgStyle} text-white font-medium ${
-        fontSize ? fontSize : 'text-xs'
-    } ${hoverTextStyle} py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} border ${borderStyle} ${hoverBorderStyle} rounded`;
+    const defaultClassName = `flex flex-row gap-x-2 justify-center items-center ${bgDefaultStyle} ${hoverBgStyle} ${
+        color == COLORS.metamask ? textStyle : 'text-white'
+    } font-medium ${fontSize ? fontSize : 'text-xs'} ${hoverTextStyle} py-sm ${
+        fontSize ? 'px-6' : 'px-3'
+    } ${width} ${height} border ${borderStyle} ${hoverBorderStyle} rounded`;
 
     const outlinedClassName = `${bgAltStyle} ${textStyle} text-opacity-70 font-medium ${
         fontSize ? fontSize : 'text-xs'
@@ -78,8 +83,8 @@ const Button = (props: ButtonInterface) => {
         className = outlinedClassName;
     }
 
-    if(isFullRound){
-        className = className.replace('rounded','rounded-full');
+    if (isFullRound) {
+        className = className.replace('rounded', 'rounded-full');
     }
 
     var iconSVG = null;
@@ -92,7 +97,7 @@ const Button = (props: ButtonInterface) => {
     return (
         <div>
             <button onClick={onClick} className={className}>
-                {props.text} {iconSVG}
+                {props.text} {iconSVG} {children}
             </button>
         </div>
     );

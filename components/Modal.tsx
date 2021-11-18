@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
 interface ModalProps {
-    theme: 'account' | 'nft' | 'gitcoin' | 'footprint';
+    theme: 'account' | 'nft' | 'gitcoin' | 'footprint' | 'primary';
     hidden: boolean;
     children: ReactNode;
     closeEvent: () => void;
@@ -24,7 +24,7 @@ export default function Modal({ theme, hidden, children, closeEvent }: ModalProp
             className={`absolute top-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 animated faster ${
                 hidden ? 'hidden' : ''
             } ${animation ? 'fadeIn' : 'fadeOut'} ${
-                theme === 'account' ? 'flex flex-row justify-center items-center' : ''
+                theme === 'account' || 'primary' ? 'flex flex-row justify-center items-center' : ''
             } `}
         >
             {theme !== 'account' && (
@@ -51,4 +51,5 @@ export const buttonTheme = new Map([
     ['nft', 'text-nft'],
     ['gitcoin', 'text-donation'],
     ['footprint', 'text-footprint'],
+    ['primary', 'text-primary'],
 ]);
