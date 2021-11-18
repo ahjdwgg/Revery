@@ -17,9 +17,9 @@ import { GeneralAssetWithTags } from '../../../common/types';
 
 const ProfilePage: NextPage = () => {
     const router = useRouter();
-    const addrOrName = (router.query.user as string) || '';
+    const [addrOrName, setAddrOrName] = useState('');
 
-    const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
+    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
@@ -53,13 +53,15 @@ const ProfilePage: NextPage = () => {
     };
 
     const init = async () => {
-        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const aon = (router.query.user as string) || '';
+        setAddrOrName(aon);
+        const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
         if (profile || (await RSS3.reconnect())) {
             // Profile
-            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || bio, ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
-            setUsername(profile?.name || '');
+            setUsername(profile?.name || username);
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
@@ -83,6 +85,7 @@ const ProfilePage: NextPage = () => {
             setDonationItems(await loadAssets('Gitcoin-Donation', 4));
             setFootprintItems(await loadAssets('POAP', 5));
         }
+        console.log(pageOwner);
     };
 
     const toEditProfile = async () => {
@@ -96,8 +99,10 @@ const ProfilePage: NextPage = () => {
     // Initialize
 
     useEffect(() => {
-        init();
-    }, []);
+        if (router.isReady) {
+            init();
+        }
+    }, [router.isReady]);
 
     return (
         <>

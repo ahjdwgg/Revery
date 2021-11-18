@@ -18,12 +18,12 @@ interface ModalDetail {
 
 const Account: NextPage = () => {
     const router = useRouter();
-    const addrOrName = (router.query.user as string) || '';
 
     const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
     const init = async () => {
+        const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         const apiUser = RSS3.getAPIUser();
         const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
@@ -38,8 +38,10 @@ const Account: NextPage = () => {
     };
 
     useEffect(() => {
-        init();
-    }, []);
+        if (router.isReady) {
+            init();
+        }
+    }, [router.isReady]);
 
     const [modal, setModal] = useState<ModalDetail>({
         hidden: true,

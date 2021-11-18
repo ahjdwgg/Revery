@@ -15,7 +15,6 @@ import { useRouter } from 'next/router';
 
 const Footprint: NextPage = () => {
     const router = useRouter();
-    const addrOrName = (router.query.user as string) || '';
 
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<POAPResponse | null>(null);
@@ -23,6 +22,7 @@ const Footprint: NextPage = () => {
     const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
     const init = async () => {
+        const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadFootprints();
         setListedFootprint(orderAsset);
@@ -36,8 +36,10 @@ const Footprint: NextPage = () => {
     };
 
     useEffect(() => {
-        init();
-    }, []);
+        if (router.isReady) {
+            init();
+        }
+    }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string) => {
         setModalHidden(false);

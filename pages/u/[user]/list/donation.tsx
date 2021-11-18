@@ -15,7 +15,6 @@ import { useRouter } from 'next/router';
 
 const Donation: NextPage = () => {
     const router = useRouter();
-    const addrOrName = (router.query.user as string) || '';
 
     const [modalHidden, setModalHidden] = useState(true);
     const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
@@ -23,6 +22,7 @@ const Donation: NextPage = () => {
     const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
     const init = async () => {
+        const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadDonations();
         setlistedDonation(orderAsset);
@@ -36,8 +36,10 @@ const Donation: NextPage = () => {
     };
 
     useEffect(() => {
-        init();
-    }, []);
+        if (router.isReady) {
+            init();
+        }
+    }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string) => {
         setModalHidden(false);
