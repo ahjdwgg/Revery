@@ -12,4 +12,6 @@
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+    overflow-y: scroll;
+    max-height: 10rem;
 }
