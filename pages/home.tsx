@@ -7,7 +7,7 @@ import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
 import RecommendSection from '../components/recommends/RecommendSection';
-import Modal from '../components/Modal';
+import Modal from '../components/modal/Modal';
 import WalletConnect from '../components/icons/WalletConnect';
 import Metamask from '../components/icons/Metamask';
 import RSS3, { EMPTY_RSS3_DP, IRSS3, RSS3DetailPersona } from '../common/rss3';

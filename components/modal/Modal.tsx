@@ -28,7 +28,7 @@ export default function Modal({ theme, hidden, children, closeEvent }: ModalProp
             } `}
         >
             {theme !== 'account' ? (
-                <div className="relative max-w-6xl px-2 py-12 mx-auto bg-white rounded">
+                <div className="relative w-full max-w-6xl px-2 py-12 mx-auto bg-white rounded">
                     <BiX
                         className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
                         onClick={modalClose}
