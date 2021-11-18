@@ -9,7 +9,7 @@ import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
 import Profile from '../components/profile/Profile';
-import RecommendSection from '../components/recommends/RecommendSection';
+import RecommendSection from '../components/users/RecommendSection';
 
 const ProfilePage: NextPage = () => {
     let slides = [

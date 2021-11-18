@@ -5,7 +5,7 @@ import { COLORS } from '../components/buttons/variables';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
-import RecommendSection from '../components/recommends/RecommendSection';
+import RecommendSection from '../components/users/RecommendSection';
 
 const Home: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

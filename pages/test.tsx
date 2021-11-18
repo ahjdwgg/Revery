@@ -8,7 +8,8 @@ import Profile from '../components/profile/Profile';
 import AssetCard from '../components/assets/AssetCard';
 import ImageHolder from '../components/ImageHolder';
 import FootprintCard from '../components/assets/FootprintCard';
-import RecommendSection from '../components/recommends/RecommendSection';
+import RecommendSection from '../components/users/RecommendSection';
+
 import Header from '../components/Header';
 import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
