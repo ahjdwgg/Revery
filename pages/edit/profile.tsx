@@ -13,37 +13,8 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import profile from '../profile';
 import Modal from '../../components/Modal';
-
-const AccountItems = [
-    {
-        type: 'evmp',
-        value: '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4',
-    },
-    {
-        type: 'default',
-        value: 'BSC',
-    },
-    {
-        type: 'default',
-        value: 'Ethereum',
-    },
-    {
-        type: 'default',
-        value: 'Ronin',
-    },
-    {
-        type: 'default',
-        value: 'Misskey',
-    },
-    {
-        type: 'default',
-        value: 'Twitter',
-    },
-    {
-        type: 'evmp',
-        value: '0x0000000000000000000000000000000000000000',
-    },
-];
+import utils from '../../common/utils';
+import { RSS3Account } from 'rss3-next/types/rss3';
 
 interface AccountItemInterface {
     type: string;
@@ -67,7 +38,7 @@ const Profile: NextPage = () => {
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
 
-    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>([]);
+    const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
 
     const [notice, setNotice] = useState('');
     const [isShowingNotice, setIsShowingNotice] = useState(false);
@@ -121,6 +92,21 @@ const Profile: NextPage = () => {
         console.log('Discard Clicked');
     };
 
+    const init = async () => {
+        const listed: RSS3Account[] = [];
+
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
+        const allAccounts = await loginUser.accounts.get();
+
+        for (const account of allAccounts) {
+            if (!account.tags?.includes(config.tags.hiddenTag)) {
+                listed.push(account);
+            }
+        }
+
+        setAccountItems(utils.sortByOrderTag(listed));
+    };
+
     const handleSave = async () => {
         const profile = {
             avatar: [avatarUrl],
@@ -145,6 +131,12 @@ const Profile: NextPage = () => {
             showNotice('Failed to save profile');
         }
     };
+
+    // Initialize
+
+    if (RSS3.getLoginUser().persona) {
+        init();
+    }
 
     return (
         <div>
@@ -207,13 +199,13 @@ const Profile: NextPage = () => {
                         <div className="flex flex-row justify-start w-full gap-x-5">
                             <label className="w-48 text-right">Accounts</label>
                             <div className="flex flex-row w-4/5 gap-x-2">
-                                {accountItems.map((item) => {
-                                    if (item.type == 'default') {
-                                        return <AccountItem size="sm" chain={item.value} />;
-                                    } else {
-                                        return <EVMpAccountItem size="sm" address={item.value} />;
-                                    }
-                                })}
+                                {accountItems.map((account) =>
+                                    account.platform === 'EVM+' ? (
+                                        <EVMpAccountItem size="sm" address={account.identity} />
+                                    ) : (
+                                        <AccountItem size="sm" chain={account.platform} />
+                                    ),
+                                )}
                             </div>
                             <div className="flex flex-row">
                                 <div>
