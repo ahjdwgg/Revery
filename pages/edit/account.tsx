@@ -11,7 +11,7 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
 import ContentProviders from '../../common/content-providers';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
 import Input from '../../components/inputs/Input';
 import { BiCheckCircle, BiInfoCircle, BiPaste } from 'react-icons/bi';
 
@@ -349,6 +349,7 @@ const Account = () => {
                                                             await addEVMpAccount();
                                                         }}
                                                     />
+                                                </div>
                                             </div>
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
                                                 {AdditionalNoSignAccounts.map((platform, i) => (
@@ -510,9 +511,15 @@ const Account = () => {
                     </footer>
                 </div>
             </div>
-            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
-                <div className="flex flex-col w-full h-full justify-between">
-                    <div className="flex flex-start justify-center">
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isShowingNotice}
+                closeEvent={() => setIsShowingNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
                     </div>
 
@@ -530,9 +537,15 @@ const Account = () => {
                     </div>
                 </div>
             </Modal>
-            <Modal theme="account" hidden={!isAddingNoSignAccount} closeEvent={() => setIsAddingNoSignAccount(false)}>
-                <div className="flex flex-col w-full h-full justify-between">
-                    <div className="flex flex-start justify-center">
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isAddingNoSignAccount}
+                closeEvent={() => setIsAddingNoSignAccount(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
                         <span className="text-primary">{noSignAccountProviderInfo.platform}</span>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -554,13 +567,13 @@ const Account = () => {
                             />
                         </div>
                         <div className="flex text-sm">
-                            <span className="text-primary text-lg mr-1">
+                            <span className="mr-1 text-lg text-primary">
                                 <BiInfoCircle />
                             </span>
                             <span>
                                 <span>You need to place your</span>
                                 <span
-                                    className="inline-flex mx-1 text-primary items-center cursor-pointer gap-1"
+                                    className="inline-flex items-center gap-1 mx-1 cursor-pointer text-primary"
                                     onClick={async () => {
                                         setIsCopyingName(true);
                                         await window.navigator.clipboard.writeText('...');

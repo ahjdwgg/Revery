@@ -23,7 +23,7 @@ const account: NextPage = () => {
     const init = async () => {
         // await RSS3.setPageOwner('RSS3 page owner address');
         const pageOwner = RSS3.getPageOwner();
-        const apiUser = RSS3.apiUser();
+        const apiUser = RSS3.getAPIUser();
         const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
         const listed: RSS3Account[] = [];
         for (const account of allAccounts) {
@@ -78,6 +78,8 @@ const account: NextPage = () => {
             <Modal
                 hidden={modal.hidden}
                 theme={'account'}
+                isCenter={true}
+                size="md"
                 closeEvent={() => {
                     setModal({
                         hidden: true,

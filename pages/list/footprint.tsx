@@ -23,7 +23,7 @@ const footprint: NextPage = () => {
     const init = async () => {
         // await RSS3.setPageOwner('RSS3 page owner address');
         const pageOwner = RSS3.getPageOwner();
-        const apiUser = RSS3.apiUser();
+        const apiUser = RSS3.getAPIUser();
         const generalAsset = await RSS3.getAssetProfile(pageOwner.address, 'POAP');
         const rss3Asset = await (apiUser.persona as IRSS3).assets.get(pageOwner.address);
         let orderAsset = await loadFootprints(rss3Asset, generalAsset?.assets);
@@ -116,7 +116,7 @@ const footprint: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'} isCenter={false} size="lg">
                 {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="footprint" />}
             </Modal>
         </>

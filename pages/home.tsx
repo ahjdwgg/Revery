@@ -134,8 +134,8 @@ const Home: NextPage = () => {
                     )}
                 </div>
             </Header>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'}>
-                <div className="flex flex-col gap-y-6 mx-14 my-8">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={true} size="sm">
+                <div className="flex flex-col my-8 gap-y-6 mx-14">
                     <Button
                         isOutlined={false}
                         color={COLORS.primary}

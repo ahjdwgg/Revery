@@ -12,7 +12,7 @@ import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import profile from '../profile';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
 
 const AccountItems = [
     {
@@ -261,8 +261,8 @@ const Profile: NextPage = () => {
                 </section>
             </div>
             <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
-                <div className="flex flex-col w-full h-full justify-between">
-                    <div className="flex flex-start justify-center">
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
                     </div>
 

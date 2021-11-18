@@ -24,7 +24,7 @@ const nft: NextPage = () => {
     const init = async () => {
         // await RSS3.setPageOwner('RSS3 page owner address');
         const pageOwner = RSS3.getPageOwner();
-        const apiUser = RSS3.apiUser();
+        const apiUser = RSS3.getAPIUser();
         const generalAsset = await RSS3.getAssetProfile(pageOwner.address, 'NFT');
         const rss3Asset = await (apiUser.persona as IRSS3).assets.get(pageOwner.address);
         let orderAsset = await loadNFTs(rss3Asset, generalAsset?.assets);
@@ -124,7 +124,7 @@ const nft: NextPage = () => {
                 </section>
             </div>
 
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'} isCenter={false} size="lg">
                 {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="nft" />}
             </Modal>
         </>
