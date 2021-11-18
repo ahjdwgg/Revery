@@ -10,27 +10,53 @@ import AccountItem from '../../components/accounts/AccountItem';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
+import ContentProviders from '../../common/content-providers';
+import Modal from '../../components/Modal';
+import Input from '../../components/inputs/Input';
+import { BiCheckCircle, BiInfoCircle, BiPaste } from 'react-icons/bi';
 
 interface RSS3AccountWithID {
     id: string; // For ReactSortable only
     account: RSS3Account;
 }
 
-const Account = async () => {
+interface SpecifyNoSignAccount {
+    platform: string;
+    accountStyle: string;
+    availableFields: string[];
+    prefix: string;
+    suffix: string;
+}
+
+const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
+
+const Account = () => {
     const ModeTypes = {
         default: 'default',
         add: 'add',
         delete: 'delete',
     };
 
-    const AdditionalNoSignAccounts = ['Misskey', 'Twitter'];
-
     const [listedAccounts, setListedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [unlistedAccounts, setUnlistedAccounts] = useState<RSS3AccountWithID[]>([]);
     const [mode, setMode] = useState(ModeTypes.default);
+    const [isLoading, setIsLoading] = useState(false);
+    const [notice, setNotice] = useState('');
+    const [isShowingNotice, setIsShowingNotice] = useState(false);
+    const [isAddingNoSignAccount, setIsAddingNoSignAccount] = useState(false);
+    const [isCopyingName, setIsCopyingName] = useState(false);
 
     const toAddAccounts: RSS3AccountWithID[] = [];
     const toDeleteAccounts: RSS3AccountWithID[] = [];
+
+    const [noSignAccountIdentity, setNoSignAccountIdentity] = useState('');
+    const [noSignAccountProviderInfo, setNoSignAccountProviderInfo] = useState<SpecifyNoSignAccount>({
+        platform: '',
+        accountStyle: '',
+        availableFields: [],
+        prefix: '',
+        suffix: '',
+    });
 
     const unlistAll = () => {
         setUnlistedAccounts(unlistedAccounts.concat(listedAccounts));
@@ -42,12 +68,17 @@ const Account = async () => {
         setUnlistedAccounts([]);
     };
 
+    const showNotice = (notice: string) => {
+        setNotice(notice);
+        setIsShowingNotice(true);
+    };
+
     const init = async () => {
         const listed: RSS3Account[] = [];
         const unlisted: RSS3Account[] = [];
 
         const pageOwner = RSS3.getPageOwner();
-        const apiUser = RSS3.apiUser();
+        const apiUser = RSS3.getAPIUser();
         const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
 
         for (const account of allAccounts) {
@@ -63,6 +94,10 @@ const Account = async () => {
     };
 
     const save = async () => {
+        setIsLoading(true);
+
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
+
         const newListed: RSS3Account[] = await utils.setOrderTag(listedAccounts.map((wrapper) => wrapper.account));
         const newUnlisted: RSS3Account[] = await utils.setHiddenTag(unlistedAccounts.map((wrapper) => wrapper.account));
 
@@ -73,22 +108,21 @@ const Account = async () => {
                     account.platform === wrapper.account.platform && account.identity === wrapper.account.identity,
             );
             if (showIndex === -1) {
-                await (RSS3.getLoginUser().persona as IRSS3).accounts.post(account);
+                await loginUser.accounts.post(account);
             } else {
                 toDeleteAccounts.splice(showIndex, 1);
             }
         }
         for (const { account } of toDeleteAccounts) {
-            await (RSS3.getLoginUser().persona as IRSS3).accounts.delete(account);
+            await loginUser.accounts.delete(account);
         }
 
         // Update tags
         await Promise.all(
             newListed.concat(newUnlisted).map((account) => {
-                (RSS3.getLoginUser().persona as IRSS3).accounts.patchTags(
+                loginUser.accounts.patchTags(
                     {
-                        platform: account.platform,
-                        identity: account.identity,
+                        ...account,
                     },
                     account.tags || [],
                 );
@@ -101,47 +135,79 @@ const Account = async () => {
 
         // Sync
         try {
-            await (RSS3.getLoginUser().persona as IRSS3).files.sync();
+            await loginUser.files.sync();
         } catch (e) {
             console.log(e);
         }
+
+        setIsLoading(false);
     };
 
-    const addEVMpAccount = async () => {
-        if (!(window as any).ethereum) {
-            // No metamask
-            // addAccountNotice = 'Adding an EVM+ account is now only supported with MetaMask browser extension enabled. (PC recommended)';
-            return;
-        }
-        const newAccount = await RSS3.addNewMetamaskAccount();
+    const checkDup = (newAccount: RSS3Account) => {
+        const equalDefaultAccount =
+            newAccount.platform === 'EVM+' && newAccount.identity === RSS3.getLoginUser().address;
+        const listedIndex = listedAccounts.findIndex(
+            ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        const unlistedIndex = unlistedAccounts.findIndex(
+            ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        return equalDefaultAccount || listedIndex !== -1 || unlistedIndex !== -1;
+    };
+
+    const addNewAccountCommon = (newAccount: RSS3Account) => {
         if (newAccount.identity) {
-            const equalDefaultAccount =
-                newAccount.platform === 'EVM+' && newAccount.identity === RSS3.getLoginUser().address;
-            const listedIndex = listedAccounts.findIndex(
-                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
-            const unlistedIndex = unlistedAccounts.findIndex(
-                ({ account }) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
-            if (equalDefaultAccount || listedIndex !== -1 || unlistedIndex !== -1) {
-                // addAccountNotice = Account already exist
-            } else {
+            if (!checkDup(newAccount)) {
                 const newAccountWithId = {
                     id: '',
                     account: newAccount,
                 };
                 setListedAccounts(listedAccounts.concat([newAccountWithId]));
                 toAddAccounts.push(newAccountWithId);
+                setMode('default');
+            } else {
+                showNotice('Account already exist');
             }
         } else {
-            // addAccountNotice = newAccount.signature
+            showNotice(newAccount.signature || 'No identity found.');
         }
+    };
+
+    const addEVMpAccount = async () => {
+        if (!(window as any).ethereum) {
+            // No metamask
+            showNotice(
+                'Adding an EVM+ account is now only supported with MetaMask browser extension enabled. (PC recommended)',
+            );
+            return;
+        }
+        const newAccount = await RSS3.addNewMetamaskAccount();
+        addNewAccountCommon(newAccount);
+    };
+
+    const addNoSignAccount = (platform: string) => {
+        setNoSignAccountProviderInfo({
+            ...ContentProviders[platform],
+            platform,
+        });
+        setNoSignAccountIdentity('');
+        setIsAddingNoSignAccount(true);
+    };
+
+    const addNoSignAccountConfirm = () => {
+        const newAccount: RSS3Account = {
+            ...noSignAccountProviderInfo,
+            identity: noSignAccountIdentity,
+            signature: '',
+        };
+        setIsAddingNoSignAccount(false);
+        addNewAccountCommon(newAccount);
     };
 
     // Initialize
 
     if (RSS3.getLoginUser().persona) {
-        await init();
+        init();
     }
 
     return (
@@ -276,8 +342,13 @@ const Account = async () => {
                                         <div className="flex flex-col flex-shrink-0 w-full gap-6 content-middle">
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
                                                 <div className="relative flex items-center justify-center m-auto cursor-pointer">
-                                                    <EVMpAccountItem size="lg" outline="account" />
-                                                </div>
+                                                    <EVMpAccountItem
+                                                        size="lg"
+                                                        outline="account"
+                                                        onClick={async () => {
+                                                            await addEVMpAccount();
+                                                        }}
+                                                    />
                                             </div>
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
                                                 {AdditionalNoSignAccounts.map((platform, i) => (
@@ -285,7 +356,14 @@ const Account = async () => {
                                                         className="relative flex items-center justify-center m-auto cursor-pointer"
                                                         key={platform}
                                                     >
-                                                        <AccountItem size="lg" chain={platform} outline="account" />
+                                                        <AccountItem
+                                                            size="lg"
+                                                            chain={platform}
+                                                            outline="account"
+                                                            onClick={() => {
+                                                                addNoSignAccount(platform);
+                                                            }}
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>
@@ -409,19 +487,119 @@ const Account = async () => {
                                 width="w-48"
                                 // onClick={() => handleDiscard()}
                             />
-                            <Button
-                                isOutlined={false}
-                                color="primary"
-                                text="Save"
-                                fontSize="text-base"
-                                width="w-48"
-                                // isDisabled={saveBtnDisabled}
-                                onClick={() => save()}
-                            />
+                            {isLoading ? (
+                                <Button
+                                    isOutlined={false}
+                                    color="primary"
+                                    icon="check"
+                                    fontSize="text-base"
+                                    width="w-48"
+                                    isDisabled={true}
+                                />
+                            ) : (
+                                <Button
+                                    isOutlined={false}
+                                    color="primary"
+                                    text="Save"
+                                    fontSize="text-base"
+                                    width="w-48"
+                                    onClick={() => save()}
+                                />
+                            )}
                         </div>
                     </footer>
                 </div>
             </div>
+            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
+                <div className="flex flex-col w-full h-full justify-between">
+                    <div className="flex flex-start justify-center">
+                        <span className="mx-2 text-primary">Oops</span>
+                    </div>
+
+                    <div className="flex justify-center">{notice}</div>
+
+                    <div className="flex justify-center">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="OK"
+                            fontSize="text-base"
+                            width="w-48"
+                            onClick={() => setIsShowingNotice(false)}
+                        />
+                    </div>
+                </div>
+            </Modal>
+            <Modal theme="account" hidden={!isAddingNoSignAccount} closeEvent={() => setIsAddingNoSignAccount(false)}>
+                <div className="flex flex-col w-full h-full justify-between">
+                    <div className="flex flex-start justify-center">
+                        <span className="text-primary">{noSignAccountProviderInfo.platform}</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex">
+                            Input
+                            <span className="mx-2 text-primary">{noSignAccountProviderInfo.platform}</span>
+                            account:
+                        </div>
+                        <div className="flex">
+                            <Input
+                                placeholder={noSignAccountProviderInfo.accountStyle}
+                                isSingleLine={true}
+                                prefix={noSignAccountProviderInfo.prefix}
+                                suffix={noSignAccountProviderInfo.suffix}
+                                value={noSignAccountIdentity}
+                                onChange={(event) => {
+                                    setNoSignAccountIdentity(event.target.value);
+                                }}
+                            />
+                        </div>
+                        <div className="flex text-sm">
+                            <span className="text-primary text-lg mr-1">
+                                <BiInfoCircle />
+                            </span>
+                            <span>
+                                <span>You need to place your</span>
+                                <span
+                                    className="inline-flex mx-1 text-primary items-center cursor-pointer gap-1"
+                                    onClick={async () => {
+                                        setIsCopyingName(true);
+                                        await window.navigator.clipboard.writeText('...');
+                                        setTimeout(() => setIsCopyingName(false), 1500);
+                                    }}
+                                >
+                                    BioLink
+                                    {isCopyingName ? <BiCheckCircle /> : <BiPaste />}
+                                </span>
+                                <span>into one of :</span>
+                                <span className="ml-1">{noSignAccountProviderInfo.availableFields.join(', ')}</span>.
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex justify-center gap-4">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="Discard"
+                            fontSize="text-base"
+                            width="w-32"
+                            onClick={() => {
+                                setNoSignAccountIdentity('');
+                                setIsAddingNoSignAccount(false);
+                            }}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color="primary"
+                            text="Confirm"
+                            fontSize="text-base"
+                            width="w-32"
+                            onClick={() => {
+                                addNoSignAccountConfirm();
+                            }}
+                        />
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

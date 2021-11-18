@@ -7,46 +7,57 @@ import { GeneralAssetWithTags } from '../../common/types';
 import { ReactSortable } from 'react-sortablejs';
 import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
+import RSS3, { IRSS3 } from '../../common/rss3';
+import utils from '../../common/utils';
 
 const Donation = () => {
-    const [listedDonations, setListedDonations] = useState<GeneralAssetWithTags[]>([
-        {
-            platform: 'EVM+',
-            identity: '0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA',
-            type: 'Gitcoin-Donation',
-            id: '0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C',
-            info: {
-                image_preview_url: 'https://c.gitcoin.co/grants/546622657b597ce151666ed2e2ecbd92/rss3_square_blue.png',
-                title: 'RSS3 - RSS with human curation',
-                total_contribs: 1,
-                token_contribs: [
-                    {
-                        token: 'ETH',
-                        amount: '0.001',
-                    },
-                ],
-            },
-        },
-        {
-            platform: 'EVM+',
-            identity: '0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA',
-            type: 'Gitcoin-Donation',
-            id: '0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6',
-            info: {
-                image_preview_url: 'https://c.gitcoin.co/grants/adb075fd0039ec8c8dc9d468638744b2/1500x500-1.jpg',
-                title: 'Gitcoin Grants Official Matching Pool Fund',
-                total_contribs: 1,
-                token_contribs: [
-                    {
-                        token: 'ETH',
-                        amount: '0.00005',
-                    },
-                ],
-            },
-        },
-    ]);
+    const [listedAssets, setListedAssets] = useState<GeneralAssetWithTags[]>([]);
+    const [unlistedAssets, setUnlistedAssets] = useState<GeneralAssetWithTags[]>([]);
 
-    const [unlistedDonations, setUnlistedDonations] = useState<GeneralAssetWithTags[]>([]);
+    const unlistAll = () => {
+        setUnlistedAssets(unlistedAssets.concat(listedAssets));
+        setListedAssets([]);
+    };
+
+    const listAll = () => {
+        setListedAssets(listedAssets.concat(unlistedAssets));
+        setUnlistedAssets([]);
+    };
+
+    const init = async () => {
+        const { listed, unlisted } = await utils.initAssets('Gitcoin-Donation');
+        setListedAssets(listed);
+        setUnlistedAssets(unlisted);
+    };
+
+    const save = async () => {
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
+
+        // Update tags
+        await Promise.all(
+            listedAssets.concat(unlistedAssets).map((asset) => {
+                loginUser.assets.patchTags(
+                    {
+                        ...asset,
+                    },
+                    asset.tags || [],
+                );
+            }),
+        );
+
+        // Sync
+        try {
+            await loginUser.files.sync();
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    // Initialize
+
+    if (RSS3.getLoginUser().persona) {
+        init();
+    }
 
     return (
         <div style={{ height: '100vh' }}>
@@ -71,19 +82,21 @@ const Donation = () => {
                                         text: 'Unlist All',
                                         isOutlined: true,
                                         isDisabled: false,
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            unlistAll();
+                                        },
                                     },
                                 ]}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
-                                    list={listedDonations}
-                                    setList={setListedDonations}
+                                    list={listedAssets}
+                                    setList={setListedAssets}
                                     group="asset"
                                     animation={200}
                                     delay={2}
                                 >
-                                    {listedDonations.map((asset, index) => (
+                                    {listedAssets.map((asset, index) => (
                                         <div
                                             key={asset.id}
                                             className="flex items-center justify-center relative m-auto cursor-move"
@@ -110,20 +123,22 @@ const Donation = () => {
                                         text: 'List All',
                                         isOutlined: true,
                                         isDisabled: false,
-                                        onClick: () => {},
+                                        onClick: () => {
+                                            listAll();
+                                        },
                                     },
                                 ]}
                                 isSecondaryBG={true}
                             >
                                 <ReactSortable
                                     className="w-full content-start flex-shrink-0 grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-items-center"
-                                    list={unlistedDonations}
-                                    setList={setUnlistedDonations}
+                                    list={unlistedAssets}
+                                    setList={setUnlistedAssets}
                                     group="asset"
                                     animation={200}
                                     delay={2}
                                 >
-                                    {unlistedDonations.map((asset, index) => (
+                                    {unlistedAssets.map((asset, index) => (
                                         <div
                                             key={asset.id}
                                             className="flex items-center justify-center relative m-auto cursor-move"
@@ -162,7 +177,7 @@ const Donation = () => {
                                 fontSize="text-base"
                                 width="w-48"
                                 // isDisabled={saveBtnDisabled}
-                                // onClick={() => handleSave()}
+                                onClick={() => save()}
                             />
                         </div>
                     </footer>

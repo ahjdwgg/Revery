@@ -9,6 +9,10 @@ import LinkButton from '../../components/buttons/LinkButton';
 import { COLORS } from '../../components/buttons/variables';
 import Input from '../../components/inputs/Input';
 import ImageHolder from '../../components/ImageHolder';
+import config from '../../common/config';
+import RSS3, { IRSS3 } from '../../common/rss3';
+import profile from '../profile';
+import Modal from '../../components/Modal';
 
 const AccountItems = [
     {
@@ -56,15 +60,28 @@ interface InputStates {
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Profile: NextPage = () => {
-    const [avatarUrl, setAvatarUrl] = useState('https://i.imgur.com/GdWEt4z.jpg');
-    const [link, setLink] = useState<string>('Fendi.github.io'); // this is a hard-coded placeholder link
+    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
+    const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
-    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>(AccountItems); // this is a hard-coded placeholder array
+
+    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>([]);
+
+    const [notice, setNotice] = useState('');
+    const [isShowingNotice, setIsShowingNotice] = useState(false);
 
     const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+
+    const showNotice = (notice: string) => {
+        setNotice(notice);
+        setIsShowingNotice(true);
+    };
+
+    const setOversizeNotice = (field: string) => {
+        showNotice(`${field} cannot be longer than ${config.fieldMaxLength} chars`);
+    };
 
     const handleChangeAvatar = () => {
         console.log('Change Avatar');
@@ -104,12 +121,29 @@ const Profile: NextPage = () => {
         console.log('Discard Clicked');
     };
 
-    const handleSave = () => {
-        console.log({
+    const handleSave = async () => {
+        const profile = {
+            avatar: [avatarUrl],
             username: username,
-            bio: bio,
-            website: website,
-        });
+            bio: bio + (website ? `<SITE#${website}>` : ''),
+        };
+
+        const loginUser = RSS3.getLoginUser().persona as IRSS3;
+        if (profile.username.length > config.fieldMaxLength) {
+            setOversizeNotice('Name');
+            return;
+        }
+        if (profile.bio.length) {
+            setOversizeNotice('Bio');
+            return;
+        }
+
+        try {
+            await loginUser.profile.patch(profile);
+        } catch (e) {
+            console.log(e);
+            showNotice('Failed to save profile');
+        }
     };
 
     return (
@@ -226,6 +260,26 @@ const Profile: NextPage = () => {
                     </section>
                 </section>
             </div>
+            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
+                <div className="flex flex-col w-full h-full justify-between">
+                    <div className="flex flex-start justify-center">
+                        <span className="mx-2 text-primary">Oops</span>
+                    </div>
+
+                    <div className="flex justify-center">{notice}</div>
+
+                    <div className="flex justify-center">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="OK"
+                            fontSize="text-base"
+                            width="w-48"
+                            onClick={() => setIsShowingNotice(false)}
+                        />
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
