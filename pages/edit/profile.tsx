@@ -11,21 +11,14 @@ import Input from '../../components/inputs/Input';
 import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
-import profile from '../profile';
 import utils from '../../common/utils';
 import { RSS3Account } from 'rss3-next/types/rss3';
 import Modal from '../../components/modal/Modal';
+import { useRouter } from 'next/router';
 
 interface AccountItemInterface {
     type: string;
     value: string;
-}
-
-interface InputStates {
-    username: string;
-    website: string;
-    bio: string;
-    accountItems: AccountItemInterface[];
 }
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
@@ -43,20 +36,22 @@ const Profile: NextPage = () => {
     const [notice, setNotice] = useState('');
     const [isShowingNotice, setIsShowingNotice] = useState(false);
 
+    const [isEdited, setIsEdited] = useState(false);
     const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+
+    const router = useRouter();
 
     const showNotice = (notice: string) => {
         setNotice(notice);
         setIsShowingNotice(true);
     };
 
-    const setOversizeNotice = (field: string) => {
+    const showOversizeNotice = (field: string) => {
         showNotice(`${field} cannot be longer than ${config.fieldMaxLength} chars`);
     };
 
     const handleChangeAvatar = () => {
-        console.log('Change Avatar');
-        // setAvatarUrl(value)
+        showNotice('You can edit your Avatar at rss3.bio');
     };
 
     const handleLinkOnClick = () => {
@@ -66,14 +61,17 @@ const Profile: NextPage = () => {
 
     const handleChangeWebsite = (event: InputEventType) => {
         setWebsite(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeBio = (event: InputEventType) => {
         setBio(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeUsername = (event: InputEventType) => {
         setUsername(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeAccountItems = () => {
@@ -81,20 +79,35 @@ const Profile: NextPage = () => {
     };
 
     const handleEdit = () => {
-        console.log('Edit Clicked');
+        showNotice('You can edit your Accounts at rss3.bio');
     };
 
     const handleExpand = () => {
-        console.log('Expand Clicked');
+        if (isEdited) {
+            showNotice('Profile changed, you may need to save before view your accounts. For safety concern.');
+        } else {
+            router.push('/list/account');
+        }
     };
 
     const handleDiscard = () => {
         console.log('Discard Clicked');
+        setIsEdited(false);
+        router.back();
     };
 
     const init = async () => {
         const { listed } = await utils.initAccounts();
         setAccountItems(listed);
+
+        const profile = RSS3.getPageOwner().profile;
+
+        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+
+        setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
+        setUsername(profile?.name || '');
+        setBio(extracted);
+        setWebsite(fieldsMatch?.['SITE'] || '');
     };
 
     const handleSave = async () => {
@@ -106,16 +119,17 @@ const Profile: NextPage = () => {
 
         const loginUser = RSS3.getLoginUser().persona as IRSS3;
         if (profile.username.length > config.fieldMaxLength) {
-            setOversizeNotice('Name');
+            showOversizeNotice('Name');
             return;
         }
-        if (profile.bio.length) {
-            setOversizeNotice('Bio');
+        if (profile.bio.length > config.fieldMaxLength) {
+            showOversizeNotice('Bio');
             return;
         }
 
         try {
             await loginUser.profile.patch(profile);
+            setIsEdited(false);
         } catch (e) {
             console.log(e);
             showNotice('Failed to save profile');
@@ -197,27 +211,23 @@ const Profile: NextPage = () => {
                                     ),
                                 )}
                             </div>
-                            <div className="flex flex-row">
-                                <div>
-                                    <Button
-                                        key="edit"
-                                        color={COLORS.primary}
-                                        text="Edit"
-                                        onClick={handleEdit}
-                                        isOutlined={true}
-                                        isDisabled={false}
-                                    />
-                                </div>
-                                <div className="ml-2">
-                                    <Button
-                                        key="expand"
-                                        color={COLORS.primary}
-                                        icon="expand"
-                                        onClick={handleExpand}
-                                        isOutlined={true}
-                                        isDisabled={false}
-                                    />
-                                </div>
+                            <div className="flex flex-row gap-2">
+                                <Button
+                                    key="edit"
+                                    color={COLORS.primary}
+                                    text="Edit"
+                                    onClick={handleEdit}
+                                    isOutlined={true}
+                                    isDisabled={false}
+                                />
+                                <Button
+                                    key="expand"
+                                    color={COLORS.primary}
+                                    icon="expand"
+                                    onClick={handleExpand}
+                                    isOutlined={true}
+                                    isDisabled={false}
+                                />
                             </div>
                         </div>
                         <div className="flex flex-row justify-center pl-40 gap-x-3">

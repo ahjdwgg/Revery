@@ -41,7 +41,7 @@ const AssetCard = ({
                 <div className={colorClasses[color].textColorClass}>
                     <span className="opacity-70 font-semibold text-sm">{title}</span>
                 </div>
-                <div className="flex flex-row gap-2 items-end">
+                <div className="flex flex-row gap-2">
                     {headerButtons?.map((btn, i) => (
                         <Button
                             key={i}

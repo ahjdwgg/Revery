@@ -142,6 +142,27 @@ async function initAccounts() {
     };
 }
 
+function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
+    const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
+    const fields = raw.match(fieldPattern) || [];
+    const extracted = raw.replace(fieldPattern, '');
+    const fieldsMatch: {
+        [key: string]: string;
+    } = {};
+
+    for (const field of fields) {
+        const splits = fieldPattern.exec(field) || [];
+        if (fieldsEmbed.includes(splits[1])) {
+            fieldsMatch[splits[1]] = splits[2];
+        }
+    }
+
+    return {
+        extracted,
+        fieldsMatch,
+    };
+}
+
 const utils = {
     sortByOrderTag,
     setOrderTag,
@@ -149,6 +170,7 @@ const utils = {
     mergeAssetsTags,
     initAssets,
     initAccounts,
+    extractEmbedFields,
 };
 
 export default utils;
