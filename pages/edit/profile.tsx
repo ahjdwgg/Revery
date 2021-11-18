@@ -157,7 +157,8 @@ const Profile: NextPage = () => {
     };
 
     const toListPage = async (type: string) => {
-        await router.push(`/list/${type}`);
+        const addrOrName = loginUser.name || loginUser.address;
+        await router.push(`/u/${addrOrName}/list/${type}`);
     };
 
     const back = () => {
