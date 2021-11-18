@@ -13,7 +13,7 @@ const ImageHolder = ({ imageUrl, title, isFullRound, size }: ImageProps) => {
 
     return (
         <div className={`flex justify-around relative ${roundedStyleString}`} style={{ width: size, height: size }}>
-            <Image className={roundedStyleString} src={imageUrl} alt={title} layout="fill" objectFit="cover" />
+            <img className={`object-cover ${roundedStyleString}`} src={imageUrl} alt={title} />
         </div>
     );
 };

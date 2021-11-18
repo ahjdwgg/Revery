@@ -94,7 +94,7 @@ interface AssetsList {
     unlisted: GeneralAssetWithTags[];
 }
 
-async function initAssets(type: string) {
+async function initAssets(type: string, limit?: number) {
     const listed: GeneralAssetWithTags[] = [];
     const unlisted: GeneralAssetWithTags[] = [];
 
@@ -115,8 +115,8 @@ async function initAssets(type: string) {
     }
 
     return {
-        listed: utils.sortByOrderTag(listed),
-        unlisted,
+        listed: utils.sortByOrderTag(listed).slice(0, limit),
+        unlisted: unlisted.slice(0, limit),
     };
 }
 

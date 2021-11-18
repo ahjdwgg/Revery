@@ -5,10 +5,12 @@ import axios from 'axios';
 import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
+import rns from './rns';
 
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
     address: '',
+    name: '',
     profile: null,
     followers: [],
     followings: [],
@@ -29,6 +31,7 @@ export interface IAssetProfile {
 export interface RSS3DetailPersona {
     persona: RSS3 | null;
     address: string;
+    name: string;
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
@@ -223,6 +226,12 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
             await user.persona.files.sync();
         }
     }
+    if (user.name && !user.address) {
+        user.address = await rns.name2Addr(user.name);
+    }
+    if (user.address && !user.name) {
+        user.name = await rns.addr2Name(user.address);
+    }
     const RSS3APIPersona = apiPersona();
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.get(user.address, 'following');
@@ -252,16 +261,6 @@ async function disconnect() {
     setStorage(KeyNames.ConnectAddress, '');
 }
 
-async function visitor(): Promise<RSS3> {
-    if (RSS3LoginUser.persona) {
-        return RSS3LoginUser.persona;
-    } else {
-        return new RSS3({
-            endpoint: config.hubEndpoint,
-        });
-    }
-}
-
 export default {
     connect: {
         walletConnect: async () => {
@@ -285,9 +284,14 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
-    setPageOwner: async (address: string) => {
-        RSS3PageOwner.address = address;
+    setPageOwner: async (addrOrName: string) => {
+        if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
+            RSS3PageOwner.address = addrOrName;
+        } else {
+            RSS3PageOwner.name = addrOrName;
+        }
         await initUser(RSS3PageOwner);
+        return RSS3PageOwner;
     },
     getPageOwner: () => {
         return RSS3PageOwner;

@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
-import Image from 'next/image';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import AccountItem from '../../components/accounts/AccountItem';
 import EVMpAccountItem from '../../components/accounts/EVMpAccountItem';
 import Header from '../../components/Header';
@@ -24,7 +23,9 @@ interface AccountItemInterface {
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Profile: NextPage = () => {
-    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
+    const router = useRouter();
+
+    const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
@@ -38,10 +39,9 @@ const Profile: NextPage = () => {
 
     const [isEdited, setIsEdited] = useState(false);
     const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+    const [isProfileSaved, setIsProfileSaved] = useState<boolean>(false);
 
-    const router = useRouter();
-
-    const showNotice = (notice: string) => {
+    const showNotice = (notice: string, cb?: () => void) => {
         setNotice(notice);
         setIsShowingNotice(true);
     };
@@ -79,83 +79,105 @@ const Profile: NextPage = () => {
     };
 
     const handleEdit = () => {
-        showNotice('You can edit your Accounts at rss3.bio');
+        showNotice('You can change your Accounts at rss3.bio');
     };
 
     const handleExpand = () => {
         if (isEdited) {
             showNotice('Profile changed, you may need to save before view your accounts. For safety concern.');
         } else {
-            router.push('/list/account');
+            toListPage('account');
         }
     };
 
     const handleDiscard = () => {
-        console.log('Discard Clicked');
         setIsEdited(false);
-        router.back();
+        back();
     };
 
     const init = async () => {
-        const { listed } = await utils.initAccounts();
-        setAccountItems(listed);
+        const loginUser = RSS3.getLoginUser();
+        const profile = loginUser.profile;
+        if (profile || (await RSS3.reconnect())) {
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
 
-        const profile = RSS3.getPageOwner().profile;
+            setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
+            setUsername(profile?.name || '');
+            setBio(extracted);
+            setWebsite(fieldsMatch?.['SITE'] || '');
+            setLink(loginUser.name);
 
-        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
-
-        setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
-        setUsername(profile?.name || '');
-        setBio(extracted);
-        setWebsite(fieldsMatch?.['SITE'] || '');
+            await RSS3.setPageOwner(loginUser.address);
+            const { listed } = await utils.initAccounts();
+            setAccountItems(
+                [
+                    {
+                        platform: 'EVM+',
+                        identity: RSS3.getLoginUser().address,
+                    },
+                ].concat(listed),
+            );
+        }
     };
 
     const handleSave = async () => {
-        const profile = {
-            avatar: [avatarUrl],
-            username: username,
-            bio: bio + (website ? `<SITE#${website}>` : ''),
-        };
+        if (isEdited) {
+            const profile = {
+                avatar: [avatarUrl],
+                name: username,
+                bio: bio + (website ? `<SITE#${website}>` : ''),
+            };
 
-        const loginUser = RSS3.getLoginUser().persona as IRSS3;
-        if (profile.username.length > config.fieldMaxLength) {
-            showOversizeNotice('Name');
-            return;
-        }
-        if (profile.bio.length > config.fieldMaxLength) {
-            showOversizeNotice('Bio');
-            return;
-        }
+            const loginUser = RSS3.getLoginUser().persona as IRSS3;
+            if (profile.name.length > config.fieldMaxLength) {
+                showOversizeNotice('Name');
+                return;
+            }
+            if (profile.bio.length > config.fieldMaxLength) {
+                showOversizeNotice('Bio');
+                return;
+            }
 
-        try {
-            await loginUser.profile.patch(profile);
-            setIsEdited(false);
-        } catch (e) {
-            console.log(e);
-            showNotice('Failed to save profile');
+            try {
+                await loginUser.profile.patch(profile);
+                await loginUser.files.sync();
+                setIsEdited(false);
+                setIsProfileSaved(true);
+            } catch (e) {
+                console.log(e);
+                showNotice('Failed to save profile');
+            }
+        } else {
+            showNotice('Nothing changed.');
         }
+    };
+
+    const handleSaveSuccessfully = () => {
+        back();
+    };
+
+    const toListPage = async (type: string) => {
+        await router.push(`/list/${type}`);
+    };
+
+    const back = () => {
+        router.back();
     };
 
     // Initialize
 
-    if (RSS3.getLoginUser().persona) {
+    useEffect(() => {
         init();
-    }
+    }, []);
 
     return (
         <div>
-            <Header>
-                <div className="flex flex-row justify-end w-full gap-x-8">
-                    <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                    <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={28} />
-                </div>
-                <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-            </Header>
+            <Header />
             <div className="flex flex-col max-w-5xl pt-12 m-auto md:pt-16">
                 <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Profile</h1>
                 <section className="flex flex-col items-center w-full pt-10">
                     <div className="flex flex-row items-end justify-start w-4/5 pb-5 pl-14 gap-x-3">
-                        <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
+                        <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
                         <div className="flex flex-col gap-y-5">
                             <Button
                                 text={'Change Avatar'}
@@ -190,6 +212,7 @@ const Profile: NextPage = () => {
                             <Input
                                 placeholder={'Personal Website'}
                                 isSingleLine={true}
+                                value={website}
                                 prefix={'https://'}
                                 onChange={handleChangeWebsite}
                             />
@@ -197,7 +220,7 @@ const Profile: NextPage = () => {
 
                         <div className="flex flex-row justify-end w-full gap-x-5">
                             <label className="w-48 pt-2 text-right">Bio</label>
-                            <Input placeholder={'Bio'} isSingleLine={false} onChange={handleChangeBio} />
+                            <Input placeholder={'Bio'} isSingleLine={false} value={bio} onChange={handleChangeBio} />
                         </div>
 
                         <div className="flex flex-row justify-start w-full gap-x-5">
@@ -205,9 +228,17 @@ const Profile: NextPage = () => {
                             <div className="flex flex-row w-4/5 gap-x-2">
                                 {accountItems.map((account) =>
                                     account.platform === 'EVM+' ? (
-                                        <EVMpAccountItem size="sm" address={account.identity} />
+                                        <EVMpAccountItem
+                                            key={account.platform + account.identity}
+                                            size="sm"
+                                            address={account.identity}
+                                        />
                                     ) : (
-                                        <AccountItem size="sm" chain={account.platform} />
+                                        <AccountItem
+                                            key={account.platform + account.identity}
+                                            size="sm"
+                                            chain={account.platform}
+                                        />
                                     ),
                                 )}
                             </div>
@@ -274,6 +305,32 @@ const Profile: NextPage = () => {
                             fontSize="text-base"
                             width="w-48"
                             onClick={() => setIsShowingNotice(false)}
+                        />
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isProfileSaved}
+                closeEvent={() => setIsShowingNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className="mx-2 text-primary">Succeed</span>
+                    </div>
+
+                    <div className="flex justify-center">Profile saved successfully.</div>
+
+                    <div className="flex justify-center">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="OK"
+                            fontSize="text-base"
+                            width="w-48"
+                            onClick={handleSaveSuccessfully}
                         />
                     </div>
                 </div>
