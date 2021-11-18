@@ -12,9 +12,9 @@ import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import profile from '../profile';
-import Modal from '../../components/Modal';
 import utils from '../../common/utils';
 import { RSS3Account } from 'rss3-next/types/rss3';
+import Modal from '../../components/modal/Modal';
 
 interface AccountItemInterface {
     type: string;
@@ -242,9 +242,15 @@ const Profile: NextPage = () => {
                     </section>
                 </section>
             </div>
-            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
-                <div className="flex flex-col w-full h-full justify-between">
-                    <div className="flex flex-start justify-center">
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isShowingNotice}
+                closeEvent={() => setIsShowingNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
                     </div>
 

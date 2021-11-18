@@ -1,8 +1,11 @@
+import { POAPResponse } from '../../common/types';
 import FootprintDetail from './FootprintDetail';
 
-export default function SingleFootprint() {
+export default function SingleFootprint(props: { POAPInfo: POAPResponse }) {
+    let { POAPInfo } = props;
+
     const ImgStyle = {
-        backgroundImage: `url(https://i.imgur.com/GdWEt4z.jpg)`,
+        backgroundImage: `url(${POAPInfo.data.event.image_url})`,
     };
 
     return (
@@ -11,7 +14,7 @@ export default function SingleFootprint() {
                 className="w-full bg-center bg-no-repeat bg-cover rounded-full aspect-w-1 aspect-h-1"
                 style={ImgStyle}
             />
-            <FootprintDetail />
+            <FootprintDetail detail={POAPInfo.data} />
         </div>
     );
 }

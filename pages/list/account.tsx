@@ -1,23 +1,48 @@
 import { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { RSS3Account } from 'rss3-next/types/rss3';
 import AccountCard from '../../components/accounts/AccountCard';
 import Button from '../../components/buttons/Button';
 import { COLORS } from '../../components/buttons/variables';
 import SingleAccount from '../../components/details/SingleAccount';
 import Header from '../../components/Header';
 import ImageHolder from '../../components/ImageHolder';
-import Modal from '../../components/Modal';
+import Modal from '../../components/modal/Modal';
+import RSS3, { IRSS3, RSS3DetailPersona } from '../../common/rss3';
+import config from '../../common/config';
+
+interface ModalDetail {
+    hidden: boolean;
+    account?: RSS3Account;
+}
 
 const account: NextPage = () => {
-    const [modalHidden, setModalHidden] = useState(true);
+    const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([]);
+    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
 
-    const openModal = () => {
-        setModalHidden(false);
+    const init = async () => {
+        // await RSS3.setPageOwner('RSS3 page owner address');
+        const pageOwner = RSS3.getPageOwner();
+        const apiUser = RSS3.getAPIUser();
+        const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
+        const listed: RSS3Account[] = [];
+        for (const account of allAccounts) {
+            if (!account.tags?.includes(config.tags.hiddenTag)) {
+                listed.push(account);
+            }
+        }
+        setListedAccounts(listed);
+        setPersona(pageOwner);
     };
 
-    const closeModal = () => {
-        setModalHidden(true);
-    };
+    useEffect(() => {
+        init();
+    }, []);
+
+    const [modal, setModal] = useState<ModalDetail>({
+        hidden: true,
+        account: undefined,
+    });
 
     return (
         <>
@@ -29,24 +54,39 @@ const account: NextPage = () => {
             </Header>
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <h1 className="text-lg font-bold text-left text-account">Joshua's NFTs</h1>
+                    <h1 className="text-lg font-bold text-left text-account">
+                        {persona ? persona.profile?.name + "'s Accounts" : 'Accounts'}
+                    </h1>
                     <Button isOutlined={true} color={COLORS.account} text={'Edit'} />
                 </section>
-                <section className="grid items-center justify-start grid-cols-2 gap-4 py-4 gap-x-12">
-                    <AccountCard
-                        chain="EVM+"
-                        address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4"
-                        clickEvent={openModal}
-                    />
-                    <AccountCard
-                        chain="EVM+"
-                        address="0x0000000000000000000000000000000000000000"
-                        clickEvent={openModal}
-                    />
+                <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">
+                    {listedAccounts.map((account, index) => (
+                        <AccountCard
+                            key={index}
+                            chain={account.platform}
+                            address={account.identity}
+                            clickEvent={() => {
+                                setModal({
+                                    hidden: false,
+                                    account: account,
+                                });
+                            }}
+                        />
+                    ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'account'}>
-                <SingleAccount chain="EVM+" address="0x0000000000000000000000000000000000000000" />
+            <Modal
+                hidden={modal.hidden}
+                theme={'account'}
+                isCenter={true}
+                size="md"
+                closeEvent={() => {
+                    setModal({
+                        hidden: true,
+                    });
+                }}
+            >
+                <SingleAccount chain={modal.account?.platform} address={modal.account?.identity} />
             </Modal>
         </>
     );
