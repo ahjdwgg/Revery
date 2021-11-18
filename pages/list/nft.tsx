@@ -124,7 +124,7 @@ const nft: NextPage = () => {
                 </section>
             </div>
 
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'} isFixed={NFT === undefined}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'}>
                 {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="nft" />}
             </Modal>
         </>

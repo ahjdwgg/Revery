@@ -4,12 +4,11 @@ import { BiX } from 'react-icons/bi';
 interface ModalProps {
     theme: 'account' | 'nft' | 'gitcoin' | 'footprint';
     hidden: boolean;
-    isFixed: boolean;
     children: ReactNode;
     closeEvent: () => void;
 }
 
-export default function Modal({ theme, hidden, isFixed, children, closeEvent }: ModalProps) {
+export default function Modal({ theme, hidden, children, closeEvent }: ModalProps) {
     const [animation, setAnimation] = useState(true);
 
     const modalClose = () => {
@@ -22,11 +21,11 @@ export default function Modal({ theme, hidden, isFixed, children, closeEvent }: 
 
     return (
         <div
-            className={`${
-                isFixed ? 'fixed' : 'absolute'
-            } top-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 animated faster ${hidden ? 'hidden' : ''} ${
-                animation ? 'fadeIn' : 'fadeOut'
-            } ${theme === 'account' ? 'flex flex-row justify-center items-center' : ''} `}
+            className={`absolute top-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 animated faster ${
+                hidden ? 'hidden' : ''
+            } ${animation ? 'fadeIn' : 'fadeOut'} ${
+                theme === 'account' ? 'flex flex-row justify-center items-center' : ''
+            } `}
         >
             {theme !== 'account' ? (
                 <div className="relative max-w-6xl px-2 py-12 mx-auto bg-white rounded">

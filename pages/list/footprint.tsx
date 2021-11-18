@@ -116,7 +116,7 @@ const footprint: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'} isFixed={footprint === null}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'}>
                 {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="footprint" />}
             </Modal>
         </>

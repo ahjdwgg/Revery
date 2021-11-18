@@ -113,7 +113,7 @@ const Donation: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'} isFixed={donation === null}>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'}>
                 {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="donation" />}
             </Modal>
         </>

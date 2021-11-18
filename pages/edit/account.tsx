@@ -154,7 +154,7 @@ const Account = async () => {
             </Head>
             <div className="h-full">
                 <Header></Header>
-                <div className="flex flex-col h-full m-auto px-12 pt-12 md:pt-16 w-full max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
+                <div className="flex flex-col w-full h-full max-w-4xl px-12 pt-12 m-auto md:pt-16 xl:max-w-6xl 2xl:max-w-7xl">
                     <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Accounts</h1>
                     <section className="flex flex-col items-center flex-1 w-full h-0 pt-10 pb-8">
                         <div className="grid w-full h-full grid-cols-1 gap-4 lg:grid-cols-2">
@@ -273,14 +273,10 @@ const Account = async () => {
                                         ]}
                                         isSecondaryBG={true}
                                     >
-                                        <div className="w-full content-middle flex-shrink-0 flex flex-col gap-6">
+                                        <div className="flex flex-col flex-shrink-0 w-full gap-6 content-middle">
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
                                                 <div className="relative flex items-center justify-center m-auto cursor-pointer">
-                                                    <EVMpAccountItem
-                                                        size="lg"
-                                                        outline="account"
-                                                        onClick={addEVMpAccount}
-                                                    />
+                                                    <EVMpAccountItem size="lg" outline="account" />
                                                 </div>
                                             </div>
                                             <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid=cols-6 justify-center">
@@ -350,7 +346,7 @@ const Account = async () => {
                                                             outline="account"
                                                         />
                                                     )}
-                                                    <div className="absolute right-0 top-0">
+                                                    <div className="absolute top-0 right-0">
                                                         <Button color="account" icon="minus" isFullRound={true} />
                                                     </div>
                                                 </div>

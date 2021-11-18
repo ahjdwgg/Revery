@@ -78,7 +78,6 @@ const account: NextPage = () => {
             <Modal
                 hidden={modal.hidden}
                 theme={'account'}
-                isFixed={true}
                 closeEvent={() => {
                     setModal({
                         hidden: true,
