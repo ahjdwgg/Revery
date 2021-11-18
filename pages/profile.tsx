@@ -9,7 +9,6 @@ import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
 import Profile from '../components/profile/Profile';
-import RecommendSection from '../components/users/RecommendSection';
 
 const ProfilePage: NextPage = () => {
     let slides = [
@@ -66,7 +65,22 @@ const ProfilePage: NextPage = () => {
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
-                        <AssetCard title="NFTs" color="nft" isShowingExpandButton={true} headerButtonMode={'edit'}>
+                        <AssetCard
+                            title="NFTs"
+                            color="nft"
+                            headerButtons={[
+                                {
+                                    text: 'Edit',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                                {
+                                    icon: 'expand',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                            ]}
+                        >
                             <div className="grid grid-cols-2 gap-3">
                                 {[...Array(4)].map((_, i) => (
                                     <ImageHolder
@@ -84,8 +98,18 @@ const ProfilePage: NextPage = () => {
                         <AssetCard
                             title="Donations"
                             color="donation"
-                            isShowingExpandButton={true}
-                            headerButtonMode={'edit'}
+                            headerButtons={[
+                                {
+                                    text: 'Edit',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                                {
+                                    icon: 'expand',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                            ]}
                         >
                             <div className="grid grid-cols-2 gap-3">
                                 {[...Array(4)].map((_, i) => (
@@ -105,8 +129,18 @@ const ProfilePage: NextPage = () => {
                         <AssetCard
                             title="Footprints"
                             color="footprint"
-                            isShowingExpandButton={true}
-                            headerButtonMode={'edit'}
+                            headerButtons={[
+                                {
+                                    text: 'Edit',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                                {
+                                    icon: 'expand',
+                                    isOutlined: true,
+                                    isDisabled: false,
+                                },
+                            ]}
                         >
                             <div className="flex flex-col w-full">
                                 {[...Array(5)].map((_, i) => (

@@ -4,7 +4,7 @@ interface DonationCardProps {
     contribCount: number;
     contribDetails: {
         token: string;
-        amount: number;
+        amount: string;
     }[];
     clickEvent?: () => void;
 }
@@ -20,7 +20,7 @@ const DonationCard = ({ imageUrl, name, contribCount, contribDetails, clickEvent
             onClick={clickEvent}
         >
             <div className="flex-shrink m-0.5 w-64 h-32 bg-cover bg-center bg-no-repeat rounded" style={imageStyle} />
-            <div className="flex-1 px-8 w-45">
+            <div className="flex-1 w-0 px-8">
                 <p className="w-full mb-2 text-lg font-semibold truncate">{name}</p>
                 <div className="flex flex-row w-full overflow-y-auto gap-x-6">
                     <div className="text-donation">

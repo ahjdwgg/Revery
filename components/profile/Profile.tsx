@@ -1,8 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Image from 'next/image';
 import LinkButton from '../buttons/LinkButton';
 import { COLORS } from '../buttons/variables';
 import Button from '../buttons/Button';
+import Modal from '../modal/Modal';
+import FollowList from '../users/FollowList';
 
 interface ProfileProps {
     avatarUrl: string;
@@ -13,9 +15,43 @@ interface ProfileProps {
     link?: string;
     bio: string;
     children?: ReactNode;
+    followerList: [];
+    followingList: [];
 }
 
-const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio, children }: ProfileProps) => {
+const Profile = ({
+    avatarUrl,
+    username,
+    followers,
+    followings,
+    rns,
+    link,
+    bio,
+    children,
+    followerList,
+    followingList,
+}: ProfileProps) => {
+    const [modalHidden, setModalHidden] = useState(true);
+    const [followType, setFollowType] = useState('');
+
+    const openModal = () => {
+        setModalHidden(false);
+    };
+
+    const closeModal = () => {
+        setModalHidden(true);
+    };
+
+    const openFollowings = () => {
+        setFollowType('followings');
+        openModal();
+    };
+
+    const openFollowers = () => {
+        setFollowType('followers');
+        openModal();
+    };
+
     return (
         <div className="flex flex-row items-start justify-start w-full py-4 gap-x-8">
             <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
@@ -25,10 +61,10 @@ const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio, c
                     <Button text={'Edit Profile'} color={COLORS.primary} isOutlined={true} />
                 </div>
                 <div className="flex flex-row text-sm gap-x-8 text-primary">
-                    <span className="cursor-pointer">
+                    <span className="cursor-pointer" onClick={openFollowers}>
                         <span className="font-bold">{followers}</span> followers
                     </span>
-                    <span className="cursor-pointer">
+                    <span className="cursor-pointer" onClick={openFollowings}>
                         <span className="font-bold">{followings}</span> followings
                     </span>
                 </div>
@@ -39,6 +75,12 @@ const Profile = ({ avatarUrl, username, followers, followings, rns, link, bio, c
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>
                 <div className={`${!children && 'hidden'} flex flex-row gap-x-2`}>{children}</div>
             </div>
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'}>
+                <FollowList
+                    followType={followType}
+                    followList={followType === 'followings' ? followingList : followerList}
+                />
+            </Modal>
         </div>
     );
 };

@@ -1,9 +1,25 @@
 import React from 'react';
 import { BiCalendar, BiLinkAlt, BiLocationPlus } from 'react-icons/bi';
+import { formatDate } from '../../common/timeStamp';
+import { POAP } from '../../common/types';
 import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
+import style from '../../styles/content.module.css';
 
-export default function FootprintDetail() {
+interface FootprintDetailProps {
+    detail: POAP;
+}
+
+function getDate(detail: POAP): string {
+    return (
+        formatDate(detail.event.start_date) +
+        (detail.event.end_date && detail.event.end_date !== detail.event.start_date
+            ? ` ~ ${formatDate(detail.event.end_date)}`
+            : '')
+    );
+}
+
+export default function FootprintDetail({ detail }: FootprintDetailProps) {
     const subtitle = 'text-lg font-medium capitalize text-footprint my-2';
 
     return (
@@ -11,34 +27,41 @@ export default function FootprintDetail() {
             <section className="w-full">
                 <div className="flex flex-row items-center gap-2">
                     <h2 className="flex-1 overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
-                        RSS3 Taurus ♉️️ Conference
+                        {detail.event.name}
                     </h2>
-                    <Button isOutlined={false} color={COLORS.footprint} icon={'external'} width="w-8 h-8" />
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.footprint}
+                        icon={'external'}
+                        width="w-8 h-8"
+                        onClick={() => {
+                            window.open(detail.event.event_url);
+                        }}
+                    />
                 </div>
                 <div className="flex flex-row items-center justify-start gap-2 my-1 text-footprint">
                     <BiLinkAlt />
-                    <span className="flex-1 text-sm leading-normal truncate cursor-pointer">
-                        https://www.youtube.com/channel/UCI-mQ-o0...
-                    </span>
+                    <span className="flex-1 text-sm leading-normal truncate">{detail.event.event_url}</span>
                 </div>
             </section>
             <section className="w-full">
                 <div className="flex flex-row items-center gap-2">
                     <BiCalendar className="text-footprint" />
-                    <span className="flex-1 w-0 truncate">May 03, 2021</span>
+                    <span className="flex-1 w-0 truncate">{getDate(detail)}</span>
                 </div>
                 <div className="flex flex-row items-center gap-2">
                     <BiLocationPlus className="text-footprint" />
-                    <span className="flex-1 w-0 truncate">NYC</span>
+                    <span className="flex-1 w-0 truncate">
+                        {detail.event.city || detail.event.country || 'Metaverse'}
+                    </span>
                 </div>
             </section>
-            <section>
-                <h3 className={subtitle}>Description</h3>
-                <div>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua.
-                </div>
-            </section>
+            {detail.event.description && (
+                <section>
+                    <h3 className={subtitle}>Description</h3>
+                    <div className={style.content}>{detail.event.description}</div>
+                </section>
+            )}
         </div>
     );
 }

@@ -302,7 +302,7 @@ const Test: NextPage = () => {
                         contribDetails={[
                             {
                                 token: 'ETH',
-                                amount: 0.1,
+                                amount: '0.1',
                             },
                         ]}
                     />
@@ -347,14 +347,6 @@ const Test: NextPage = () => {
                             }))}
                         />
                     </div>
-                </section>
-
-                <section>
-                    <NFTDetail></NFTDetail>
-                </section>
-
-                <section>
-                    <Payment></Payment>
                 </section>
             </div>
         </div>

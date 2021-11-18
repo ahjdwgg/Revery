@@ -1,4 +1,5 @@
 import React from 'react';
+import formatter from '../../common/address';
 import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
 import AccountItem from './AccountItem';
@@ -10,10 +11,6 @@ interface AccountCardProps {
     address: string;
     clickEvent?: () => void;
 }
-
-const formatter = (address: string): string => {
-    return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
-};
 
 const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: AccountCardProps) => {
     return (

@@ -27,7 +27,7 @@ export default function Modal({ theme, hidden, children, closeEvent }: ModalProp
                 theme === 'account' ? 'flex flex-row justify-center items-center' : ''
             } `}
         >
-            {theme !== 'account' && (
+            {theme !== 'account' ? (
                 <div className="relative max-w-6xl px-2 py-12 mx-auto bg-white rounded">
                     <BiX
                         className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
@@ -35,8 +35,7 @@ export default function Modal({ theme, hidden, children, closeEvent }: ModalProp
                     />
                     {children}
                 </div>
-            )}
-            {theme === 'account' && (
+            ) : (
                 <div className="relative flex flex-col items-center justify-around w-full max-w-lg bg-white rounded h-96 p-14">
                     <BiX className="absolute w-8 h-8 cursor-pointer top-2 left-2 text-account" onClick={modalClose} />
                     {children}
