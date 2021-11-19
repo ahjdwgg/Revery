@@ -25,7 +25,7 @@ const config = {
     contentRequestLimit: 5,
     rns: {
         test: true,
-        suffix: '.pass3.me',
+        suffix: '.rss3',
         contractNetworks: {
             ropsten: {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',

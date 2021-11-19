@@ -59,7 +59,7 @@ const ProfilePage: NextPage = () => {
         setAddrOrName(aon);
         const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
-        if (profile || (await RSS3.reconnect())) {
+        if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || bio, ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
@@ -88,7 +88,6 @@ const ProfilePage: NextPage = () => {
             setFootprintItems(await loadAssets('POAP', 5));
         }
         setIsOwner(RSS3.isNowOwner());
-        console.log(pageOwner);
     };
 
     const toEditProfile = async () => {
@@ -99,13 +98,17 @@ const ProfilePage: NextPage = () => {
         await router.push(`/u/${addrOrName}/list/${type}`);
     };
 
+    const toUserPage = async (addr: string) => {
+        await router.push(`/u/${addr}`);
+    };
+
     // Initialize
 
     useEffect(() => {
         if (router.isReady) {
             init();
         }
-    }, [router.isReady]);
+    }, [router.query.user]);
 
     useEffect(() => {
         addEventListener(Events.connect, () => setIsOwner(RSS3.isNowOwner()));
@@ -126,9 +129,8 @@ const ProfilePage: NextPage = () => {
                         rns={link}
                         link={website}
                         isOwner={isOwner}
-                        toEditProfile={() => {
-                            toEditProfile();
-                        }}
+                        toEditProfile={toEditProfile}
+                        toUserPage={toUserPage}
                     >
                         {accountItems.map((account) =>
                             account.platform === 'EVM+' ? (

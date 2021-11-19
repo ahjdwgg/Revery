@@ -24,6 +24,7 @@ interface ProfileProps {
     toEditProfile?: () => void;
     followers: string[];
     followings: string[];
+    toUserPage: (addrOrName: string) => void;
 }
 
 const Profile = ({
@@ -37,6 +38,7 @@ const Profile = ({
     toEditProfile,
     followers,
     followings,
+    toUserPage,
 }: ProfileProps) => {
     const [modalHidden, setModalHidden] = useState(true);
     const [followType, setFollowType] = useState('');
@@ -53,7 +55,7 @@ const Profile = ({
     const closeModal = () => {
         isLoading.current = false;
         setModalHidden(true);
-        setFoList([]);
+        // setFoList([]);
     };
 
     const loadFoList = (addressList: string[]) => {
@@ -127,7 +129,14 @@ const Profile = ({
                 <div className={`${!children && 'hidden'} flex flex-row gap-x-2`}>{children}</div>
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size={'sm'} isCenter={false}>
-                <FollowList followType={followType} followList={foList} />
+                <FollowList
+                    followType={followType}
+                    followList={foList}
+                    toUserPage={(aon) => {
+                        closeModal();
+                        toUserPage(aon);
+                    }}
+                />
             </Modal>
         </div>
     );

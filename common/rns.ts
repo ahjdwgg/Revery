@@ -105,6 +105,7 @@ export default {
         } else {
             try {
                 const domainInfo = <RSS3Domains>(await axios.get(`https://rss3.domains/address/${addr}`)).data;
+                domainInfo.rnsName = domainInfo.rnsName.replace(config.rns.suffix, '');
                 if (domainInfo) {
                     addrCache[addr] = domainInfo;
                 }
