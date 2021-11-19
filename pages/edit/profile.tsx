@@ -141,6 +141,10 @@ const Profile: NextPage = () => {
         router.back();
     };
 
+    const toHome = () => {
+        router.push('/');
+    };
+
     const init = async () => {
         const profile = loginUser.profile;
         const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -166,17 +170,19 @@ const Profile: NextPage = () => {
     // Initialize
 
     useEffect(() => {
-        let iv: ReturnType<typeof setInterval> | null = null;
-        if (!iv) {
-            iv = setInterval(async () => {
-                if (loginUser.isReady) {
-                    if (iv) {
+        setTimeout(async () => {
+            if (await RSS3.reconnect()) {
+                const iv = setInterval(() => {
+                    if (loginUser.isReady) {
                         clearInterval(iv);
+                        init();
                     }
-                    await init();
-                }
-            }, 200);
-        }
+                }, 200);
+            } else {
+                // Not login
+                toHome();
+            }
+        }, 0);
     }, []);
 
     return (
