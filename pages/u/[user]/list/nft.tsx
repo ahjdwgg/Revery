@@ -12,6 +12,7 @@ import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
+import buffer from '../../../../common/buffer';
 
 const Nft: NextPage = () => {
     const router = useRouter();
@@ -41,14 +42,18 @@ const Nft: NextPage = () => {
     }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string, type: string) => {
+        document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        setNFT(undefined);
-        const res = await RSS3.getNFTDetails(address, platform, identity, id, type);
-        console.log(res);
-        setNFT(res?.data);
+        if (!buffer.checkBuffer(address, platform, identity, id, type)) {
+            setNFT(undefined);
+            const res = await RSS3.getNFTDetails(address, platform, identity, id, type);
+            buffer.updateBuffer(address, platform, identity, id, type);
+            setNFT(res?.data);
+        }
     };
 
     const closeModal = () => {
+        document.body.style.overflow = '';
         setModalHidden(true);
     };
 
