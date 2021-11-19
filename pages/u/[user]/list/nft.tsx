@@ -17,9 +17,9 @@ const Nft: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
-    const [NFT, setNFT] = useState<NFT | undefined>(undefined);
+    const [NFT, setNFT] = useState<NFT>();
     const [listedNFT, setlistedNFT] = useState<GeneralAssetWithTags[]>([]);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -31,7 +31,6 @@ const Nft: NextPage = () => {
 
     const loadNFTs = async () => {
         const { listed } = await utils.initAssets('NFT');
-
         return listed;
     };
 
