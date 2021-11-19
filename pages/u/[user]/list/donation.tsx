@@ -19,7 +19,7 @@ const Donation: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
     const [donation, setDonation] = useState<GitcoinResponse | null>(null);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -31,7 +31,6 @@ const Donation: NextPage = () => {
 
     const loadDonations = async () => {
         const { listed } = await utils.initAssets('Gitcoin-Donation');
-
         return listed;
     };
 

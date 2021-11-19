@@ -19,7 +19,7 @@ const Footprint: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<POAPResponse | null>(null);
     const [listedFootprint, setListedFootprint] = useState<GeneralAssetWithTags[]>([]);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -31,7 +31,6 @@ const Footprint: NextPage = () => {
 
     const loadFootprints = async () => {
         const { listed } = await utils.initAssets('POAP');
-
         return listed;
     };
 
