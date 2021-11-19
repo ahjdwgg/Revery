@@ -97,9 +97,7 @@ const Profile: NextPage = () => {
     };
 
     const init = async () => {
-        console.log(loginUser);
         const profile = loginUser.profile;
-        console.log(profile);
         const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
 
         setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
@@ -168,10 +166,18 @@ const Profile: NextPage = () => {
     // Initialize
 
     useEffect(() => {
-        if (loginUser.isReady) {
-            init();
+        let iv: ReturnType<typeof setInterval> | null = null;
+        if (!iv) {
+            iv = setInterval(async () => {
+                if (loginUser.isReady) {
+                    if (iv) {
+                        clearInterval(iv);
+                    }
+                    await init();
+                }
+            }, 200);
         }
-    }, [loginUser.isReady]);
+    }, []);
 
     return (
         <div>
