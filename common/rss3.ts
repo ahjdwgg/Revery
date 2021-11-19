@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3 from 'rss3-next';

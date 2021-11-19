@@ -8,7 +8,8 @@ import Profile from '../components/profile/Profile';
 import AssetCard from '../components/assets/AssetCard';
 import ImageHolder from '../components/ImageHolder';
 import FootprintCard from '../components/assets/FootprintCard';
-import RecommendSection from '../components/recommends/RecommendSection';
+import RecommendSection from '../components/users/RecommendSection';
+
 import Header from '../components/Header';
 import Button from '../components/buttons/Button';
 import LinkButton from '../components/buttons/LinkButton';
@@ -144,6 +145,8 @@ const Test: NextPage = () => {
                         followings={8}
                         rns="Fendi.rss3.bio"
                         link="Fendi.github.io"
+                        followerList={[]}
+                        followingList={[]}
                     >
                         <EVMpAccountItem size="sm" address="0xd0B85A7bB6B602f63B020256654cBE73A753DFC4" />
                         <AccountItem size="sm" chain="BSC" />
@@ -159,6 +162,8 @@ const Test: NextPage = () => {
                         bio={bio}
                         followers={12}
                         followings={8}
+                        followerList={[]}
+                        followingList={[]}
                     />
                     <ContentCard
                         avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
