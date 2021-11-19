@@ -58,6 +58,7 @@ const Account: NextPage = () => {
                             chain={account.platform}
                             address={account.identity}
                             clickEvent={() => {
+                                document.body.style.overflow = 'hidden';
                                 setModal({
                                     hidden: false,
                                     account: account,
@@ -73,6 +74,7 @@ const Account: NextPage = () => {
                 isCenter={true}
                 size="md"
                 closeEvent={() => {
+                    document.body.style.overflow = '';
                     setModal({
                         hidden: true,
                     });

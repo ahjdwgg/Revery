@@ -12,6 +12,7 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
+import buffer from '../../../../common/buffer';
 
 const Donation: NextPage = () => {
     const router = useRouter();
@@ -41,13 +42,18 @@ const Donation: NextPage = () => {
     }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string) => {
+        document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        setDonation(null);
-        const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
-        setDonation(res);
+        if (!buffer.checkBuffer(address, platform, identity, id, 'Gitcoin-Donation')) {
+            setDonation(null);
+            const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
+            buffer.updateBuffer(address, platform, identity, id, 'Gitcoin-Donation');
+            setDonation(res);
+        }
     };
 
     const closeModal = () => {
+        document.body.style.overflow = '';
         setModalHidden(true);
     };
 
