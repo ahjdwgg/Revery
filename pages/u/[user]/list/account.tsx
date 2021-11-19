@@ -7,9 +7,9 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleAccount from '../../../../components/details/SingleAccount';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
-import RSS3, { IRSS3, RSS3DetailPersona } from '../../../../common/rss3';
-import config from '../../../../common/config';
+import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import { useRouter } from 'next/router';
+import utils from '../../../../common/utils';
 
 interface ModalDetail {
     hidden: boolean;
@@ -20,19 +20,12 @@ const Account: NextPage = () => {
     const router = useRouter();
 
     const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([]);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const apiUser = RSS3.getAPIUser();
-        const allAccounts = await (apiUser.persona as IRSS3).accounts.get(pageOwner.address);
-        const listed: RSS3Account[] = [];
-        for (const account of allAccounts) {
-            if (!account.tags?.includes(config.tags.hiddenTag)) {
-                listed.push(account);
-            }
-        }
+        const { listed } = await utils.initAccounts();
         setListedAccounts(listed);
         setPersona(pageOwner);
     };
@@ -65,6 +58,7 @@ const Account: NextPage = () => {
                             chain={account.platform}
                             address={account.identity}
                             clickEvent={() => {
+                                document.body.style.overflow = 'hidden';
                                 setModal({
                                     hidden: false,
                                     account: account,
@@ -80,6 +74,7 @@ const Account: NextPage = () => {
                 isCenter={true}
                 size="md"
                 closeEvent={() => {
+                    document.body.style.overflow = '';
                     setModal({
                         hidden: true,
                     });

@@ -37,7 +37,7 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
 
     return (
         <div
-            className={`fixed top-0 left-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 animated faster ${
+            className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto py-16 bg-black bg-opacity-50 animated faster ${
                 isHidden ? 'hidden' : ''
             } ${animation ? 'fadeIn' : 'fadeOut'} ${isCenter ? 'flex flex-row justify-center items-center' : ''} `}
         >

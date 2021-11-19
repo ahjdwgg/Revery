@@ -271,14 +271,20 @@ async function disconnect() {
 export default {
     connect: {
         walletConnect: async () => {
-            await wcConn();
-            saveConnect(KeyNames.WalletConnect);
-            return RSS3LoginUser;
+            if (await wcConn()) {
+                saveConnect(KeyNames.WalletConnect);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
         },
         metamask: async () => {
-            await mmConn();
-            saveConnect(KeyNames.MetaMask);
-            return RSS3LoginUser;
+            if (await mmConn()) {
+                saveConnect(KeyNames.MetaMask);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
         },
     },
     disconnect: disconnect,
@@ -311,6 +317,9 @@ export default {
     },
     getPageOwner: () => {
         return RSS3PageOwner;
+    },
+    isNowOwner: () => {
+        return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
 
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {

@@ -1,7 +1,7 @@
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
-import RSS3, { IRSS3 } from './rss3';
+import RSS3, { IAssetProfile, IRSS3 } from './rss3';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\d+)$`, 'i');
 
@@ -101,7 +101,7 @@ async function initAssets(type: string, limit?: number) {
     const pageOwner = RSS3.getPageOwner();
     const apiUser = RSS3.getAPIUser().persona as IRSS3;
     const assetInRSS3 = await apiUser.assets.get(pageOwner.address);
-    const assetInAssetProfile = (await RSS3.getAssetProfile(pageOwner.address, type))?.assets || [];
+    const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
     const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
 
     for (const asset of allAssets) {
@@ -118,6 +118,31 @@ async function initAssets(type: string, limit?: number) {
         listed: utils.sortByOrderTag(listed).slice(0, limit),
         unlisted: unlisted.slice(0, limit),
     };
+}
+
+async function getAssetProfileWaitTillSuccess(address: string, type: string, delay: number = 500) {
+    return new Promise<GeneralAsset[]>(async (resolve, reject) => {
+        const tryReq = async () => {
+            try {
+                const assetProfileRes = await RSS3.getAssetProfile(address, type);
+                if (assetProfileRes?.status) {
+                    resolve(assetProfileRes?.assets || []);
+                }
+                return true;
+            } catch (e) {
+                reject(e);
+            }
+            return false;
+        };
+
+        if (!(await tryReq())) {
+            let iv = setInterval(async () => {
+                if (await tryReq()) {
+                    clearInterval(iv);
+                }
+            }, delay);
+        }
+    });
 }
 
 async function initAccounts() {

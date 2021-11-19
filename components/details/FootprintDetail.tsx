@@ -33,7 +33,8 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                         isOutlined={false}
                         color={COLORS.footprint}
                         icon={'external'}
-                        width="w-8 h-8"
+                        width="w-8"
+                        height="h-8"
                         onClick={() => {
                             window.open(detail.event.event_url);
                         }}

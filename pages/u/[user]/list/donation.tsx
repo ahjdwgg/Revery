@@ -12,6 +12,7 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
+import buffer from '../../../../common/buffer';
 
 const Donation: NextPage = () => {
     const router = useRouter();
@@ -19,7 +20,7 @@ const Donation: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
     const [donation, setDonation] = useState<GitcoinResponse | null>(null);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -31,7 +32,6 @@ const Donation: NextPage = () => {
 
     const loadDonations = async () => {
         const { listed } = await utils.initAssets('Gitcoin-Donation');
-
         return listed;
     };
 
@@ -42,13 +42,18 @@ const Donation: NextPage = () => {
     }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string) => {
+        document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        setDonation(null);
-        const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
-        setDonation(res);
+        if (!buffer.checkBuffer(address, platform, identity, id, 'Gitcoin-Donation')) {
+            setDonation(null);
+            const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
+            buffer.updateBuffer(address, platform, identity, id, 'Gitcoin-Donation');
+            setDonation(res);
+        }
     };
 
     const closeModal = () => {
+        document.body.style.overflow = '';
         setModalHidden(true);
     };
 

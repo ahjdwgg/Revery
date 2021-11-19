@@ -12,6 +12,7 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
+import buffer from '../../../../common/buffer';
 
 const Footprint: NextPage = () => {
     const router = useRouter();
@@ -19,7 +20,7 @@ const Footprint: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<POAPResponse | null>(null);
     const [listedFootprint, setListedFootprint] = useState<GeneralAssetWithTags[]>([]);
-    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -31,7 +32,6 @@ const Footprint: NextPage = () => {
 
     const loadFootprints = async () => {
         const { listed } = await utils.initAssets('POAP');
-
         return listed;
     };
 
@@ -42,13 +42,18 @@ const Footprint: NextPage = () => {
     }, [router.isReady]);
 
     const openModal = async (address: string, platform: string, identity: string, id: string) => {
+        document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        setFootprint(null);
-        const res = await RSS3.getFootprintDetail(address, platform, identity, id);
-        setFootprint(res);
+        if (!buffer.checkBuffer(address, platform, identity, id, 'xDai-POAP')) {
+            setFootprint(null);
+            const res = await RSS3.getFootprintDetail(address, platform, identity, id);
+            buffer.updateBuffer(address, platform, identity, id, 'xDai-POAP');
+            setFootprint(res);
+        }
     };
 
     const closeModal = () => {
+        document.body.style.overflow = '';
         setModalHidden(true);
     };
 

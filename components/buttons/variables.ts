@@ -13,6 +13,7 @@ export const BUTTON_ICONS = {
     minus: 'minus',
     external: 'external',
     check: 'check',
+    loading: 'loading',
 };
 
 interface colorToStyleInterface {
@@ -26,8 +27,8 @@ interface colorToStyleInterface {
     hoverBorder: string;
 }
 
-export const COLORTOSTYLE: colorToStyleInterface[] = [
-    {
+export const COLORTOSTYLE: { [key: string]: colorToStyleInterface } = {
+    primary: {
         name: 'primary',
         bgDefault: 'bg-primary',
         bgAlt: 'bg-white',
@@ -37,7 +38,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-primary',
     },
-    {
+    account: {
         name: 'account',
         bgDefault: 'bg-account',
         bgAlt: 'bg-white',
@@ -47,7 +48,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-account',
     },
-    {
+    nft: {
         name: 'nft',
         bgDefault: 'bg-nft',
         bgAlt: 'bg-white',
@@ -57,7 +58,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-nft',
     },
-    {
+    donation: {
         name: 'donation',
         bgDefault: 'bg-donation',
         bgAlt: 'bg-white',
@@ -67,7 +68,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-donation',
     },
-    {
+    footprint: {
         name: 'footprint',
         bgDefault: 'bg-footprint',
         bgAlt: 'bg-white',
@@ -77,7 +78,7 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-white',
         hoverBorder: 'hover:border-footprint',
     },
-    {
+    metamask: {
         name: 'metamask',
         bgDefault: 'bg-metamask-bg',
         bgAlt: 'bg-metamask-bg',
@@ -87,4 +88,4 @@ export const COLORTOSTYLE: colorToStyleInterface[] = [
         hoverText: 'hover:text-metamask-text',
         hoverBorder: 'hover:border-metamask-bg',
     },
-];
+};
