@@ -11,7 +11,7 @@ import config from '../common/config';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
-function Header(props: any) {
+function Header() {
     const router = useRouter();
 
     const [top, setTop] = useState(true);
