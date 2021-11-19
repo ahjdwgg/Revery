@@ -15,11 +15,6 @@ import { RSS3Account } from 'rss3-next/types/rss3';
 import Modal from '../../components/modal/Modal';
 import { useRouter } from 'next/router';
 
-interface AccountItemInterface {
-    type: string;
-    value: string;
-}
-
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Profile: NextPage = () => {
