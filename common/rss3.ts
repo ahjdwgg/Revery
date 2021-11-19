@@ -318,7 +318,7 @@ export default {
         return RSS3PageOwner;
     },
     isNowOwner: () => {
-        return RSS3LoginUser.address === RSS3PageOwner.address;
+        return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
 
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {

@@ -76,7 +76,7 @@ const ProfilePage: NextPage = () => {
                 [
                     {
                         platform: 'EVM+',
-                        identity: RSS3.getLoginUser().address,
+                        identity: pageOwner.address,
                     },
                 ].concat(listed),
             );
@@ -86,9 +86,7 @@ const ProfilePage: NextPage = () => {
             setDonationItems(await loadAssets('Gitcoin-Donation', 4));
             setFootprintItems(await loadAssets('POAP', 5));
         }
-        if (RSS3.isNowOwner()) {
-            setIsOwner(true);
-        }
+        setIsOwner(RSS3.isNowOwner());
         console.log(pageOwner);
     };
 
