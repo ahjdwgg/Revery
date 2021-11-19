@@ -1,13 +1,12 @@
 /* eslint-disable react/no-children-prop */
 import React, { ReactNode, useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import LinkButton from '../buttons/LinkButton';
 import { COLORS } from '../buttons/variables';
 import Button from '../buttons/Button';
 import Modal from '../modal/Modal';
 import FollowList from '../users/FollowList';
 import ImageHolder from '../ImageHolder';
-import UserCard, { UserItemProps } from '../users/UserCard';
+import { UserItemProps } from '../users/UserCard';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
@@ -21,9 +20,10 @@ interface ProfileProps {
     bio: string;
     isOwner: boolean;
     children?: ReactNode;
-    toEditProfile?: () => void;
     followers: string[];
     followings: string[];
+    toEditProfile?: () => void;
+    toExternalUserSite?: () => void;
     toUserPage: (addrOrName: string) => void;
 }
 
@@ -35,9 +35,10 @@ const Profile = ({
     bio,
     isOwner,
     children,
-    toEditProfile,
     followers,
     followings,
+    toEditProfile,
+    toExternalUserSite,
     toUserPage,
 }: ProfileProps) => {
     const [modalHidden, setModalHidden] = useState(true);
@@ -80,7 +81,7 @@ const Profile = ({
                     user.username = profile.name || user.username;
                     user.bio = extracted;
                     user.rns = rns;
-                    setFoList([...userList]);
+                    setFoList([...userList]); // Force change address fore reload
                 }
             }
         }, 0);
@@ -123,7 +124,7 @@ const Profile = ({
                 </div>
                 <div className={`flex flex-row gap-x-2 ${!(rns || link) && 'hidden'}`}>
                     {rns && <LinkButton text={rns} color={COLORS.primary} />}
-                    {link && <LinkButton text={link} color={COLORS.primary} link={true} />}
+                    {link && <LinkButton text={link} color={COLORS.primary} onClick={toExternalUserSite} link={true} />}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>
                 <div className={`${!children && 'hidden'} flex flex-row gap-x-2`}>{children}</div>

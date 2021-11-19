@@ -97,6 +97,13 @@ const ProfilePage: NextPage = () => {
         await router.push(`/u/${addrOrName}/list/${type}`);
     };
 
+    const toExternalUserSite = () => {
+        if (website) {
+            const url = website.replace(/^https?:\/\//, '');
+            window.open(`https://${url}`, '_blank');
+        }
+    };
+
     const toUserPage = async (addr: string) => {
         await router.push(`/u/${addr}`);
     };
@@ -129,6 +136,7 @@ const ProfilePage: NextPage = () => {
                         link={website}
                         isOwner={isOwner}
                         toEditProfile={toEditProfile}
+                        toExternalUserSite={toExternalUserSite}
                         toUserPage={toUserPage}
                     >
                         {accountItems.map((account) =>
