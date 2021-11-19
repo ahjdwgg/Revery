@@ -14,9 +14,9 @@ const FollowList = ({ followType, followList }: FollowListProps) => {
             </div>
             <div className="flex flex-col divide-primary divide-opacity-10 divide-y">
                 <div className="">
-                    {followList.map((user) => (
+                    {followList.map((user, i) => (
                         <UserCard
-                            key={user.ethAddress}
+                            key={i}
                             username={user.username}
                             avatarUrl={user.avatarUrl}
                             bio={user.bio}

@@ -3,9 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
-import RecommendSection from '../components/recommends/RecommendSection';
-import { RSS3Profile } from 'rss3-next/types/rss3';
-import config from '../common/config';
+import RecommendSection from '../components/users/RecommendSection';
 const Home: NextPage = () => {
     const router = useRouter();
 

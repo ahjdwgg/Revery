@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { RSS3Account } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3ID, RSS3Links } from 'rss3-next/types/rss3';
 import AccountItem from '../../../components/accounts/AccountItem';
 import AssetCard from '../../../components/assets/AssetCard';
 import FootprintCard from '../../../components/assets/FootprintCard';
@@ -27,8 +27,8 @@ const ProfilePage: NextPage = () => {
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
-    const [followers, setFollowers] = useState<number>(0);
-    const [followings, setFollowings] = useState<number>(0);
+    const [followers, setFollowers] = useState<RSS3ID[]>([]);
+    const [followings, setFollowings] = useState<RSS3ID[]>([]);
 
     const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
     const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
@@ -67,8 +67,8 @@ const ProfilePage: NextPage = () => {
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
-            setFollowers(pageOwner.followers.length || 0);
-            setFollowings(pageOwner.followings.length || 0);
+            setFollowers(pageOwner.followers || []);
+            setFollowings(pageOwner.followings || []);
 
             // Accounts
             await RSS3.setPageOwner(pageOwner.address);

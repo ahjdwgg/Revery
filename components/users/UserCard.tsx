@@ -13,7 +13,7 @@ export interface UserItemProps {
 const UserCard = ({ username, avatarUrl, bio, ethAddress, rns }: UserItemProps) => {
     // Setup user address
     // using rss3.bio or other things maybe
-    const address = rns ? `${rns}.rss3.bio` : ethAddress;
+    const address = rns ? `${rns}` : `${ethAddress.slice(0, 6)}...${ethAddress.slice(-4)}`;
 
     return (
         <div className="flex flex-row gap-2 justify-start p-2">
