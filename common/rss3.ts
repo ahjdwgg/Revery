@@ -323,11 +323,13 @@ export default {
             if (RSS3PageOwner.address !== addrOrName) {
                 isReloadRequired = true;
                 RSS3PageOwner.address = addrOrName;
+                RSS3PageOwner.name = '';
             }
         } else {
             if (RSS3PageOwner.name !== addrOrName) {
                 isReloadRequired = true;
                 RSS3PageOwner.name = addrOrName;
+                RSS3PageOwner.address = '';
             }
         }
         if (isReloadRequired) {

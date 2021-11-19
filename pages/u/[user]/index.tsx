@@ -21,9 +21,8 @@ const ProfilePage: NextPage = () => {
     const [addrOrName, setAddrOrName] = useState('');
     const [isOwner, setIsOwner] = useState(false);
 
-    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
-
+    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
@@ -159,7 +158,7 @@ const ProfilePage: NextPage = () => {
                             type="Twitter"
                         />
                     ))}
-                    <div className="w-full py-8 text-sm text-center">That's all :p</div>
+                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
