@@ -14,6 +14,7 @@ import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
 import { GeneralAssetWithTags } from '../../../common/types';
+import Events from '../../../common/events';
 
 const ProfilePage: NextPage = () => {
     const router = useRouter();
@@ -105,6 +106,11 @@ const ProfilePage: NextPage = () => {
             init();
         }
     }, [router.isReady]);
+
+    useEffect(() => {
+        addEventListener(Events.connect, () => setIsOwner(RSS3.isNowOwner()));
+        addEventListener(Events.disconnect, () => setIsOwner(RSS3.isNowOwner()));
+    }, []);
 
     return (
         <>

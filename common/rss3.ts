@@ -6,6 +6,7 @@ import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
 import rns from './rns';
+import Events from './events';
 
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
@@ -267,11 +268,22 @@ async function disconnect() {
     setStorage(KeyNames.ConnectAddress, '');
 }
 
+function dispatchEvent(event: string, detail: any) {
+    const evt = new CustomEvent(event, {
+        detail,
+        bubbles: true,
+        composed: true,
+    });
+    document.dispatchEvent(evt);
+    console.log(event, detail);
+}
+
 export default {
     connect: {
         walletConnect: async () => {
             if (await wcConn()) {
                 saveConnect(KeyNames.WalletConnect);
+                dispatchEvent(Events.connect, RSS3LoginUser);
                 return RSS3LoginUser;
             } else {
                 return null;
@@ -280,14 +292,22 @@ export default {
         metamask: async () => {
             if (await mmConn()) {
                 saveConnect(KeyNames.MetaMask);
+                dispatchEvent(Events.connect, RSS3LoginUser);
                 return RSS3LoginUser;
             } else {
                 return null;
             }
         },
     },
-    disconnect: disconnect,
-    reconnect: reconnect,
+    disconnect: async () => {
+        await disconnect();
+        dispatchEvent(Events.disconnect, RSS3LoginUser);
+    },
+    reconnect: async () => {
+        const res = await reconnect();
+        dispatchEvent(Events.connect, RSS3LoginUser);
+        return res;
+    },
     getAPIUser: (): RSS3DetailPersona => {
         const user = Object.create(EMPTY_RSS3_DP);
         user.persona = apiPersona();
@@ -312,6 +332,7 @@ export default {
         if (isReloadRequired) {
             await initUser(RSS3PageOwner);
         }
+        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
     getPageOwner: () => {
