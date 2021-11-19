@@ -224,6 +224,7 @@ async function reconnect() {
 }
 
 async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
+    user.isReady = false;
     if (user.persona) {
         if (!user.address) {
             user.address = user.persona.account.address;
