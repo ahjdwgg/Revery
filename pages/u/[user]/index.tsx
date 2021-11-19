@@ -18,6 +18,7 @@ import { GeneralAssetWithTags } from '../../../common/types';
 const ProfilePage: NextPage = () => {
     const router = useRouter();
     const [addrOrName, setAddrOrName] = useState('');
+    const [isOwner, setIsOwner] = useState(false);
 
     const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
@@ -85,6 +86,9 @@ const ProfilePage: NextPage = () => {
             setDonationItems(await loadAssets('Gitcoin-Donation', 4));
             setFootprintItems(await loadAssets('POAP', 5));
         }
+        if (RSS3.isNowOwner()) {
+            setIsOwner(true);
+        }
         console.log(pageOwner);
     };
 
@@ -117,6 +121,7 @@ const ProfilePage: NextPage = () => {
                         followings={followings}
                         rns={link}
                         link={website}
+                        isOwner={isOwner}
                         toEditProfile={() => {
                             toEditProfile();
                         }}

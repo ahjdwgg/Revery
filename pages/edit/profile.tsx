@@ -39,7 +39,7 @@ const Profile: NextPage = () => {
     const [isShowingNotice, setIsShowingNotice] = useState(false);
 
     const [isEdited, setIsEdited] = useState(false);
-    const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isProfileSaved, setIsProfileSaved] = useState<boolean>(false);
 
     const showNotice = (notice: string, cb?: () => void) => {
@@ -97,6 +97,7 @@ const Profile: NextPage = () => {
     };
 
     const handleSave = async () => {
+        setIsLoading(true);
         if (isEdited) {
             const profile = {
                 avatar: [avatarUrl],
@@ -126,6 +127,7 @@ const Profile: NextPage = () => {
         } else {
             showNotice('Nothing changed.');
         }
+        setIsLoading(false);
     };
 
     const handleSaveSuccessfully = () => {
@@ -165,6 +167,7 @@ const Profile: NextPage = () => {
                 },
             ].concat(listed),
         );
+        setIsLoading(false);
     };
 
     // Initialize
@@ -283,17 +286,28 @@ const Profile: NextPage = () => {
                                 text={'Discard'}
                                 fontSize={'text-base'}
                                 width={'w-48'}
+                                height={'h-8'}
                                 onClick={() => handleDiscard()}
                             />
-                            <Button
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                text={'Save'}
-                                fontSize={'text-base'}
-                                width={'w-48'}
-                                isDisabled={saveBtnDisabled}
-                                onClick={() => handleSave()}
-                            />
+                            {isLoading ? (
+                                <Button
+                                    isOutlined={false}
+                                    color={COLORS.primary}
+                                    icon="loading"
+                                    width={'w-48'}
+                                    height={'h-8'}
+                                />
+                            ) : (
+                                <Button
+                                    isOutlined={false}
+                                    color={COLORS.primary}
+                                    text={'Save'}
+                                    fontSize={'text-base'}
+                                    width={'w-48'}
+                                    height={'h-8'}
+                                    onClick={() => handleSave()}
+                                />
+                            )}
                         </div>
                     </section>
                 </section>

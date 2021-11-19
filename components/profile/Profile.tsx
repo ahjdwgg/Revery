@@ -12,6 +12,7 @@ interface ProfileProps {
     rns?: string;
     link?: string;
     bio: string;
+    isOwner: boolean;
     children?: ReactNode;
     toEditProfile?: () => void;
 }
@@ -24,6 +25,7 @@ const Profile = ({
     rns,
     link,
     bio,
+    isOwner,
     children,
     toEditProfile,
 }: ProfileProps) => {
@@ -33,7 +35,14 @@ const Profile = ({
             <div className="flex flex-col items-start justify-start flex-1 gap-y-2">
                 <div className="flex flex-row items-center gap-x-4">
                     <div className="text-2xl font-semibold">{username}</div>
-                    <Button text={'Edit Profile'} color={COLORS.primary} isOutlined={true} onClick={toEditProfile} />
+                    {isOwner && (
+                        <Button
+                            text={'Edit Profile'}
+                            color={COLORS.primary}
+                            isOutlined={true}
+                            onClick={toEditProfile}
+                        />
+                    )}
                 </div>
                 <div className="flex flex-row text-sm gap-x-8 text-primary">
                     <span className="cursor-pointer">

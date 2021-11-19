@@ -9,12 +9,15 @@ import RSS3 from '../common/rss3';
 import { useRouter } from 'next/router';
 import config from '../common/config';
 
+type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
+
 function Header(props: any) {
     const router = useRouter();
 
     const [top, setTop] = useState(true);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
     const [modalHidden, setModalHidden] = useState(true);
 
     // default avatar
@@ -27,38 +30,50 @@ function Header(props: any) {
     };
 
     const openModal = () => {
+        setIsLoading('any');
         setModalHidden(false);
     };
 
     const closeModal = () => {
+        setIsLoading(null);
         setModalHidden(true);
     };
 
     const handleWalletConnect = async () => {
+        setIsLoading('WalletConnect');
         try {
-            await RSS3.connect.walletConnect();
-            initAccount();
+            if (await RSS3.connect.walletConnect()) {
+                initAccount();
+                closeModal();
+                return;
+            }
         } catch (e) {
-            return null;
+            console.log(e);
         }
+        setIsLoading('any');
     };
 
     const handleMetamask = async () => {
+        setIsLoading('Metamask');
         try {
-            await RSS3.connect.metamask();
-            initAccount();
+            if (await RSS3.connect.metamask()) {
+                initAccount();
+                closeModal();
+                return;
+            }
         } catch (e) {
             console.log(e);
-            return;
         }
+        setIsLoading('any');
     };
 
     const initAccount = () => {
+        setIsLoading('any');
         const profile = RSS3.getLoginUser().profile;
 
         setAvatarURL(profile?.avatar?.[0] || avatarURL);
         setIsLoggedIn(true);
-        setModalHidden(true);
+        setIsLoading(null);
     };
 
     const toProfilePage = () => {
@@ -99,11 +114,20 @@ function Header(props: any) {
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
                                         </div>
                                     </>
+                                ) : isLoading !== null ? (
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        icon={'loading'}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                    />
                                 ) : (
                                     <Button
                                         isOutlined={false}
                                         color={COLORS.primary}
                                         text={'Connect Wallet'}
+                                        width={'w-32'}
                                         height={'h-8'}
                                         onClick={openModal}
                                     />
@@ -115,28 +139,48 @@ function Header(props: any) {
             </header>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={true} size="sm">
                 <div className="flex flex-col my-8 gap-y-6 mx-14">
-                    <Button
-                        isOutlined={false}
-                        color={COLORS.primary}
-                        onClick={handleWalletConnect}
-                        fontSize={'text-md'}
-                        width={'w-60'}
-                        height={'h-14'}
-                    >
-                        <WalletConnect size={30} />
-                        <span>WalletConnect</span>
-                    </Button>
-                    <Button
-                        isOutlined={false}
-                        color={COLORS.metamask}
-                        onClick={handleMetamask}
-                        fontSize={'text-md'}
-                        width={'w-60'}
-                        height={'h-14'}
-                    >
-                        <Metamask size={30} />
-                        <span>Metamask</span>
-                    </Button>
+                    {isLoading === 'WalletConnect' ? (
+                        <Button
+                            isOutlined={false}
+                            color={COLORS.primary}
+                            icon={'loading'}
+                            width={'w-60'}
+                            height={'h-14'}
+                        />
+                    ) : (
+                        <Button
+                            isOutlined={false}
+                            color={COLORS.primary}
+                            onClick={handleWalletConnect}
+                            fontSize={'text-md'}
+                            width={'w-60'}
+                            height={'h-14'}
+                        >
+                            <WalletConnect size={30} />
+                            <span>WalletConnect</span>
+                        </Button>
+                    )}
+                    {isLoading === 'Metamask' ? (
+                        <Button
+                            isOutlined={false}
+                            color={COLORS.metamask}
+                            icon={'loading'}
+                            width={'w-60'}
+                            height={'h-14'}
+                        />
+                    ) : (
+                        <Button
+                            isOutlined={false}
+                            color={COLORS.metamask}
+                            onClick={handleMetamask}
+                            fontSize={'text-md'}
+                            width={'w-60'}
+                            height={'h-14'}
+                        >
+                            <Metamask size={30} />
+                            <span>Metamask</span>
+                        </Button>
+                    )}
                 </div>
             </Modal>
         </>
