@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import Image from 'next/image';
 import LinkButton from '../buttons/LinkButton';
 import { COLORS } from '../buttons/variables';

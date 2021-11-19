@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import React from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import AccountItem from '../components/accounts/AccountItem';
 import AssetCard from '../components/assets/AssetCard';
 import FootprintCard from '../components/assets/FootprintCard';
@@ -9,6 +9,9 @@ import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import ImageHolder from '../components/ImageHolder';
 import Profile from '../components/profile/Profile';
+import RSS3, { IAssetProfile, IRSS3, RSS3DetailPersona } from '../common/rss3';
+import config from '../common/config';
+import utils from '../common/utils';
 
 const ProfilePage: NextPage = () => {
     let slides = [
@@ -24,6 +27,20 @@ const ProfilePage: NextPage = () => {
 
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+    const [persona, setPersona] = useState<RSS3DetailPersona | undefined>(undefined);
+    const init = async () => {
+        await RSS3.setPageOwner('0xDA048BED40d40B1EBd9239Cdf56ca0c2F018ae65');
+        const pageOwner = RSS3.getPageOwner();
+        const apiUser = RSS3.apiUser();
+        const rss3Asset = await (apiUser.persona as IRSS3).assets.get(pageOwner.address);
+
+        setPersona(pageOwner);
+    };
+
+    useEffect(() => {
+        init();
+    }, []);
 
     return (
         <>
@@ -43,6 +60,8 @@ const ProfilePage: NextPage = () => {
                         followings={8}
                         rns="Fendi.rss3.bio"
                         link="Fendi.github.io"
+                        followerList={[]}
+                        followingList={[]}
                     >
                         <AccountItem size="sm" chain="BSC" />
                         <AccountItem size="sm" chain="Ethereum" />
