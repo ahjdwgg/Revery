@@ -96,28 +96,6 @@ const Profile: NextPage = () => {
         back();
     };
 
-    const init = async () => {
-        const profile = loginUser.profile;
-        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
-
-        setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
-        setUsername(profile?.name || '');
-        setBio(extracted);
-        setWebsite(fieldsMatch?.['SITE'] || '');
-        setLink(loginUser.name);
-
-        await RSS3.setPageOwner(loginUser.address);
-        const { listed } = await utils.initAccounts();
-        setAccountItems(
-            [
-                {
-                    platform: 'EVM+',
-                    identity: RSS3.getLoginUser().address,
-                },
-            ].concat(listed),
-        );
-    };
-
     const handleSave = async () => {
         if (isEdited) {
             const profile = {
@@ -161,6 +139,28 @@ const Profile: NextPage = () => {
 
     const back = () => {
         router.back();
+    };
+
+    const init = async () => {
+        const profile = loginUser.profile;
+        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+
+        setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
+        setUsername(profile?.name || '');
+        setBio(extracted);
+        setWebsite(fieldsMatch?.['SITE'] || '');
+        setLink(loginUser.name);
+
+        await RSS3.setPageOwner(loginUser.address);
+        const { listed } = await utils.initAccounts();
+        setAccountItems(
+            [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(listed),
+        );
     };
 
     // Initialize
