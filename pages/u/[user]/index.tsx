@@ -58,11 +58,12 @@ const ProfilePage: NextPage = () => {
         setAddrOrName(aon);
         const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
+        setIsOwner(RSS3.isNowOwner());
         if (profile) {
             // Profile
-            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || bio, ['SITE']);
-            setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
-            setUsername(profile?.name || username);
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
+            setUsername(profile?.name || '');
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
@@ -82,11 +83,16 @@ const ProfilePage: NextPage = () => {
             );
 
             // Assets
-            setNftItems(await loadAssets('NFT', 4));
-            setDonationItems(await loadAssets('Gitcoin-Donation', 4));
-            setFootprintItems(await loadAssets('POAP', 5));
+            setTimeout(async () => {
+                setNftItems(await loadAssets('NFT', 4));
+            }, 0);
+            setTimeout(async () => {
+                setDonationItems(await loadAssets('Gitcoin-Donation', 4));
+            }, 0);
+            setTimeout(async () => {
+                setFootprintItems(await loadAssets('POAP', 5));
+            }, 0);
         }
-        setIsOwner(RSS3.isNowOwner());
     };
 
     const toEditProfile = async () => {
