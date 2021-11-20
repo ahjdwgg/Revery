@@ -49,11 +49,13 @@ const Profile = ({
     const isLoading = useRef<boolean>(false);
 
     const openModal = () => {
+        document.body.style.overflow = 'hidden';
         isLoading.current = true;
         setModalHidden(false);
     };
 
     const closeModal = () => {
+        document.body.style.overflow = '';
         isLoading.current = false;
         setModalHidden(true);
         // setFoList([]);

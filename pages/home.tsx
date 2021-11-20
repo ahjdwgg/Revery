@@ -1,10 +1,7 @@
 import type { NextPage } from 'next';
 import React, { useState } from 'react';
-import Button from '../components/buttons/Button';
-import { COLORS } from '../components/buttons/variables';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
-import ImageHolder from '../components/ImageHolder';
 import RecommendSection from '../components/users/RecommendSection';
 
 const Home: NextPage = () => {
@@ -39,18 +36,7 @@ const Home: NextPage = () => {
 
     return (
         <>
-            <Header>
-                <div className="flex flex-row justify-end w-full gap-x-8">
-                    {isLoggedIn ? (
-                        <>
-                            <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                            <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
-                        </>
-                    ) : (
-                        <Button isOutlined={false} color={COLORS.primary} text={'Register Now'} />
-                    )}
-                </div>
-            </Header>
+            <Header />
             <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
                 <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
                     {[...Array(2)].map((_, i) => (

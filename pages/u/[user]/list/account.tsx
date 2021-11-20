@@ -26,6 +26,10 @@ const Account: NextPage = () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         const { listed } = await utils.initAccounts();
+        listed.unshift({
+            platform: 'EVM+',
+            identity: pageOwner.address,
+        });
         setListedAccounts(listed);
         setPersona(pageOwner);
     };
