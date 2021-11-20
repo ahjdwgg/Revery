@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
-import Image from 'next/image';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import AccountItem from '../../components/accounts/AccountItem';
 import EVMpAccountItem from '../../components/accounts/EVMpAccountItem';
 import Header from '../../components/Header';
@@ -11,81 +10,44 @@ import Input from '../../components/inputs/Input';
 import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
-import profile from '../profile';
+import utils from '../../common/utils';
+import { RSS3Account } from 'rss3-next/types/rss3';
 import Modal from '../../components/modal/Modal';
-
-const AccountItems = [
-    {
-        type: 'evmp',
-        value: '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4',
-    },
-    {
-        type: 'default',
-        value: 'BSC',
-    },
-    {
-        type: 'default',
-        value: 'Ethereum',
-    },
-    {
-        type: 'default',
-        value: 'Ronin',
-    },
-    {
-        type: 'default',
-        value: 'Misskey',
-    },
-    {
-        type: 'default',
-        value: 'Twitter',
-    },
-    {
-        type: 'evmp',
-        value: '0x0000000000000000000000000000000000000000',
-    },
-];
-
-interface AccountItemInterface {
-    type: string;
-    value: string;
-}
-
-interface InputStates {
-    username: string;
-    website: string;
-    bio: string;
-    accountItems: AccountItemInterface[];
-}
+import { useRouter } from 'next/router';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Profile: NextPage = () => {
-    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
+    const router = useRouter();
+    const loginUser = RSS3.getLoginUser();
+
+    const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
     const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
 
-    const [accountItems, setAccountItems] = useState<AccountItemInterface[]>([]);
+    const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
 
     const [notice, setNotice] = useState('');
     const [isShowingNotice, setIsShowingNotice] = useState(false);
 
-    const [saveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(false);
+    const [isEdited, setIsEdited] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isProfileSaved, setIsProfileSaved] = useState<boolean>(false);
 
-    const showNotice = (notice: string) => {
+    const showNotice = (notice: string, cb?: () => void) => {
         setNotice(notice);
         setIsShowingNotice(true);
     };
 
-    const setOversizeNotice = (field: string) => {
+    const showOversizeNotice = (field: string) => {
         showNotice(`${field} cannot be longer than ${config.fieldMaxLength} chars`);
     };
 
     const handleChangeAvatar = () => {
-        console.log('Change Avatar');
-        // setAvatarUrl(value)
+        showNotice('You can edit your Avatar at rss3.bio');
     };
 
     const handleLinkOnClick = () => {
@@ -95,14 +57,17 @@ const Profile: NextPage = () => {
 
     const handleChangeWebsite = (event: InputEventType) => {
         setWebsite(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeBio = (event: InputEventType) => {
         setBio(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeUsername = (event: InputEventType) => {
         setUsername(event.target.value);
+        setIsEdited(true);
     };
 
     const handleChangeAccountItems = () => {
@@ -110,56 +75,122 @@ const Profile: NextPage = () => {
     };
 
     const handleEdit = () => {
-        console.log('Edit Clicked');
+        showNotice('You can change your Accounts at rss3.bio');
     };
 
     const handleExpand = () => {
-        console.log('Expand Clicked');
+        if (isEdited) {
+            showNotice('Profile changed, you may need to save before view your accounts. For safety concern.');
+        } else {
+            toListPage('account');
+        }
     };
 
     const handleDiscard = () => {
-        console.log('Discard Clicked');
+        setIsEdited(false);
+        back();
     };
 
     const handleSave = async () => {
-        const profile = {
-            avatar: [avatarUrl],
-            username: username,
-            bio: bio + (website ? `<SITE#${website}>` : ''),
-        };
+        setIsLoading(true);
+        if (isEdited) {
+            const profile = {
+                avatar: [avatarUrl],
+                name: username,
+                bio: bio + (website ? `<SITE#${website}>` : ''),
+            };
 
-        const loginUser = RSS3.getLoginUser().persona as IRSS3;
-        if (profile.username.length > config.fieldMaxLength) {
-            setOversizeNotice('Name');
-            return;
-        }
-        if (profile.bio.length) {
-            setOversizeNotice('Bio');
-            return;
-        }
+            const loginUser = RSS3.getLoginUser().persona as IRSS3;
+            if (profile.name.length > config.fieldMaxLength) {
+                showOversizeNotice('Name');
+                return;
+            }
+            if (profile.bio.length > config.fieldMaxLength) {
+                showOversizeNotice('Bio');
+                return;
+            }
 
-        try {
-            await loginUser.profile.patch(profile);
-        } catch (e) {
-            console.log(e);
-            showNotice('Failed to save profile');
+            try {
+                await loginUser.profile.patch(profile);
+                await loginUser.files.sync();
+                setIsEdited(false);
+                setIsProfileSaved(true);
+            } catch (e) {
+                console.log(e);
+                showNotice('Failed to save profile');
+            }
+        } else {
+            showNotice('Nothing changed.');
         }
+        setIsLoading(false);
     };
+
+    const handleSaveSuccessfully = () => {
+        back();
+    };
+
+    const toListPage = async (type: string) => {
+        const addrOrName = loginUser.name || loginUser.address;
+        await router.push(`/u/${addrOrName}/list/${type}`);
+    };
+
+    const back = () => {
+        router.back();
+    };
+
+    const toHome = () => {
+        router.push('/');
+    };
+
+    const init = async () => {
+        const profile = loginUser.profile;
+        const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+
+        setAvatarUrl(profile?.avatar?.[0] || avatarUrl);
+        setUsername(profile?.name || '');
+        setBio(extracted);
+        setWebsite(fieldsMatch?.['SITE'] || '');
+        setLink(loginUser.name);
+
+        await RSS3.setPageOwner(loginUser.address);
+        const { listed } = await utils.initAccounts();
+        setAccountItems(
+            [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(listed),
+        );
+        setIsLoading(false);
+    };
+
+    // Initialize
+
+    useEffect(() => {
+        setTimeout(async () => {
+            if (await RSS3.reconnect()) {
+                const iv = setInterval(() => {
+                    if (loginUser.isReady) {
+                        clearInterval(iv);
+                        init();
+                    }
+                }, 200);
+            } else {
+                // Not login
+                toHome();
+            }
+        }, 0);
+    }, []);
 
     return (
         <div>
-            <Header>
-                <div className="flex flex-row justify-end w-full gap-x-8">
-                    <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                    <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={28} />
-                </div>
-                <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-            </Header>
+            <Header />
             <div className="flex flex-col max-w-5xl pt-12 m-auto md:pt-16">
                 <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Profile</h1>
                 <section className="flex flex-col items-center w-full pt-10">
                     <div className="flex flex-row items-end justify-start w-4/5 pb-5 pl-14 gap-x-3">
-                        <Image src={avatarUrl} alt={username} width={100} height={100} className="rounded-full" />
+                        <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
                         <div className="flex flex-col gap-y-5">
                             <Button
                                 text={'Change Avatar'}
@@ -194,6 +225,7 @@ const Profile: NextPage = () => {
                             <Input
                                 placeholder={'Personal Website'}
                                 isSingleLine={true}
+                                value={website}
                                 prefix={'https://'}
                                 onChange={handleChangeWebsite}
                             />
@@ -201,41 +233,45 @@ const Profile: NextPage = () => {
 
                         <div className="flex flex-row justify-end w-full gap-x-5">
                             <label className="w-48 pt-2 text-right">Bio</label>
-                            <Input placeholder={'Bio'} isSingleLine={false} onChange={handleChangeBio} />
+                            <Input placeholder={'Bio'} isSingleLine={false} value={bio} onChange={handleChangeBio} />
                         </div>
 
                         <div className="flex flex-row justify-start w-full gap-x-5">
                             <label className="w-48 text-right">Accounts</label>
                             <div className="flex flex-row w-4/5 gap-x-2">
-                                {accountItems.map((item) => {
-                                    if (item.type == 'default') {
-                                        return <AccountItem size="sm" chain={item.value} />;
-                                    } else {
-                                        return <EVMpAccountItem size="sm" address={item.value} />;
-                                    }
-                                })}
+                                {accountItems.map((account) =>
+                                    account.platform === 'EVM+' ? (
+                                        <EVMpAccountItem
+                                            key={account.platform + account.identity}
+                                            size="sm"
+                                            address={account.identity}
+                                        />
+                                    ) : (
+                                        <AccountItem
+                                            key={account.platform + account.identity}
+                                            size="sm"
+                                            chain={account.platform}
+                                        />
+                                    ),
+                                )}
                             </div>
-                            <div className="flex flex-row">
-                                <div>
-                                    <Button
-                                        key="edit"
-                                        color={COLORS.primary}
-                                        text="Edit"
-                                        onClick={handleEdit}
-                                        isOutlined={true}
-                                        isDisabled={false}
-                                    />
-                                </div>
-                                <div className="ml-2">
-                                    <Button
-                                        key="expand"
-                                        color={COLORS.primary}
-                                        icon="expand"
-                                        onClick={handleExpand}
-                                        isOutlined={true}
-                                        isDisabled={false}
-                                    />
-                                </div>
+                            <div className="flex flex-row gap-2">
+                                <Button
+                                    key="edit"
+                                    color={COLORS.primary}
+                                    text="Edit"
+                                    onClick={handleEdit}
+                                    isOutlined={true}
+                                    isDisabled={false}
+                                />
+                                <Button
+                                    key="expand"
+                                    color={COLORS.primary}
+                                    icon="expand"
+                                    onClick={handleExpand}
+                                    isOutlined={true}
+                                    isDisabled={false}
+                                />
                             </div>
                         </div>
                         <div className="flex flex-row justify-center pl-40 gap-x-3">
@@ -245,22 +281,39 @@ const Profile: NextPage = () => {
                                 text={'Discard'}
                                 fontSize={'text-base'}
                                 width={'w-48'}
+                                height={'h-8'}
                                 onClick={() => handleDiscard()}
                             />
-                            <Button
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                text={'Save'}
-                                fontSize={'text-base'}
-                                width={'w-48'}
-                                isDisabled={saveBtnDisabled}
-                                onClick={() => handleSave()}
-                            />
+                            {isLoading ? (
+                                <Button
+                                    isOutlined={false}
+                                    color={COLORS.primary}
+                                    icon="loading"
+                                    width={'w-48'}
+                                    height={'h-8'}
+                                />
+                            ) : (
+                                <Button
+                                    isOutlined={false}
+                                    color={COLORS.primary}
+                                    text={'Save'}
+                                    fontSize={'text-base'}
+                                    width={'w-48'}
+                                    height={'h-8'}
+                                    onClick={() => handleSave()}
+                                />
+                            )}
                         </div>
                     </section>
                 </section>
             </div>
-            <Modal theme="account" hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isShowingNotice}
+                closeEvent={() => setIsShowingNotice(false)}
+            >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
@@ -276,6 +329,32 @@ const Profile: NextPage = () => {
                             fontSize="text-base"
                             width="w-48"
                             onClick={() => setIsShowingNotice(false)}
+                        />
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                theme="account"
+                size="md"
+                isCenter={true}
+                hidden={!isProfileSaved}
+                closeEvent={() => setIsShowingNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className="mx-2 text-primary">Succeed</span>
+                    </div>
+
+                    <div className="flex justify-center">Profile saved successfully.</div>
+
+                    <div className="flex justify-center">
+                        <Button
+                            isOutlined={true}
+                            color="primary"
+                            text="OK"
+                            fontSize="text-base"
+                            width="w-48"
+                            onClick={handleSaveSuccessfully}
                         />
                     </div>
                 </div>

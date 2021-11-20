@@ -8,15 +8,23 @@ export interface UserItemProps {
     bio: string;
     ethAddress: string;
     rns: string;
+    toUserPage?: (addrOrName: string) => void;
 }
 
-const UserCard = ({ username, avatarUrl, bio, ethAddress, rns }: UserItemProps) => {
+const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: UserItemProps) => {
     // Setup user address
     // using rss3.bio or other things maybe
-    const address = rns ? `${rns}.rss3.bio` : ethAddress;
+    const address = rns ? `${rns}` : `${ethAddress.slice(0, 6)}...${ethAddress.slice(-4)}`;
 
     return (
-        <div className="flex flex-row gap-2 justify-start p-2">
+        <div
+            className={`flex flex-row gap-2 justify-start p-2 ${toUserPage ? 'cursor-pointer' : ''}`}
+            onClick={() => {
+                if (toUserPage) {
+                    toUserPage(rns || ethAddress);
+                }
+            }}
+        >
             <section className="flex flex-row items-center flex-shrink-0">
                 <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
             </section>

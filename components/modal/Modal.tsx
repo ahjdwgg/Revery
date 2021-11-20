@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
 interface ModalProps {
@@ -11,6 +11,7 @@ interface ModalProps {
 }
 
 export default function Modal({ theme, hidden, size, isCenter, children, closeEvent }: ModalProps) {
+    const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
     const modalClose = () => {
@@ -18,13 +19,26 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
         setTimeout(() => {
             closeEvent();
             setAnimation(true);
+            setIsHidden(true);
         }, 500);
     };
 
+    const onStateChange = () => {
+        if (hidden && !isHidden) {
+            modalClose();
+        } else {
+            setIsHidden(hidden);
+        }
+    };
+
+    useEffect(() => {
+        onStateChange();
+    }, [hidden]);
+
     return (
         <div
-            className={`absolute top-0 z-50 w-full min-h-screen py-16 bg-black bg-opacity-50 animated faster ${
-                hidden ? 'hidden' : ''
+            className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto py-16 bg-black bg-opacity-50 animated faster ${
+                isHidden ? 'hidden' : ''
             } ${animation ? 'fadeIn' : 'fadeOut'} ${isCenter ? 'flex flex-row justify-center items-center' : ''} `}
         >
             <div className={modalSize.get(size)}>

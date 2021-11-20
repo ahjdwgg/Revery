@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 interface ImageProps {
     imageUrl: string;
@@ -13,7 +12,7 @@ const ImageHolder = ({ imageUrl, title, isFullRound, size }: ImageProps) => {
 
     return (
         <div className={`flex justify-around relative ${roundedStyleString}`} style={{ width: size, height: size }}>
-            <Image className={roundedStyleString} src={imageUrl} alt={title} layout="fill" objectFit="cover" />
+            <img className={`w-full h-full object-cover ${roundedStyleString}`} src={imageUrl} alt={title} />
         </div>
     );
 };

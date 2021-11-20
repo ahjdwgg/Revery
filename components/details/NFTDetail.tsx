@@ -4,6 +4,7 @@ import ScanTag from '../tags/ScanTag';
 import Trait from './Trait';
 import { NFT } from '../../common/types';
 import style from '../../styles/content.module.css';
+import { Markdown } from 'react-marked-renderer';
 
 interface NFTDetailProps {
     detail: NFT;
@@ -25,7 +26,9 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.description && (
                 <div>
                     <h3 className={subtitle}>Description</h3>
-                    <div className={style.content}>{detail.description}</div>
+                    <div className={style.content}>
+                        <Markdown markdown={detail.description} />
+                    </div>
                 </div>
             )}
             {detail.traits && detail.traits.length > 0 && (
@@ -41,7 +44,9 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.collection?.description && (
                 <div>
                     <h3 className={subtitle}>About {detail.collection?.name}</h3>
-                    <div className={style.content}>{detail.collection?.description}</div>
+                    <div className={style.content}>
+                        <Markdown markdown={detail.collection?.description} />
+                    </div>
                 </div>
             )}
         </div>

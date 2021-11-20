@@ -81,8 +81,13 @@ function sha3HexAddress(addr: string) {
     return utils.keccak256('0x' + res);
 }
 
+interface RSS3Domains {
+    rnsName: string;
+    ensName: string;
+}
+
 const addrCache: {
-    [key: string]: string;
+    [key: string]: RSS3Domains;
 } = {};
 
 const nameCache: {
@@ -96,20 +101,18 @@ export default {
     },
     async addr2Name(addr: string, isPureRNS: boolean = false) {
         if (addrCache[addr]) {
-            return addrCache[addr];
+            return addrCache[addr].rnsName || addrCache[addr].ensName || '';
         } else {
             try {
-                const domainInfo = (await axios.get(`https://rss3.domains/address/${addr}`)).data;
+                const domainInfo = <RSS3Domains>(await axios.get(`https://rss3.domains/address/${addr}`)).data;
+                domainInfo.rnsName = domainInfo.rnsName.replace(config.rns.suffix, '');
+                if (domainInfo) {
+                    addrCache[addr] = domainInfo;
+                }
                 if (isPureRNS) {
                     return domainInfo.rnsName || '';
                 } else {
-                    if (domainInfo.rnsName) {
-                        return domainInfo.rnsName.replace('.rss3', '');
-                    } else if (domainInfo.ensName) {
-                        return domainInfo.ensName;
-                    } else {
-                        return '';
-                    }
+                    return domainInfo.rnsName || domainInfo.ensName || '';
                 }
             } catch (e) {
                 const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
@@ -121,7 +124,10 @@ export default {
                     .toLowerCase()
                     .replace(config.rns.suffix, '');
                 if (name) {
-                    addrCache[addr] = name;
+                    addrCache[addr] = {
+                        rnsName: name,
+                        ensName: '',
+                    };
                 }
                 return name;
             }

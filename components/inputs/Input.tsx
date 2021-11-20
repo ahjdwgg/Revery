@@ -26,62 +26,32 @@ interface InputProps {
     onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 }
 
-interface InputState {
-    value: string;
-}
-
-class Input extends Component<InputProps, InputState> {
-    constructor(props: InputProps) {
-        super(props);
-
-        this.state = {
-            value: props.value || '',
-        };
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const { onChange } = this.props;
-        this.setState({
-            value: event.target.value,
-        });
-
-        if (typeof onChange === 'function') {
-            onChange(event);
-        }
-    }
-
-    render() {
-        const { placeholder, prefix, suffix, isDisabled, isSingleLine } = this.props;
-        const { value } = this.state;
-
-        return (
-            <div className={style.wrapper}>
-                {prefix && <span className={style.additional}>{prefix}</span>}
-                {isSingleLine && (
-                    <input
-                        type="text"
-                        placeholder={placeholder}
-                        className={style.input}
-                        value={value}
-                        onChange={this.handleChange}
-                        disabled={isDisabled}
-                    />
-                )}
-                {!isSingleLine && (
-                    <textarea
-                        className={style.textarea}
-                        placeholder={placeholder}
-                        value={value}
-                        onChange={this.handleChange}
-                        disabled={isDisabled}
-                    />
-                )}
-                {suffix && <span className={style.additional}>{suffix}</span>}
-            </div>
-        );
-    }
-}
+const Input = ({ placeholder, prefix, suffix, isDisabled, isSingleLine, value, onChange }: InputProps) => {
+    return (
+        <div className={style.wrapper}>
+            {prefix && <span className={style.additional}>{prefix}</span>}
+            {isSingleLine ? (
+                <input
+                    type="text"
+                    placeholder={placeholder}
+                    className={style.input}
+                    value={value}
+                    onChange={onChange}
+                    disabled={isDisabled}
+                />
+            ) : (
+                <textarea
+                    className={style.textarea}
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    disabled={isDisabled}
+                />
+            )}
+            {suffix && <span className={style.additional}>{suffix}</span>}
+        </div>
+    );
+};
 
 export default Input;
 

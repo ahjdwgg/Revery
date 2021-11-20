@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3 from 'rss3-next';
@@ -5,13 +6,17 @@ import axios from 'axios';
 import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
+import rns from './rns';
+import Events from './events';
 
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
     address: '',
+    name: '',
     profile: null,
     followers: [],
     followings: [],
+    isReady: false,
 };
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
@@ -29,9 +34,11 @@ export interface IAssetProfile {
 export interface RSS3DetailPersona {
     persona: RSS3 | null;
     address: string;
+    name: string;
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
+    isReady: boolean;
 }
 
 function setStorage(key: string, value: string) {
@@ -137,6 +144,9 @@ function saveConnect(method: string) {
 }
 
 async function reconnect() {
+    if (isValidRSS3()) {
+        return true;
+    }
     const lastConnect = getStorage(KeyNames.ConnectMethod);
     const address = getStorage(KeyNames.ConnectAddress);
     if (address) {
@@ -214,6 +224,7 @@ async function reconnect() {
 }
 
 async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
+    user.isReady = false;
     if (user.persona) {
         if (!user.address) {
             user.address = user.persona.account.address;
@@ -223,10 +234,17 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
             await user.persona.files.sync();
         }
     }
+    if (user.name && !user.address) {
+        user.address = await rns.name2Addr(user.name);
+    }
+    if (user.address && !user.name) {
+        user.name = await rns.addr2Name(user.address);
+    }
     const RSS3APIPersona = apiPersona();
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.get(user.address, 'following');
     user.followings = (await RSS3APIPersona.links.get(user.address, 'following'))?.list || [];
+    user.isReady = true;
 }
 
 function apiPersona(): RSS3 {
@@ -252,31 +270,46 @@ async function disconnect() {
     setStorage(KeyNames.ConnectAddress, '');
 }
 
-async function visitor(): Promise<RSS3> {
-    if (RSS3LoginUser.persona) {
-        return RSS3LoginUser.persona;
-    } else {
-        return new RSS3({
-            endpoint: config.hubEndpoint,
-        });
-    }
+function dispatchEvent(event: string, detail: any) {
+    const evt = new CustomEvent(event, {
+        detail,
+        bubbles: true,
+        composed: true,
+    });
+    document.dispatchEvent(evt);
+    console.log(event, detail);
 }
 
 export default {
     connect: {
         walletConnect: async () => {
-            await wcConn();
-            saveConnect(KeyNames.WalletConnect);
-            return RSS3LoginUser;
+            if (await wcConn()) {
+                saveConnect(KeyNames.WalletConnect);
+                dispatchEvent(Events.connect, RSS3LoginUser);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
         },
         metamask: async () => {
-            await mmConn();
-            saveConnect(KeyNames.MetaMask);
-            return RSS3LoginUser;
+            if (await mmConn()) {
+                saveConnect(KeyNames.MetaMask);
+                dispatchEvent(Events.connect, RSS3LoginUser);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
         },
     },
-    disconnect: disconnect,
-    reconnect: reconnect,
+    disconnect: async () => {
+        await disconnect();
+        dispatchEvent(Events.disconnect, RSS3LoginUser);
+    },
+    reconnect: async () => {
+        const res = await reconnect();
+        dispatchEvent(Events.connect, RSS3LoginUser);
+        return res;
+    },
     getAPIUser: (): RSS3DetailPersona => {
         const user = Object.create(EMPTY_RSS3_DP);
         user.persona = apiPersona();
@@ -285,12 +318,32 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
-    setPageOwner: async (address: string) => {
-        RSS3PageOwner.address = address;
-        await initUser(RSS3PageOwner);
+    setPageOwner: async (addrOrName: string) => {
+        let isReloadRequired = false;
+        if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
+            if (RSS3PageOwner.address !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.address = addrOrName;
+                RSS3PageOwner.name = '';
+            }
+        } else {
+            if (RSS3PageOwner.name !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.name = addrOrName;
+                RSS3PageOwner.address = '';
+            }
+        }
+        if (isReloadRequired) {
+            await initUser(RSS3PageOwner);
+        }
+        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
+        return RSS3PageOwner;
     },
     getPageOwner: () => {
         return RSS3PageOwner;
+    },
+    isNowOwner: () => {
+        return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
 
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {

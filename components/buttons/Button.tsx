@@ -1,6 +1,6 @@
 import { BUTTON_ICONS, COLORS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
-import { BiExpandAlt, BiPlus, BiMinus, BiCheck } from 'react-icons/bi';
+import { BiExpandAlt, BiPlus, BiMinus, BiCheck, BiLoaderAlt } from 'react-icons/bi';
 import { ReactNode } from 'react';
 
 interface ButtonInterface {
@@ -24,38 +24,47 @@ interface ButtonInterface {
  * 4. button with an icon
  * @param {string} color - The text and background color of the button
  * @param {string} [text] - The text of the button
+ * @param children
  * @param {string} [fontSize] - The font size of the button
  * @param {string} [icon] - The icon on the button
  * @param {boolean} [isOutlined] - Specify if the button style is outlined
  * @param {boolean} [isDisabled] - Specify if the button style is disabled
+ * @param isFullRound
  * @param {string} [width] - width if not wrapped around text
+ * @param height
  * @param {function} [onClick] - button onClick function
  * @example
  * <Button text={"Edit Profile"} color={COLORS.nft} isOutlined={true}/>
  */
-const Button = (props: ButtonInterface) => {
-    var { color, text, children, fontSize, icon, isOutlined, isDisabled, isFullRound, width, height, onClick } = props;
+const Button = ({
+    color,
+    text,
+    children,
+    fontSize,
+    icon,
+    isOutlined,
+    isDisabled,
+    isFullRound,
+    width,
+    height,
+    onClick,
+}: ButtonInterface) => {
+    let bgDefaultStyle = '';
+    let bgAltStyle = '';
+    let textStyle = '';
+    let borderStyle = '';
+    let hoverTextStyle = '';
+    let hoverBorderStyle = '';
+    let hoverBgStyle = '';
 
-    var bgDefaultStyle = '';
-    var bgAltStyle = '';
-    var textStyle = '';
-    var borderStyle = '';
-    var hoverTextStyle = '';
-    var hoverBorderStyle = '';
-    var hoverBgStyle = '';
-
-    if (color != undefined) {
-        for (let styleItem of COLORTOSTYLE) {
-            if (styleItem.name == color) {
-                bgDefaultStyle = styleItem.bgDefault;
-                bgAltStyle = styleItem.bgAlt;
-                textStyle = styleItem.text;
-                borderStyle = styleItem.border;
-                hoverTextStyle = styleItem.hoverText;
-                hoverBorderStyle = styleItem.hoverBorder;
-                hoverBgStyle = styleItem.hoverBg;
-            }
-        }
+    if (typeof color !== 'undefined') {
+        bgDefaultStyle = COLORTOSTYLE[color].bgDefault;
+        bgAltStyle = COLORTOSTYLE[color].bgAlt;
+        textStyle = COLORTOSTYLE[color].text;
+        borderStyle = COLORTOSTYLE[color].border;
+        hoverTextStyle = COLORTOSTYLE[color].hoverText;
+        hoverBorderStyle = COLORTOSTYLE[color].hoverBorder;
+        hoverBgStyle = COLORTOSTYLE[color].hoverBg;
     }
 
     // default = simple button filled with specified color
@@ -75,7 +84,7 @@ const Button = (props: ButtonInterface) => {
         fontSize ? fontSize : 'text-xs'
     } font-medium py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} rounded bg-opacity-5 cursor-not-allowed`;
 
-    var className = defaultClassName;
+    let className = defaultClassName;
 
     if (isDisabled) {
         className = disabledClassName;
@@ -87,23 +96,29 @@ const Button = (props: ButtonInterface) => {
         className = className.replace('rounded', 'rounded-full');
     }
 
-    var iconSVG = null;
+    let iconSVG = null;
 
-    if (icon != undefined) {
-        className = (className + ` h-6 w-6`).replace('py-sm px-3', 'p-0.5');
+    if (typeof icon !== 'undefined') {
+        if (typeof height === 'undefined') {
+            className += ' h-6';
+        }
+        if (typeof width === 'undefined') {
+            className += ' w-6';
+        }
+        className = className.replace('py-sm px-3', 'p-0.5');
         iconSVG = iconSVGMap.get(icon);
     }
 
     return (
-        <div>
+        <div className="flex items-center">
             <button onClick={onClick} className={className}>
-                {props.text} {iconSVG} {children}
+                {text} {iconSVG} {children}
             </button>
         </div>
     );
 };
 
-var iconClass = 'w-full h-full';
+const iconClass = 'w-full h-full';
 
 const iconSVGMap = new Map([
     [BUTTON_ICONS.expand, <BiExpandAlt className={`${iconClass} p-0.5`} />],
@@ -111,6 +126,7 @@ const iconSVGMap = new Map([
     [BUTTON_ICONS.minus, <BiMinus className={iconClass} />],
     [BUTTON_ICONS.external, <FiArrowUpRight className={iconClass} />],
     [BUTTON_ICONS.check, <BiCheck className={iconClass} />],
+    [BUTTON_ICONS.loading, <BiLoaderAlt className={`${iconClass} animate-spin`} />],
 ]);
 
 export default Button;
