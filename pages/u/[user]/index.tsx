@@ -15,6 +15,7 @@ import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
 import { GeneralAssetWithTags } from '../../../common/types';
 import Events from '../../../common/events';
+import NFTItem from '../../../components/assets/NFTItem';
 
 const ProfilePage: NextPage = () => {
     const router = useRouter();
@@ -192,10 +193,10 @@ const ProfilePage: NextPage = () => {
                         >
                             <div className="grid grid-cols-2 gap-3">
                                 {nftItems.map((asset, i) => (
-                                    <ImageHolder
+                                    <NFTItem
                                         key={asset.platform + asset.id}
-                                        imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                                        isFullRound={false}
+                                        previewUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                                        isShowingDetails={false}
                                         size={70}
                                     />
                                 ))}

@@ -19,9 +19,20 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
         height: `${size}px`,
     };
 
+    const fixSchemas = (url: string) => {
+        let fixedUrl = url;
+        if (url.startsWith('ipfs://')) {
+            fixedUrl = url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+        }
+        return fixedUrl;
+    };
+
+    const fixedPreviewUrl = fixSchemas(previewUrl || '');
+    const fixedDetailUrl = fixSchemas(detailUrl || '');
+
     const imageUrl = isShowingDetails
-        ? detailUrl || previewUrl || config.undefinedImageAlt
-        : previewUrl || detailUrl || config.undefinedImageAlt;
+        ? fixedDetailUrl || fixedPreviewUrl || config.undefinedImageAlt
+        : fixedPreviewUrl || fixedDetailUrl || config.undefinedImageAlt;
     type contentTypes = 'html' | 'model' | 'video' | 'image';
     const getContentType = (url: string): contentTypes => {
         // Should better use Content-Type to detect, but don't know how to do that
@@ -38,16 +49,6 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
         return 'image'; // default
     };
 
-    const fixSchemas = (url: string) => {
-        if (url.startsWith('ipfs://')) {
-            return url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
-        }
-        return url;
-    };
-
-    previewUrl = fixSchemas(previewUrl || '');
-    detailUrl = fixSchemas(detailUrl || '');
-
     return (
         <div className="flex flex-shrink-0">
             {getContentType(imageUrl) === 'html' && (
@@ -60,8 +61,8 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                 <video
                     className={containerClasses}
                     style={containerStyles}
-                    src={detailUrl || previewUrl}
-                    poster={previewUrl}
+                    src={imageUrl}
+                    poster={fixedPreviewUrl}
                     controls={isShowingDetails}
                     autoPlay={isShowingDetails}
                     playsInline
