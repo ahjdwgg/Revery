@@ -51,11 +51,13 @@ const ProfilePage: NextPage = () => {
 
     const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
     const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
+        product: string;
         type: string;
         route: string;
         baseUrl: string;
         colorStyle: ModalColorStyle;
     }>({
+        product: '',
         type: '',
         route: '',
         baseUrl: '',
@@ -230,9 +232,10 @@ const ProfilePage: NextPage = () => {
     const toRSS3BioEditAssetNotice = (type: string, route: string, colorStyle: ModalColorStyle) => {
         // to RSS3.Bio edit this
 
+        const product = 'RSS3Bio';
         const loginUser = RSS3.getLoginUser();
-        const baseUrl = RSS3.buildProductBaseURL('RSS3Bio', loginUser.address, loginUser.name);
-        setOtherProductRedirectSettings({ type, route, baseUrl, colorStyle });
+        const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
+        setOtherProductRedirectSettings({ product, type, route, baseUrl, colorStyle });
         setIsShowingRedirectNotice(true);
     };
 
@@ -406,18 +409,26 @@ const ProfilePage: NextPage = () => {
 
             <Modal
                 theme={otherProductRedirectSettings.colorStyle}
-                size={'md'}
+                size={'sm'}
                 isCenter={true}
                 hidden={!isShowingRedirectNotice}
                 closeEvent={() => setIsShowingRedirectNotice(false)}
             >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
-                        <span className="mx-2 text-primary">Info</span>
+                        <span className={`mx-2 text-xl text-${otherProductRedirectSettings.colorStyle}`}>Info</span>
                     </div>
 
                     <div className="flex justify-center">
-                        {`You will be redirect to ${otherProductRedirectSettings.baseUrl}${otherProductRedirectSettings.route} to set up your ${otherProductRedirectSettings.type}.`}
+                        <div className="inline px-12 pt-8 pb-12">
+                            {`You will be redirect to`}
+                            <span className="text-primary mx-2">{otherProductRedirectSettings.product}</span>
+                            {`to set up your`}
+                            <span className={`mx-2 text-${otherProductRedirectSettings.colorStyle}`}>
+                                {otherProductRedirectSettings.type}
+                            </span>
+                            {`.`}
+                        </div>
                     </div>
 
                     <div className="flex justify-center gap-x-3">
