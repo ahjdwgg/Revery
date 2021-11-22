@@ -19,7 +19,9 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
         setTimeout(() => {
             closeEvent();
             setAnimation(true);
-            setIsHidden(true);
+            if (hidden) {
+                setIsHidden(true);
+            }
         }, 500);
     };
 
