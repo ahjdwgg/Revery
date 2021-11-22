@@ -13,9 +13,21 @@ import RSS3 from '../../../common/rss3';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
-import { GeneralAssetWithTags } from '../../../common/types';
+import { GeneralAssetWithTags, GitcoinResponse, NFT, NFTResponse, POAPResponse } from '../../../common/types';
 import Events from '../../../common/events';
 import NFTItem from '../../../components/assets/NFTItem';
+
+import Modal from '../../../components/modal/Modal';
+import ModalLoading from '../../../components/modal/ModalLoading';
+import SingleNFT from '../../../components/details/SingleNFT';
+import SingleDonation from '../../../components/details/SingleDonation';
+import SingleFootprint from '../../../components/details/SingleFootprint';
+
+interface ModalDetail {
+    hidden: boolean;
+    type: 'primary' | 'nft' | 'gitcoin' | 'footprint';
+    details?: NFT | GitcoinResponse | POAPResponse | null;
+}
 
 const ProfilePage: NextPage = () => {
     const router = useRouter();
@@ -25,6 +37,7 @@ const ProfilePage: NextPage = () => {
     const [link, setLink] = useState<string>('');
     const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [username, setUsername] = useState<string>('');
+    const [address, setAddress] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
     const [followers, setFollowers] = useState<RSS3ID[]>([]);
@@ -34,6 +47,11 @@ const ProfilePage: NextPage = () => {
     const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
     const [donationItems, setDonationItems] = useState<GeneralAssetWithTags[]>([]);
     const [footprintItems, setFootprintItems] = useState<GeneralAssetWithTags[]>([]);
+
+    const [modal, setModal] = useState<ModalDetail>({
+        hidden: true,
+        type: 'primary',
+    });
 
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -65,6 +83,7 @@ const ProfilePage: NextPage = () => {
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
             setUsername(profile?.name || '');
+            setAddress(pageOwner?.address || '');
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
@@ -127,6 +146,44 @@ const ProfilePage: NextPage = () => {
         addEventListener(Events.connect, () => setIsOwner(RSS3.isNowOwner()));
         addEventListener(Events.disconnect, () => setIsOwner(RSS3.isNowOwner()));
     }, []);
+
+    const getModalDetail = async (asset: GeneralAssetWithTags, type: 'nft' | 'gitcoin' | 'footprint') => {
+        document.body.style.overflow = 'hidden';
+        let data;
+        if (type === 'nft') {
+            const res = await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type);
+            data = res?.data;
+        } else if (type === 'gitcoin') {
+            const res = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
+            data = res;
+        } else if (type === 'footprint') {
+            const res = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
+            data = res;
+        }
+        setModal({
+            hidden: false,
+            type: type,
+            details: data,
+        });
+    };
+
+    const getModalDisplay = () => {
+        if (modal.type === 'nft') {
+            return <SingleNFT NFT={modal.details as NFT} />;
+        } else if (modal.type === 'gitcoin') {
+            return <SingleDonation Gitcoin={modal.details as GitcoinResponse} />;
+        } else if (modal.type === 'footprint') {
+            return <SingleFootprint POAPInfo={modal.details as POAPResponse} />;
+        }
+    };
+
+    const closeModal = () => {
+        document.body.style.overflow = '';
+        setModal({
+            hidden: true,
+            type: 'primary',
+        });
+    };
 
     return (
         <>
@@ -193,12 +250,20 @@ const ProfilePage: NextPage = () => {
                         >
                             <div className="grid grid-cols-2 gap-3">
                                 {nftItems.map((asset, i) => (
-                                    <NFTItem
-                                        key={asset.platform + asset.id}
-                                        previewUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                                        isShowingDetails={false}
-                                        size={70}
-                                    />
+                                    <div
+                                        className="cursor-pointer"
+                                        key={i}
+                                        onClick={() => {
+                                            getModalDetail(asset, 'nft');
+                                        }}
+                                    >
+                                        <NFTItem
+                                            key={asset.platform + asset.id}
+                                            previewUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                                            isShowingDetails={false}
+                                            size={70}
+                                        />
+                                    </div>
                                 ))}
                             </div>
                         </AssetCard>
@@ -224,6 +289,9 @@ const ProfilePage: NextPage = () => {
                                         imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
                                         isFullRound={false}
                                         size={70}
+                                        onClick={() => {
+                                            getModalDetail(asset, 'gitcoin');
+                                        }}
                                     />
                                 ))}
                             </div>
@@ -255,6 +323,9 @@ const ProfilePage: NextPage = () => {
                                         country={asset.info.country}
                                         username={username}
                                         activity={asset.info.title || ''}
+                                        clickEvent={() => {
+                                            getModalDetail(asset, 'footprint');
+                                        }}
                                     />
                                 ))}
                             </div>
@@ -262,6 +333,9 @@ const ProfilePage: NextPage = () => {
                     </div>
                 </section>
             </div>
+            <Modal hidden={modal.hidden} closeEvent={closeModal} theme={modal.type} isCenter={false} size="lg">
+                {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
+            </Modal>
         </>
     );
 };

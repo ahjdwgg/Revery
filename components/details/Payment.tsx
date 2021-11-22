@@ -27,7 +27,8 @@ export default function Payment({ donation }: PaymentProps) {
                 isOutlined={false}
                 color={COLORS.donation}
                 icon={'external'}
-                width="w-8 h-8"
+                width="w-8"
+                height="h-8"
                 onClick={() => toScanTx(donation)}
             />
         </div>
