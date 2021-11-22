@@ -1,5 +1,21 @@
 const { PAGE_ENV } = process.env;
 
+interface ProductsDefine {
+    schema: string;
+    baseDomain: string;
+    subDomainMode: boolean;
+}
+
+const productsList: {
+    [key: string]: ProductsDefine;
+} = {
+    RSS3Bio: {
+        schema: 'https://',
+        baseDomain: 'rss3.bio',
+        subDomainMode: true,
+    },
+};
+
 const config = {
     infuraId: [
         '76af1228cdf345d2bff6a9c0f35112e1',
@@ -15,6 +31,7 @@ const config = {
         prefix: 'pass',
         hiddenTag: 'hidden',
     },
+    productsList,
     fieldMaxLength: 280,
     walletConnectOptions: {
         rpc: {
