@@ -52,10 +52,10 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     return (
         <div className="flex flex-shrink-0">
             {getContentType(imageUrl) === 'html' && (
-                <iframe className={containerClasses} style={containerStyles} src={detailUrl} />
+                <iframe className={containerClasses} style={containerStyles} src={fixedDetailUrl} />
             )}
             {getContentType(imageUrl) === 'model' && (
-                <DynamicModelViewer className={containerClasses} style={containerStyles} src={detailUrl} />
+                <DynamicModelViewer className={containerClasses} style={containerStyles} src={fixedDetailUrl} />
             )}
             {getContentType(imageUrl) === 'video' && (
                 <video
