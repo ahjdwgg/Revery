@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../buttons/Button';
 
-interface ButtonMode {
+export interface AssetCardButtonMode {
     icon?: string;
     text?: string;
     isOutlined: boolean;
@@ -12,9 +12,9 @@ interface ButtonMode {
 interface AssetProps {
     title: string;
     color: 'account' | 'nft' | 'donation' | 'footprint';
-    headerButtons?: ButtonMode[];
+    headerButtons?: AssetCardButtonMode[];
     footerTips?: string;
-    footerButtons?: ButtonMode[];
+    footerButtons?: AssetCardButtonMode[];
     isSecondaryBG?: boolean;
     isTransparentBG?: boolean;
     children: React.ReactNode;

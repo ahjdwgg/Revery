@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { RSS3Account, RSS3ID, RSS3Links } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3ID } from 'rss3-next/types/rss3';
 import AccountItem from '../../../components/accounts/AccountItem';
-import AssetCard from '../../../components/assets/AssetCard';
+import AssetCard, { AssetCardButtonMode } from '../../../components/assets/AssetCard';
 import FootprintCard from '../../../components/assets/FootprintCard';
 import ContentCard from '../../../components/content/ContentCard';
 import Header from '../../../components/Header';
@@ -13,19 +13,20 @@ import RSS3 from '../../../common/rss3';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
-import { GeneralAssetWithTags, GitcoinResponse, NFT, NFTResponse, POAPResponse } from '../../../common/types';
+import { GeneralAssetWithTags, GitcoinResponse, NFT, POAPResponse } from '../../../common/types';
 import Events from '../../../common/events';
 import NFTItem from '../../../components/assets/NFTItem';
 
-import Modal from '../../../components/modal/Modal';
+import Modal, { ModalColorStyle } from '../../../components/modal/Modal';
 import ModalLoading from '../../../components/modal/ModalLoading';
 import SingleNFT from '../../../components/details/SingleNFT';
 import SingleDonation from '../../../components/details/SingleDonation';
 import SingleFootprint from '../../../components/details/SingleFootprint';
+import Button from '../../../components/buttons/Button';
 
 interface ModalDetail {
     hidden: boolean;
-    type: 'primary' | 'nft' | 'gitcoin' | 'footprint';
+    type: ModalColorStyle;
     details?: NFT | GitcoinResponse | POAPResponse | null;
 }
 
@@ -47,6 +48,90 @@ const ProfilePage: NextPage = () => {
     const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
     const [donationItems, setDonationItems] = useState<GeneralAssetWithTags[]>([]);
     const [footprintItems, setFootprintItems] = useState<GeneralAssetWithTags[]>([]);
+
+    const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
+    const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
+        product: string;
+        type: string;
+        route: string;
+        baseUrl: string;
+        colorStyle: ModalColorStyle;
+    }>({
+        product: '',
+        type: '',
+        route: '',
+        baseUrl: '',
+        colorStyle: 'primary',
+    });
+
+    const expandButtonCommon = {
+        icon: 'expand',
+        isOutlined: true,
+        isDisabled: false,
+    };
+    const editButtonCommon = {
+        text: 'Edit',
+        isOutlined: true,
+        isDisabled: false,
+    };
+    const defaultAssetCardButtons = {
+        NFT: [
+            {
+                ...expandButtonCommon,
+                onClick: () => {
+                    toListPage('nft');
+                },
+            },
+        ],
+        Donation: [
+            {
+                ...expandButtonCommon,
+                onClick: () => {
+                    toListPage('donation');
+                },
+            },
+        ],
+        Footprint: [
+            {
+                ...expandButtonCommon,
+                onClick: () => {
+                    toListPage('footprint');
+                },
+            },
+        ],
+    };
+    const ownerAssetCardButtons = {
+        NFT: [
+            {
+                ...editButtonCommon,
+                onClick: () => {
+                    toRSS3BioEditAssetNotice('NFT', '/setup/nfts', 'nft');
+                },
+            },
+            ...defaultAssetCardButtons.NFT,
+        ],
+        Donation: [
+            {
+                ...editButtonCommon,
+                onClick: () => {
+                    toRSS3BioEditAssetNotice('Donation', '/setup/gitcoins', 'donation');
+                },
+            },
+            ...defaultAssetCardButtons.Donation,
+        ],
+        Footprint: [
+            {
+                ...editButtonCommon,
+                onClick: () => {
+                    toRSS3BioEditAssetNotice('Footprint', '/setup/footprints', 'footprint');
+                },
+            },
+            ...defaultAssetCardButtons.Footprint,
+        ],
+    };
+    const [assetCardButtons, setAssetCardButtons] = useState<{
+        [key: string]: AssetCardButtonMode[];
+    }>(defaultAssetCardButtons);
 
     const [modal, setModal] = useState<ModalDetail>({
         hidden: true,
@@ -77,7 +162,7 @@ const ProfilePage: NextPage = () => {
         setAddrOrName(aon);
         const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
-        setIsOwner(RSS3.isNowOwner());
+        checkOwner();
         if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -115,6 +200,16 @@ const ProfilePage: NextPage = () => {
         }
     };
 
+    const checkOwner = () => {
+        const latestIsOwner = RSS3.isNowOwner();
+        if (latestIsOwner) {
+            setAssetCardButtons(ownerAssetCardButtons);
+        } else {
+            setAssetCardButtons(defaultAssetCardButtons);
+        }
+        setIsOwner(latestIsOwner);
+    };
+
     const toEditProfile = async () => {
         await router.push('/edit/profile');
     };
@@ -134,6 +229,22 @@ const ProfilePage: NextPage = () => {
         await router.push(`/u/${addr}`);
     };
 
+    const toRSS3BioEditAssetNotice = (type: string, route: string, colorStyle: ModalColorStyle) => {
+        // to RSS3.Bio edit this
+
+        const product = 'RSS3Bio';
+        const loginUser = RSS3.getLoginUser();
+        const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
+        setOtherProductRedirectSettings({ product, type, route, baseUrl, colorStyle });
+        setIsShowingRedirectNotice(true);
+    };
+
+    const toEditAssetRedirect = () => {
+        // open new window
+        setIsShowingRedirectNotice(false);
+        window.open(`${otherProductRedirectSettings.baseUrl}${otherProductRedirectSettings.route}`, '_blank');
+    };
+
     // Initialize
 
     useEffect(() => {
@@ -143,22 +254,19 @@ const ProfilePage: NextPage = () => {
     }, [router.query.user]);
 
     useEffect(() => {
-        addEventListener(Events.connect, () => setIsOwner(RSS3.isNowOwner()));
-        addEventListener(Events.disconnect, () => setIsOwner(RSS3.isNowOwner()));
+        addEventListener(Events.connect, checkOwner);
+        addEventListener(Events.disconnect, checkOwner);
     }, []);
 
-    const getModalDetail = async (asset: GeneralAssetWithTags, type: 'nft' | 'gitcoin' | 'footprint') => {
+    const getModalDetail = async (asset: GeneralAssetWithTags, type: 'nft' | 'donation' | 'footprint') => {
         document.body.style.overflow = 'hidden';
         let data;
         if (type === 'nft') {
-            const res = await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type);
-            data = res?.data;
-        } else if (type === 'gitcoin') {
-            const res = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
-            data = res;
+            data = (await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type))?.data;
+        } else if (type === 'donation') {
+            data = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
         } else if (type === 'footprint') {
-            const res = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
-            data = res;
+            data = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
         }
         setModal({
             hidden: false,
@@ -170,7 +278,7 @@ const ProfilePage: NextPage = () => {
     const getModalDisplay = () => {
         if (modal.type === 'nft') {
             return <SingleNFT NFT={modal.details as NFT} />;
-        } else if (modal.type === 'gitcoin') {
+        } else if (modal.type === 'donation') {
             return <SingleDonation Gitcoin={modal.details as GitcoinResponse} />;
         } else if (modal.type === 'footprint') {
             return <SingleFootprint POAPInfo={modal.details as POAPResponse} />;
@@ -234,20 +342,7 @@ const ProfilePage: NextPage = () => {
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
-                        <AssetCard
-                            title="NFTs"
-                            color="nft"
-                            headerButtons={[
-                                {
-                                    icon: 'expand',
-                                    isOutlined: true,
-                                    isDisabled: false,
-                                    onClick: () => {
-                                        toListPage('nft');
-                                    },
-                                },
-                            ]}
-                        >
+                        <AssetCard title="NFTs" color="nft" headerButtons={assetCardButtons.NFT}>
                             <div className="grid grid-cols-2 gap-3">
                                 {nftItems.map((asset, i) => (
                                     <div
@@ -268,50 +363,25 @@ const ProfilePage: NextPage = () => {
                             </div>
                         </AssetCard>
 
-                        <AssetCard
-                            title="Donations"
-                            color="donation"
-                            headerButtons={[
-                                {
-                                    icon: 'expand',
-                                    isOutlined: true,
-                                    isDisabled: false,
-                                    onClick: () => {
-                                        toListPage('donation');
-                                    },
-                                },
-                            ]}
-                        >
+                        <AssetCard title="Donations" color="donation" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
                                 {donationItems.map((asset, i) => (
-                                    <ImageHolder
-                                        key={asset.platform + asset.id}
-                                        imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                                        isFullRound={false}
-                                        size={70}
-                                        onClick={() => {
-                                            getModalDetail(asset, 'gitcoin');
-                                        }}
-                                    />
+                                    <div key={asset.platform + asset.id} className="flex cursor-pointer">
+                                        <ImageHolder
+                                            imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                                            isFullRound={false}
+                                            size={70}
+                                            onClick={() => {
+                                                getModalDetail(asset, 'donation');
+                                            }}
+                                        />
+                                    </div>
                                 ))}
                             </div>
                         </AssetCard>
                     </div>
                     <div>
-                        <AssetCard
-                            title="Footprints"
-                            color="footprint"
-                            headerButtons={[
-                                {
-                                    icon: 'expand',
-                                    isOutlined: true,
-                                    isDisabled: false,
-                                    onClick: () => {
-                                        toListPage('footprint');
-                                    },
-                                },
-                            ]}
-                        >
+                        <AssetCard title="Footprints" color="footprint" headerButtons={assetCardButtons.Footprint}>
                             <div className="flex flex-col w-full">
                                 {footprintItems.map((asset, i) => (
                                     <FootprintCard
@@ -335,6 +405,51 @@ const ProfilePage: NextPage = () => {
             </div>
             <Modal hidden={modal.hidden} closeEvent={closeModal} theme={modal.type} isCenter={false} size="lg">
                 {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
+            </Modal>
+
+            <Modal
+                theme={otherProductRedirectSettings.colorStyle}
+                size={'sm'}
+                isCenter={true}
+                hidden={!isShowingRedirectNotice}
+                closeEvent={() => setIsShowingRedirectNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className={`mx-2 text-xl text-${otherProductRedirectSettings.colorStyle}`}>Info</span>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12">
+                            {`You will be redirect to`}
+                            <span className="text-primary mx-2">{otherProductRedirectSettings.product}</span>
+                            {`to set up your`}
+                            <span className={`mx-2 text-${otherProductRedirectSettings.colorStyle}`}>
+                                {otherProductRedirectSettings.type}
+                            </span>
+                            {`.`}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center gap-x-3">
+                        <Button
+                            isOutlined={true}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Cancel'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={() => setIsShowingRedirectNotice(false)}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Go'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={toEditAssetRedirect}
+                        />
+                    </div>
+                </div>
             </Modal>
         </>
     );

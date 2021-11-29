@@ -1,8 +1,10 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
+export type ModalColorStyle = 'account' | 'nft' | 'donation' | 'footprint' | 'primary';
+
 interface ModalProps {
-    theme: 'account' | 'nft' | 'gitcoin' | 'footprint' | 'primary';
+    theme: ModalColorStyle;
     hidden: boolean;
     size: 'sm' | 'md' | 'lg';
     isCenter: boolean;
@@ -57,7 +59,7 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
 export const buttonTheme = new Map([
     ['account', 'text-account'],
     ['nft', 'text-nft'],
-    ['gitcoin', 'text-donation'],
+    ['donation', 'text-donation'],
     ['footprint', 'text-footprint'],
     ['primary', 'text-primary'],
 ]);

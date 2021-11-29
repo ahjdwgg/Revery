@@ -466,4 +466,20 @@ export default {
             signature: signature,
         };
     },
+
+    buildProductBaseURL: (product: string, address: string, name?: string) => {
+        if (product in config.productsList) {
+            const p = config.productsList[product];
+            if (p.subDomainMode) {
+                if (name) {
+                    return `${p.schema}${name}.${p.baseDomain}`;
+                } else {
+                    return `${p.schema}${p.baseDomain}/${address}`;
+                }
+            } else {
+                return `${p.schema}${p.baseDomain}/${name || address}`;
+            }
+        }
+        return '';
+    },
 };

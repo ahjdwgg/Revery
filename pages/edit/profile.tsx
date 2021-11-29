@@ -12,7 +12,7 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
 import { RSS3Account } from 'rss3-next/types/rss3';
-import Modal from '../../components/modal/Modal';
+import Modal, { ModalColorStyle } from '../../components/modal/Modal';
 import { useRouter } from 'next/router';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
@@ -32,6 +32,21 @@ const Profile: NextPage = () => {
 
     const [notice, setNotice] = useState('');
     const [isShowingNotice, setIsShowingNotice] = useState(false);
+
+    const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
+    const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
+        product: string;
+        type: string;
+        route: string;
+        baseUrl: string;
+        colorStyle: ModalColorStyle;
+    }>({
+        product: '',
+        type: '',
+        route: '',
+        baseUrl: '',
+        colorStyle: 'primary',
+    });
 
     const [isEdited, setIsEdited] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -72,10 +87,6 @@ const Profile: NextPage = () => {
 
     const handleChangeAccountItems = () => {
         console.log(accountItems);
-    };
-
-    const handleEdit = () => {
-        showNotice('You can change your Accounts at rss3.bio');
     };
 
     const handleExpand = () => {
@@ -132,6 +143,28 @@ const Profile: NextPage = () => {
     const toListPage = async (type: string) => {
         const addrOrName = loginUser.name || loginUser.address;
         await router.push(`/u/${addrOrName}/list/${type}`);
+    };
+
+    const toRSS3BioEditAccountNotice = () => {
+        // to RSS3.Bio edit this
+
+        const product = 'RSS3Bio';
+        const loginUser = RSS3.getLoginUser();
+        const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
+        setOtherProductRedirectSettings({
+            product,
+            type: 'Account',
+            route: '/setup/accounts',
+            baseUrl,
+            colorStyle: 'account',
+        });
+        setIsShowingRedirectNotice(true);
+    };
+
+    const toEditAssetRedirect = () => {
+        // open new window
+        setIsShowingRedirectNotice(false);
+        window.open(`${otherProductRedirectSettings.baseUrl}${otherProductRedirectSettings.route}`, '_blank');
     };
 
     const back = () => {
@@ -260,7 +293,7 @@ const Profile: NextPage = () => {
                                     key="edit"
                                     color={COLORS.primary}
                                     text="Edit"
-                                    onClick={handleEdit}
+                                    onClick={toRSS3BioEditAccountNotice}
                                     isOutlined={true}
                                     isDisabled={false}
                                 />
@@ -307,42 +340,89 @@ const Profile: NextPage = () => {
                     </section>
                 </section>
             </div>
+
             <Modal
-                theme="account"
-                size="md"
+                theme={otherProductRedirectSettings.colorStyle}
+                size={'sm'}
+                isCenter={true}
+                hidden={!isShowingRedirectNotice}
+                closeEvent={() => setIsShowingRedirectNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className={`mx-2 text-xl text-${otherProductRedirectSettings.colorStyle}`}>Info</span>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12">
+                            {`You will be redirect to`}
+                            <span className="text-primary mx-2">{otherProductRedirectSettings.product}</span>
+                            {`to set up your`}
+                            <span className={`mx-2 text-${otherProductRedirectSettings.colorStyle}`}>
+                                {otherProductRedirectSettings.type}
+                            </span>
+                            {`.`}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center gap-x-3">
+                        <Button
+                            isOutlined={true}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Cancel'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={() => setIsShowingRedirectNotice(false)}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Go'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={toEditAssetRedirect}
+                        />
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                theme={'account'}
+                size={'md'}
                 isCenter={true}
                 hidden={!isShowingNotice}
                 closeEvent={() => setIsShowingNotice(false)}
             >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
-                        <span className="mx-2 text-primary">Oops</span>
+                        <span className="mx-2 text-account">Oops</span>
                     </div>
 
                     <div className="flex justify-center">{notice}</div>
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center gap-x-3">
                         <Button
                             isOutlined={true}
-                            color="primary"
-                            text="OK"
-                            fontSize="text-base"
-                            width="w-48"
+                            color={'account'}
+                            text={'OK'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
                             onClick={() => setIsShowingNotice(false)}
                         />
                     </div>
                 </div>
             </Modal>
+
             <Modal
-                theme="account"
-                size="md"
+                theme={'account'}
+                size={'md'}
                 isCenter={true}
                 hidden={!isProfileSaved}
                 closeEvent={() => setIsShowingNotice(false)}
             >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
-                        <span className="mx-2 text-primary">Succeed</span>
+                        <span className="mx-2 text-account">Succeed</span>
                     </div>
 
                     <div className="flex justify-center">Profile saved successfully.</div>
@@ -350,10 +430,10 @@ const Profile: NextPage = () => {
                     <div className="flex justify-center">
                         <Button
                             isOutlined={true}
-                            color="primary"
-                            text="OK"
-                            fontSize="text-base"
-                            width="w-48"
+                            color={'account'}
+                            text={'OK'}
+                            fontSize={'text-base'}
+                            width={'w-48'}
                             onClick={handleSaveSuccessfully}
                         />
                     </div>
