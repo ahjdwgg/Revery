@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { RSS3Account, RSS3ID } from 'rss3-next/types/rss3';
@@ -32,7 +32,7 @@ interface ModalDetail {
 
 const ProfilePage: NextPage = () => {
     const router = useRouter();
-    const [addrOrName, setAddrOrName] = useState('');
+    const addrOrName = useRef<string>('');
     const [isOwner, setIsOwner] = useState(false);
 
     const [link, setLink] = useState<string>('');
@@ -159,7 +159,7 @@ const ProfilePage: NextPage = () => {
 
     const init = async () => {
         const aon = (router.query.user as string) || '';
-        setAddrOrName(aon);
+        addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
         checkOwner();
@@ -215,7 +215,7 @@ const ProfilePage: NextPage = () => {
     };
 
     const toListPage = async (type: string) => {
-        await router.push(`/u/${addrOrName}/list/${type}`);
+        await router.push(`/u/${addrOrName.current}/list/${type}`);
     };
 
     const toExternalUserSite = () => {
