@@ -80,6 +80,7 @@ const Nft: NextPage = () => {
                                 size={208}
                                 previewUrl={asset.info.image_preview_url}
                                 detailUrl={asset.info.animation_url}
+                                isShowingDetails={false}
                             />
                             <NFTBadges
                                 location="overlay"

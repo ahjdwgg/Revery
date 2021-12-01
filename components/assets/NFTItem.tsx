@@ -30,7 +30,7 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     const fixedPreviewUrl = fixSchemas(previewUrl || '');
     const fixedDetailUrl = fixSchemas(detailUrl || '');
 
-    const imageUrl = isShowingDetails
+    const mainUrl = isShowingDetails
         ? fixedDetailUrl || fixedPreviewUrl || config.undefinedImageAlt
         : fixedPreviewUrl || fixedDetailUrl || config.undefinedImageAlt;
     type contentTypes = 'html' | 'model' | 'video' | 'image';
@@ -51,17 +51,17 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
 
     return (
         <div className="flex flex-shrink-0">
-            {getContentType(imageUrl) === 'html' && (
-                <iframe className={containerClasses} style={containerStyles} src={fixedDetailUrl} />
+            {getContentType(mainUrl) === 'html' && (
+                <iframe className={containerClasses} style={containerStyles} src={mainUrl} />
             )}
-            {getContentType(imageUrl) === 'model' && (
-                <DynamicModelViewer className={containerClasses} style={containerStyles} src={fixedDetailUrl} />
+            {getContentType(mainUrl) === 'model' && (
+                <DynamicModelViewer className={containerClasses} style={containerStyles} src={mainUrl} />
             )}
-            {getContentType(imageUrl) === 'video' && (
+            {getContentType(mainUrl) === 'video' && (
                 <video
                     className={containerClasses}
                     style={containerStyles}
-                    src={imageUrl}
+                    src={mainUrl}
                     poster={fixedPreviewUrl}
                     controls={isShowingDetails}
                     autoPlay={isShowingDetails}
@@ -70,8 +70,8 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                     muted
                 />
             )}
-            {getContentType(imageUrl) === 'image' && (
-                <img className={containerClasses} style={containerStyles} src={imageUrl} alt="NFT Image" />
+            {getContentType(mainUrl) === 'image' && (
+                <img className={containerClasses} style={containerStyles} src={mainUrl} alt="NFT Image" />
             )}
         </div>
     );
