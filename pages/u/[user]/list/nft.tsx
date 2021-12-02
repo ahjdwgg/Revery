@@ -62,6 +62,7 @@ const Nft: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 py-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
+                    <Button isOutlined={true} color={COLORS.nft} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-nft">
                         {persona ? persona.profile?.name + "'s NFTs" : 'NFTs'}
                     </h1>
