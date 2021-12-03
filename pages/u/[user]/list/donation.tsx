@@ -62,6 +62,7 @@ const Donation: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
+                    <Button isOutlined={true} color={COLORS.donation} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-donation">
                         {persona ? persona.profile?.name + "'s Donations" : 'Donations'}
                     </h1>
