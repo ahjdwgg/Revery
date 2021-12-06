@@ -1,11 +1,16 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
 import RecommendSection from '../components/users/RecommendSection';
+
+import RSS3 from '../common/rss3';
+import config from '../common/config';
+
 const Home: NextPage = () => {
     const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     let slides = [
         'https://i.imgur.com/GdWEt4z.jpg',
@@ -34,28 +39,45 @@ const Home: NextPage = () => {
         })),
     }));
 
+    const init = async () => {
+        if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
+            setIsLoggedIn(true);
+        }
+    };
+
+    useEffect(() => {
+        init();
+    }, []);
+
     return (
         <>
             <Header />
-            <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
-                <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
-                    {[...Array(2)].map((_, i) => (
-                        <ContentCard
-                            key={i}
-                            avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
-                            username="Fendi"
-                            content={content}
-                            images={slides}
-                            timeStamp={0x60de434e}
-                            type="Twitter"
-                        />
-                    ))}
-                    <div className="w-full py-8 text-sm text-center">That's all :p</div>
-                </section>
-                <section className="flex flex-col gap-4 pb-16 w-4/11 sticky self-start top-16">
-                    <RecommendSection groups={recommendGroups} />
-                </section>
-            </div>
+            {isLoggedIn ? (
+                <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
+                    <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
+                        {[...Array(2)].map((_, i) => (
+                            <ContentCard
+                                key={i}
+                                avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                                username="Fendi"
+                                content={content}
+                                images={slides}
+                                timeStamp={0x60de434e}
+                                type="Twitter"
+                            />
+                        ))}
+                        <div className="w-full py-8 text-sm text-center">That's all :p</div>
+                    </section>
+                    <section className="flex flex-col gap-4 pb-16 w-4/11 sticky self-start top-16">
+                        <RecommendSection groups={recommendGroups} />
+                    </section>
+                </div>
+            ) : (
+                <div className="flex flex-col justify-start max-w-6xl px-2 pt-80 mx-auto gap-y-8 h-full">
+                    <p className="font-semibold text-4xl">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
+                    <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
+                </div>
+            )}
         </>
     );
 };
