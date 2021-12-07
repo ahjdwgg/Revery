@@ -1,8 +1,8 @@
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
-import { RSS3Account } from './rss3Types';
-
+import { RSS3Account, RSS3Asset } from './rss3Types';
+import { utils } from 'rss3';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -70,15 +70,16 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
                 ag.type = 'Invalid'; // Using as a match mark
             }
             for (const airf of assetsInRSS3File) {
+                let asset = utils.id.parseAsset(airf);
                 if (
-                    airf.platform === ag.platform &&
-                    airf.identity === ag.identity &&
-                    airf.id === ag.id &&
-                    airf.type === origType
+                    asset.platform === ag.platform &&
+                    asset.identity === ag.identity &&
+                    asset.uniqueID === ag.id &&
+                    asset.type === origType
                 ) {
                     // Matched
                     ag.type = origType; // Recover type
-                    if (airf.tags) {
+                    if (asset.tags) {
                         ag.tags = airf.tags;
                     }
                     break;
@@ -102,7 +103,7 @@ async function initAssets(type: string, limit?: number) {
     const apiUser = RSS3.getAPIUser().persona as IRSS3;
     const assetInRSS3 = await apiUser.assets.getList(pageOwner.address);
     const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
-    const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
+    const allAssets = await rss3Utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
 
     for (const asset of allAssets) {
         if (asset.type.endsWith(type)) {
@@ -115,7 +116,7 @@ async function initAssets(type: string, limit?: number) {
     }
 
     return {
-        listed: utils.sortByOrderTag(listed).slice(0, limit),
+        listed: rss3Utils.sortByOrderTag(listed).slice(0, limit),
         unlisted: unlisted.slice(0, limit),
     };
 }
@@ -150,7 +151,7 @@ async function initAccounts() {
     const unlisted: RSS3Account[] = [];
 
     const pageOwner = RSS3.getPageOwner();
-    const allAccounts = await pageOwner.profile.accounts.getList(pageOwner.address);
+    const allAccounts = (await pageOwner.profile?.accounts) || [];
 
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
@@ -161,7 +162,7 @@ async function initAccounts() {
     }
 
     return {
-        listed: utils.sortByOrderTag(listed),
+        listed: rss3Utils.sortByOrderTag(listed),
         unlisted,
     };
 }
@@ -187,7 +188,7 @@ function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
     };
 }
 
-const utils = {
+const rss3Utils = {
     sortByOrderTag,
     setOrderTag,
     setHiddenTag,
@@ -197,4 +198,4 @@ const utils = {
     extractEmbedFields,
 };
 
-export default utils;
+export default rss3Utils;

@@ -164,3 +164,4 @@ interface RSS3AutoItem extends RSS3ItemBase {
 export type RSS3Profile = Required<RSS3Index>['profile'];
 export type RSS3Account = Required<RSS3Profile>['accounts'][number];
 export type RSS3Links = Required<RSS3Index>['links'];
+export type RSS3Asset = RSS3CustomAsset | RSS3CustomAsset;
