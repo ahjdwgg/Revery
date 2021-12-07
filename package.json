@@ -26,7 +26,7 @@
         "react-icons": "4.3.1",
         "react-marked-renderer": "0.2.1",
         "react-sortablejs": "6.0.0",
-        "rss3-next": "^0.7.0",
+        "rss3": "0.8.0",
         "sortablejs": "1.14.0"
     },
     "devDependencies": {

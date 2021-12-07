@@ -17,7 +17,7 @@ const productsList: {
 };
 
 const config = {
-    hubEndpoint: PAGE_ENV === 'production' ? 'https://hub.pass3.me' : 'https://hub-dev.pass3.me',
+    hubEndpoint: 'https://node-beta.rss3.dev/',
     undefinedImageAlt: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
     tags: {

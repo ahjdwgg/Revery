@@ -1,9 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import RSS3 from 'rss3-next';
+import RSS3, { utils } from 'rss3';
+import { RSS3Account, RSS3Profile } from './rss3Types';
 import axios from 'axios';
-import { RSS3Account, RSS3List, RSS3Profile } from 'rss3-next/types/rss3';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from './config';
 import rns from './rns';
@@ -242,8 +242,8 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     }
     const RSS3APIPersona = apiPersona();
     user.profile = await RSS3APIPersona.profile.get(user.address);
-    user.followers = await RSS3APIPersona.backlinks.get(user.address, 'following');
-    user.followings = (await RSS3APIPersona.links.get(user.address, 'following'))?.list || [];
+    user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
+    user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
     user.isReady = true;
 }
 
@@ -431,40 +431,6 @@ export default {
             data = null;
         }
         return data;
-    },
-
-    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
-        // js don't support multiple return values,
-        // so here I'm using signature as a message provider
-        if (!RSS3LoginUser.persona) {
-            return {
-                platform: '',
-                identity: '',
-                signature: 'Not logged in',
-            };
-        }
-        const metamaskEthereum = (window as any).ethereum;
-        ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
-        const accounts = await metamaskEthereum.request({
-            method: 'eth_requestAccounts',
-        });
-        const address = ethers.utils.getAddress(accounts[0]);
-
-        const newTmpAddress: RSS3Account = {
-            platform: 'EVM+',
-            identity: address,
-        };
-
-        const signature =
-            (await ethersProvider
-                ?.getSigner()
-                .signMessage(RSS3LoginUser.persona.accounts.getSigMessage(newTmpAddress))) || '';
-
-        return {
-            platform: 'EVM+',
-            identity: address,
-            signature: signature,
-        };
     },
 
     buildProductBaseURL: (product: string, address: string, name?: string) => {

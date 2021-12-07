@@ -1,7 +1,7 @@
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
+import { RSS3Account } from './rss3Types';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -100,7 +100,7 @@ async function initAssets(type: string, limit?: number) {
 
     const pageOwner = RSS3.getPageOwner();
     const apiUser = RSS3.getAPIUser().persona as IRSS3;
-    const assetInRSS3 = await apiUser.assets.get(pageOwner.address);
+    const assetInRSS3 = await apiUser.assets.getList(pageOwner.address);
     const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
     const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
 
@@ -150,8 +150,7 @@ async function initAccounts() {
     const unlisted: RSS3Account[] = [];
 
     const pageOwner = RSS3.getPageOwner();
-    const apiUser = RSS3.getAPIUser().persona as IRSS3;
-    const allAccounts = await apiUser.accounts.get(pageOwner.address);
+    const allAccounts = await pageOwner.profile.accounts.getList(pageOwner.address);
 
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
