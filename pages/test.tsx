@@ -24,6 +24,7 @@ import ScanTag from '../components/tags/ScanTag';
 import Trait from '../components/details/Trait';
 import NFTDetail from '../components/details/NFTDetail';
 import Payment from '../components/details/Payment';
+import ItemCard from '../components/content/ItemCard';
 
 interface InputStates {
     website: string;
@@ -128,21 +129,13 @@ const Test: NextPage = () => {
             <Head>
                 <title>Test page</title>
             </Head>
-            <Header>
-                <div className="flex flex-row justify-end w-full gap-x-8">
-                    <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
-                    <ImageHolder imageUrl="https://i.imgur.com/GdWEt4z.jpg" isFullRound={true} size={28} />
-                </div>
-            </Header>
             <div className="flex flex-col max-w-lg pt-12 m-auto md:pt-16">
                 <h1 className="mt-4 font-bold text-center">Test Page</h1>
                 <section className="divide-y-2 divide-solid divide-opacity-5 divide-primary">
-                    <Profile
+                    {/* <Profile
                         avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                         username="Fendi"
                         bio={bio}
-                        followers={12}
-                        followings={8}
                         rns="Fendi.rss3.bio"
                         link="Fendi.github.io"
                         followerList={[]}
@@ -164,7 +157,29 @@ const Test: NextPage = () => {
                         followings={8}
                         followerList={[]}
                         followingList={[]}
-                    />
+                    /> */}
+                    <ItemCard
+                        avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                        username="Fendi"
+                        content="hello world:)"
+                        timeStamp={0x60de434e}
+                        type="Twitter"
+                    ></ItemCard>
+                    <ItemCard
+                        avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                        username="Fendi"
+                        content={`Hello RSS3💖`}
+                        timeStamp={0x60de434e}
+                        type="Mirror-XYZ"
+                    ></ItemCard>
+                    <ItemCard
+                        avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
+                        username="Fendi"
+                        content={`Hello RSS3💖`}
+                        images={slides}
+                        timeStamp={0x60de434e}
+                        type="Misskey"
+                    ></ItemCard>
                     <ContentCard
                         avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
                         username="Fendi"

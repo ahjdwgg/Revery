@@ -13,7 +13,7 @@ interface ContentProps {
     content: string;
     images?: string[];
     timeStamp: number;
-    type: string;
+    type?: string;
 }
 
 const ContentCard = ({ avatarUrl, username, content, images, timeStamp, type }: ContentProps) => {
