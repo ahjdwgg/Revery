@@ -8,6 +8,7 @@ import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './type
 import config from './config';
 import rns from './rns';
 import Events from './events';
+import Items from 'rss3/dist/items/index';
 
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
@@ -16,6 +17,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     profile: null,
     followers: [],
     followings: [],
+    items: null,
     isReady: false,
 };
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
@@ -38,6 +40,7 @@ export interface RSS3DetailPersona {
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
+    items: Items | null;
     isReady: boolean;
 }
 
@@ -244,6 +247,7 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
     user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+    user.items = await RSS3APIPersona.items;
     user.isReady = true;
 }
 

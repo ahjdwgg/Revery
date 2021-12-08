@@ -1,7 +1,7 @@
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
-import { RSS3Account, RSS3Asset } from './rss3Types';
+import { RSS3Account, RSS3Asset, RSS3CustomItem, RSS3AutoItem } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -167,6 +167,16 @@ async function initAccounts() {
     };
 }
 
+async function initContent() {
+    const pageOwner = await RSS3.getPageOwner();
+    const listed = await pageOwner.items?.getListByPersona({
+        persona: pageOwner.address,
+        limit: 30,
+        tsp: '',
+    });
+    return { listed };
+}
+
 function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
     const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
     const fields = raw.match(fieldPattern) || [];
@@ -196,6 +206,7 @@ const utils = {
     initAssets,
     initAccounts,
     extractEmbedFields,
+    initContent,
 };
 
 export default utils;
