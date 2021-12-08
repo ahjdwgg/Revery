@@ -9,7 +9,7 @@ export default function SingleNFT(props: { NFT: NFT }) {
     return (
         <div className="flex flex-col max-w-screen-sm m-auto gap-y-4">
             <div className="relative flex flex-row items-center justify-between">
-                <span className="flex-1 w-0 text-xl font-semibold text-left capitalize truncate text-nft">
+                <span className="flex-1 w-0 text-xl font-semibold text-left capitalize truncate text-primary">
                     {NFT.name}
                 </span>
                 <NFTBadges location="header" chain={NFT.chain} collectionImg={NFT.collection?.image_url} />
