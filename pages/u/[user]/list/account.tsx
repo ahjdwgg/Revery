@@ -50,11 +50,11 @@ const Account: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <Button isOutlined={true} color={COLORS.account} text={'Back'} onClick={() => router.back()} />
-                    <h1 className="text-lg font-bold text-left text-account">
+                    <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
+                    <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Accounts" : 'Accounts'}
                     </h1>
-                    <Button isOutlined={true} color={COLORS.account} text={'Edit'} />
+                    <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">
                     {listedAccounts.map((account, index) => (
@@ -75,7 +75,7 @@ const Account: NextPage = () => {
             </div>
             <Modal
                 hidden={modal.hidden}
-                theme={'account'}
+                theme={'primary'}
                 isCenter={true}
                 size="md"
                 closeEvent={() => {
