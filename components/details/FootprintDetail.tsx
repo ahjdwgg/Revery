@@ -20,7 +20,7 @@ function getDate(detail: POAP): string {
 }
 
 export default function FootprintDetail({ detail }: FootprintDetailProps) {
-    const subtitle = 'text-lg font-medium capitalize text-footprint my-2';
+    const subtitle = 'text-lg font-medium capitalize text-primary my-2';
 
     return (
         <div className="flex flex-col items-start justify-start gap-5 px-5 py-4 filter">
@@ -31,7 +31,7 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                     </h2>
                     <Button
                         isOutlined={false}
-                        color={COLORS.footprint}
+                        color={COLORS.primary}
                         icon={'external'}
                         width="w-8"
                         height="h-8"
@@ -40,18 +40,18 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                         }}
                     />
                 </div>
-                <div className="flex flex-row items-center justify-start gap-2 my-1 text-footprint">
+                <div className="flex flex-row items-center justify-start gap-2 my-1 text-primary">
                     <BiLinkAlt />
                     <span className="flex-1 text-sm leading-normal truncate">{detail.event.event_url}</span>
                 </div>
             </section>
             <section className="w-full">
                 <div className="flex flex-row items-center gap-2">
-                    <BiCalendar className="text-footprint" />
+                    <BiCalendar className="text-primary" />
                     <span className="flex-1 w-0 truncate">{getDate(detail)}</span>
                 </div>
                 <div className="flex flex-row items-center gap-2">
-                    <BiLocationPlus className="text-footprint" />
+                    <BiLocationPlus className="text-primary" />
                     <span className="flex-1 w-0 truncate">
                         {detail.event.city || detail.event.country || 'Metaverse'}
                     </span>
