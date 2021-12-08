@@ -2,7 +2,7 @@ import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
-import { utils } from 'rss3';
+import { utils as RSS3Utils } from 'rss3';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -70,7 +70,7 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
                 ag.type = 'Invalid'; // Using as a match mark
             }
             for (const airf of assetsInRSS3File) {
-                let asset = utils.id.parseAsset(airf);
+                let asset = RSS3Utils.id.parseAsset(airf);
                 if (
                     asset.platform === ag.platform &&
                     asset.identity === ag.identity &&
@@ -79,9 +79,9 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
                 ) {
                     // Matched
                     ag.type = origType; // Recover type
-                    if (asset.tags) {
-                        ag.tags = airf.tags;
-                    }
+                    // if (asset.tags) {
+                    //     ag.tags = airf.tags;
+                    // }
                     break;
                 }
             }
@@ -103,7 +103,7 @@ async function initAssets(type: string, limit?: number) {
     const apiUser = RSS3.getAPIUser().persona as IRSS3;
     const assetInRSS3 = await apiUser.assets.getList(pageOwner.address);
     const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
-    const allAssets = await rss3Utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
+    const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
 
     for (const asset of allAssets) {
         if (asset.type.endsWith(type)) {
@@ -116,7 +116,7 @@ async function initAssets(type: string, limit?: number) {
     }
 
     return {
-        listed: rss3Utils.sortByOrderTag(listed).slice(0, limit),
+        listed: utils.sortByOrderTag(listed).slice(0, limit),
         unlisted: unlisted.slice(0, limit),
     };
 }
@@ -162,7 +162,7 @@ async function initAccounts() {
     }
 
     return {
-        listed: rss3Utils.sortByOrderTag(listed),
+        listed: utils.sortByOrderTag(listed),
         unlisted,
     };
 }
@@ -188,7 +188,7 @@ function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
     };
 }
 
-const rss3Utils = {
+const utils = {
     sortByOrderTag,
     setOrderTag,
     setHiddenTag,
@@ -198,4 +198,4 @@ const rss3Utils = {
     extractEmbedFields,
 };
 
-export default rss3Utils;
+export default utils;
