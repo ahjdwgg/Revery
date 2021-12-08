@@ -58,6 +58,9 @@ module.exports = {
             minWidth: {
                 '1/4': '25%',
             },
+            boxShadow: {
+                DEFAULT: '0px 4px 6px -2px rgba(0, 0, 0, 0.02), 0px 10px 15px -3px rgba(0, 0, 0, 0.04)',
+            },
             backgroundImage: (theme) => ({
                 EVM: 'url(/chains/evm.png)',
                 BSC: 'url(/chains/BSC.png)',
