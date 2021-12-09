@@ -99,13 +99,13 @@ async function initAssets(type: string, limit?: number) {
     const listed: GeneralAssetWithTags[] = [];
     const unlisted: GeneralAssetWithTags[] = [];
 
-    const pageOwner = RSS3.getPageOwner();
+    // const pageOwner = RSS3.getPageOwner();
     // const apiUser = RSS3.getAPIUser().persona as IRSS3;
-    console.log(pageOwner.address);
-    const assetInRSS3 = await pageOwner.assets?.auto?.getList(pageOwner.address);
+    // console.log(pageOwner.address);
+    // const assetInRSS3 = await pageOwner.assets?.auto?.getList(pageOwner.address);
     // const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
     // const allAssets = await utils.mergeAssetsTags(assetInRSS3?assetInRSS3:[''], assetInAssetProfile);
-    console.log(pageOwner.assets);
+    // console.log(pageOwner.assets);
     // for (const asset of assetInRSS3) {
     //     if (asset.type.endsWith(type)) {
     //         if (asset.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {

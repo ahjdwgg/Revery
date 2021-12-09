@@ -256,7 +256,6 @@ const ProfilePage: NextPage = () => {
     useEffect(() => {
         // init();
         console.log(address);
-        console.log(accountItems);
     }, [address]);
 
     useEffect(() => {
@@ -267,13 +266,13 @@ const ProfilePage: NextPage = () => {
     const getModalDetail = async (asset: GeneralAssetWithTags, type: 'nft' | 'donation' | 'footprint') => {
         document.body.style.overflow = 'hidden';
         let data;
-        if (type === 'nft') {
-            data = (await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type))?.data;
-        } else if (type === 'donation') {
-            data = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
-        } else if (type === 'footprint') {
-            data = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
-        }
+        // if (type === 'nft') {
+        //     data = (await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type))?.data;
+        // } else if (type === 'donation') {
+        //     data = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
+        // } else if (type === 'footprint') {
+        //     data = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
+        // }
         setModal({
             hidden: false,
             type: type,
@@ -317,16 +316,12 @@ const ProfilePage: NextPage = () => {
                         toExternalUserSite={toExternalUserSite}
                         toUserPage={toUserPage}
                     >
-                        {accountItems.map((account) => {
-                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
-                            accountInfo.platform === 'EVM+' ? (
-                                <EVMpAccountItem key={account.id} size="sm" address={accountInfo.identity} />
+                        {accountItems.map((account, index) => {
+                            let accountInfo = account.id.split('-');
+                            return accountInfo[0] === 'EVM+' ? (
+                                <EVMpAccountItem key={index} size="sm" address={accountInfo[1]} />
                             ) : (
-                                <AccountItem
-                                    key={accountInfo.platform + accountInfo.identity}
-                                    size="sm"
-                                    chain={accountInfo.platform}
-                                />
+                                <AccountItem key={index} size="sm" chain={accountInfo[0]} />
                             );
                         })}
                     </Profile>
@@ -355,12 +350,12 @@ const ProfilePage: NextPage = () => {
                                             getModalDetail(asset, 'nft');
                                         }}
                                     >
-                                        <NFTItem
+                                        {/* <NFTItem
                                             key={asset.platform + asset.id}
                                             previewUrl={asset.info.image_preview_url || config.undefinedImageAlt}
                                             isShowingDetails={false}
                                             size={70}
-                                        />
+                                        /> */}
                                     </div>
                                 ))}
                             </div>
@@ -368,7 +363,7 @@ const ProfilePage: NextPage = () => {
 
                         <AssetCard title="Donations" color="donation" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
-                                {donationItems.map((asset, i) => (
+                                {/* {donationItems.map((asset, i) => (
                                     <div key={asset.platform + asset.id} className="flex cursor-pointer">
                                         <ImageHolder
                                             imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
@@ -379,14 +374,14 @@ const ProfilePage: NextPage = () => {
                                             }}
                                         />
                                     </div>
-                                ))}
+                                ))} */}
                             </div>
                         </AssetCard>
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="footprint" headerButtons={assetCardButtons.Footprint}>
                             <div className="flex flex-col w-full">
-                                {footprintItems.map((asset, i) => (
+                                {/* {footprintItems.map((asset, i) => (
                                     <FootprintCard
                                         key={asset.platform + asset.id}
                                         imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
@@ -400,7 +395,7 @@ const ProfilePage: NextPage = () => {
                                             getModalDetail(asset, 'footprint');
                                         }}
                                     />
-                                ))}
+                                ))} */}
                             </div>
                         </AssetCard>
                     </div>
