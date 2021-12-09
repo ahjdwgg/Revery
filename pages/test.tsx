@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import AccountItem from '../components/accounts/AccountItem';
 import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
 import ContentCard from '../components/content/ContentCard';

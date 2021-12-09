@@ -1,5 +1,5 @@
 // File ids
-type RSS3ID = string; // Same as ethereum address
+export type RSS3ID = string; // Same as ethereum address
 type RSS3CustomItemsListID = string; // `${RSS3ID}-list-items.custom-${index}`
 type RSS3AutoItemsListID = string; // `${RSS3ID}-list-items.auto-0`
 type RSS3CustomAssetsListID = string; // `${RSS3ID}-list-assets.custom-${index}`

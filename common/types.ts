@@ -99,9 +99,11 @@ export interface POAPResponse {
 export interface GeneralAsset {
     platform: string;
     identity: string;
-    id: string; // contractAddress-id or admin_address
+    uniqueID: string; // contractAddress-id or admin_address
     type: string;
-    info: {
+    hide?: boolean;
+    order?: number;
+    info?: {
         collection?: string;
         collection_icon?: string;
         image_preview_url?: string | null;

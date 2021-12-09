@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { RSS3Account, RSS3ID } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3ID } from '../../../common/rss3Types';
 import AccountItem from '../../../components/accounts/AccountItem';
 import AssetCard, { AssetCardButtonMode } from '../../../components/assets/AssetCard';
 import FootprintCard from '../../../components/assets/FootprintCard';
@@ -23,7 +23,7 @@ import SingleNFT from '../../../components/details/SingleNFT';
 import SingleDonation from '../../../components/details/SingleDonation';
 import SingleFootprint from '../../../components/details/SingleFootprint';
 import Button from '../../../components/buttons/Button';
-
+import { utils as RSS3Utils } from 'rss3';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -163,7 +163,9 @@ const ProfilePage: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(aon);
         const profile = pageOwner.profile;
         checkOwner();
+        console.log(pageOwner.assets);
         if (profile) {
+            console.log(pageOwner.isReady);
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
@@ -176,13 +178,11 @@ const ProfilePage: NextPage = () => {
             setFollowings(pageOwner.followings || []);
 
             // Accounts
-            await RSS3.setPageOwner(pageOwner.address);
             const { listed } = await utils.initAccounts();
             setAccountItems(
                 [
                     {
-                        platform: 'EVM+',
-                        identity: pageOwner.address,
+                        id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
                     },
                 ].concat(listed),
             );
@@ -192,7 +192,7 @@ const ProfilePage: NextPage = () => {
                 setNftItems(await loadAssets('NFT', 4));
             }, 0);
             setTimeout(async () => {
-                setDonationItems(await loadAssets('Gitcoin-Donation', 4));
+                setDonationItems(await loadAssets('Donation', 4));
             }, 0);
             setTimeout(async () => {
                 setFootprintItems(await loadAssets('POAP', 5));
@@ -254,6 +254,12 @@ const ProfilePage: NextPage = () => {
     }, [router.query.user]);
 
     useEffect(() => {
+        // init();
+        console.log(address);
+        console.log(accountItems);
+    }, [address]);
+
+    useEffect(() => {
         addEventListener(Events.connect, checkOwner);
         addEventListener(Events.disconnect, checkOwner);
     }, []);
@@ -311,21 +317,18 @@ const ProfilePage: NextPage = () => {
                         toExternalUserSite={toExternalUserSite}
                         toUserPage={toUserPage}
                     >
-                        {accountItems.map((account) =>
-                            account.platform === 'EVM+' ? (
-                                <EVMpAccountItem
-                                    key={account.platform + account.identity}
-                                    size="sm"
-                                    address={account.identity}
-                                />
+                        {accountItems.map((account) => {
+                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
+                            accountInfo.platform === 'EVM+' ? (
+                                <EVMpAccountItem key={account.id} size="sm" address={accountInfo.identity} />
                             ) : (
                                 <AccountItem
-                                    key={account.platform + account.identity}
+                                    key={accountInfo.platform + accountInfo.identity}
                                     size="sm"
-                                    chain={account.platform}
+                                    chain={accountInfo.platform}
                                 />
-                            ),
-                        )}
+                            );
+                        })}
                     </Profile>
                     {[...Array(1)].map((_, i) => (
                         <ContentCard

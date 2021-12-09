@@ -1,7 +1,7 @@
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
-import { RSS3Account, RSS3Asset, RSS3CustomItem, RSS3AutoItem } from './rss3Types';
+import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -66,7 +66,7 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
     return await Promise.all(
         (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
             const origType = ag.type;
-            if (config.hideUnlistedAsstes) {
+            if (config.hideUnlistedAssets) {
                 ag.type = 'Invalid'; // Using as a match mark
             }
             for (const airf of assetsInRSS3File) {
@@ -74,7 +74,7 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
                 if (
                     asset.platform === ag.platform &&
                     asset.identity === ag.identity &&
-                    asset.uniqueID === ag.id &&
+                    asset.uniqueID === ag.uniqueID &&
                     asset.type === origType
                 ) {
                     // Matched
@@ -100,20 +100,21 @@ async function initAssets(type: string, limit?: number) {
     const unlisted: GeneralAssetWithTags[] = [];
 
     const pageOwner = RSS3.getPageOwner();
-    const apiUser = RSS3.getAPIUser().persona as IRSS3;
-    const assetInRSS3 = await apiUser.assets.getList(pageOwner.address);
-    const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
-    const allAssets = await utils.mergeAssetsTags(assetInRSS3, assetInAssetProfile);
-
-    for (const asset of allAssets) {
-        if (asset.type.endsWith(type)) {
-            if (asset.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
-                unlisted.push(asset);
-            } else {
-                listed.push(asset);
-            }
-        }
-    }
+    // const apiUser = RSS3.getAPIUser().persona as IRSS3;
+    console.log(pageOwner.address);
+    const assetInRSS3 = await pageOwner.assets?.auto?.getList(pageOwner.address);
+    // const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
+    // const allAssets = await utils.mergeAssetsTags(assetInRSS3?assetInRSS3:[''], assetInAssetProfile);
+    console.log(pageOwner.assets);
+    // for (const asset of assetInRSS3) {
+    //     if (asset.type.endsWith(type)) {
+    //         if (asset.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
+    //             unlisted.push(asset);
+    //         } else {
+    //             listed.push(asset);
+    //         }
+    //     }
+    // }
 
     return {
         listed: utils.sortByOrderTag(listed).slice(0, limit),
@@ -152,7 +153,7 @@ async function initAccounts() {
 
     const pageOwner = RSS3.getPageOwner();
     const allAccounts = (await pageOwner.profile?.accounts) || [];
-
+    console.log(allAccounts);
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
             unlisted.push(account);

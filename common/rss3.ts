@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import RSS3, { utils } from 'rss3';
+import RSS3, { utils as RSS3Utils } from 'rss3';
 import { RSS3Account, RSS3Profile } from './rss3Types';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
@@ -9,7 +9,7 @@ import config from './config';
 import rns from './rns';
 import Events from './events';
 import Items from 'rss3/dist/items/index';
-
+import Assets from 'rss3/dist/assets/index';
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     persona: null,
     address: '',
@@ -18,8 +18,10 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     followers: [],
     followings: [],
     items: null,
+    assets: null,
     isReady: false,
 };
+
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let assetsProfileCache: Map<string, IAssetProfile> = new Map();
@@ -41,6 +43,7 @@ export interface RSS3DetailPersona {
     followers: string[];
     followings: string[];
     items: Items | null;
+    assets: Assets | null;
     isReady: boolean;
 }
 
@@ -248,6 +251,8 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
     user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
     user.items = await RSS3APIPersona.items;
+    // user.assets = await RSS3APIPersona.assets;
+
     user.isReady = true;
 }
 
@@ -356,17 +361,11 @@ export default {
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`/assets/list`, {
-                    baseURL: config.hubEndpoint,
-                    params: {
-                        personaID: address,
-                        type: type,
-                    },
-                });
-                if (res && res.data) {
-                    data = <IAssetProfile>res.data;
-                    assetsProfileCache.set(address + type, data);
-                }
+                const autoAssets = (await RSS3PageOwner.assets?.auto.getList(address))?.map((asset) =>
+                    RSS3Utils.id.parseAsset(asset),
+                );
+                data = <IAssetProfile>{ assets: autoAssets, status: autoAssets };
+                assetsProfileCache.set(address + type, data);
             } catch (error) {
                 data = null;
             }
