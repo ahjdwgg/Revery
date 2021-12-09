@@ -8,6 +8,7 @@ module.exports = {
                 primary: {
                     DEFAULT: '#0072ff',
                     bg: '#F2F8FF',
+                    asset: '#FAFAFA',
                 },
                 account: {
                     DEFAULT: '#40D22F',
