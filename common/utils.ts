@@ -99,13 +99,13 @@ async function initAssets(type: string, limit?: number) {
     const listed: GeneralAssetWithTags[] = [];
     const unlisted: GeneralAssetWithTags[] = [];
 
-    // const pageOwner = RSS3.getPageOwner();
-    // const apiUser = RSS3.getAPIUser().persona as IRSS3;
-    // console.log(pageOwner.address);
-    // const assetInRSS3 = await pageOwner.assets?.auto?.getList(pageOwner.address);
+    const pageOwner = RSS3.getPageOwner();
+    const apiUser = RSS3.getAPIUser();
+    // const assetInRSS3 = (await pageOwner.assets?.auto.getListFile(pageOwner.address)) || [];
+
     // const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
-    // const allAssets = await utils.mergeAssetsTags(assetInRSS3?assetInRSS3:[''], assetInAssetProfile);
-    // console.log(pageOwner.assets);
+    // const allAssets = await utils.mergeAssetsTags(assetInRSS3 ? assetInRSS3 : [''], assetInAssetProfile);
+
     // for (const asset of assetInRSS3) {
     //     if (asset.type.endsWith(type)) {
     //         if (asset.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
@@ -115,6 +115,11 @@ async function initAssets(type: string, limit?: number) {
     //         }
     //     }
     // }
+
+    console.log('assets?.auto.getListFile');
+    console.log(await pageOwner.assets?.auto.getListFile(pageOwner.address));
+    console.log('RSS3APIPersona.files.get');
+    console.log(await pageOwner.files.get(pageOwner.address));
 
     return {
         listed: utils.sortByOrderTag(listed).slice(0, limit),
@@ -153,7 +158,6 @@ async function initAccounts() {
 
     const pageOwner = RSS3.getPageOwner();
     const allAccounts = (await pageOwner.profile?.accounts) || [];
-    console.log(allAccounts);
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
             unlisted.push(account);

@@ -11,6 +11,7 @@ import Events from './events';
 import Items from 'rss3/dist/items/index';
 import Assets from 'rss3/dist/assets/index';
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
+    files: null,
     persona: null,
     address: '',
     name: '',
@@ -36,6 +37,7 @@ export interface IAssetProfile {
 }
 
 export interface RSS3DetailPersona {
+    files: any;
     persona: RSS3 | null;
     address: string;
     name: string;
@@ -251,8 +253,8 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
     user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
     user.items = await RSS3APIPersona.items;
-    // user.assets = await RSS3APIPersona.assets;
-
+    user.assets = await RSS3APIPersona.assets;
+    user.files = await RSS3APIPersona.files;
     user.isReady = true;
 }
 
