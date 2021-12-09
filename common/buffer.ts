@@ -1,34 +1,34 @@
 interface requestParams {
-    address: string;
-    platform: string;
-    identity: string;
+    // address: string;
+    // platform: string;
+    // identity: string;
     id: string;
-    type: string;
+    // type: string;
 }
 
 const requestBuffer: requestParams = {
-    address: '',
-    platform: '',
-    identity: '',
+    // address: '',
+    // platform: '',
+    // identity: '',
     id: '',
-    type: '',
+    // type: '',
 };
 
-const updateBuffer = (address: string, platform: string, identity: string, id: string, type: string) => {
-    requestBuffer.address = address;
-    requestBuffer.platform = platform;
-    requestBuffer.identity = identity;
+const updateBuffer = (id: string) => {
+    // requestBuffer.address = address;
+    // requestBuffer.platform = platform;
+    // requestBuffer.identity = identity;
     requestBuffer.id = id;
-    requestBuffer.type = type;
+    // requestBuffer.type = type;
 };
 
-const checkBuffer = (address: string, platform: string, identity: string, id: string, type: string) => {
+const checkBuffer = (id: string) => {
     return (
-        requestBuffer.address === address &&
-        requestBuffer.platform === platform &&
-        requestBuffer.identity === identity &&
-        requestBuffer.id === id &&
-        requestBuffer.type === type
+        // requestBuffer.address === address &&
+        // requestBuffer.platform === platform &&
+        // requestBuffer.identity === identity &&
+        requestBuffer.id === id
+        // requestBuffer.type === type
     );
 };
 

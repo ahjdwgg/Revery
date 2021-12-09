@@ -13,9 +13,9 @@ interface FootprintProps {
     clickEvent?: () => void;
 }
 
-const formatDate = (ts: string): string => {
-    return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
-};
+// const formatDate = (ts: string): string => {
+//     return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
+// };
 
 const FootprintCard = ({
     imageUrl,
@@ -30,9 +30,9 @@ const FootprintCard = ({
     // Calc display date
     let displayDate;
     if (startDate && endDate) {
-        displayDate = formatDate(startDate);
+        displayDate = startDate;
         if (endDate !== startDate) {
-            displayDate += ' ~ ' + formatDate(endDate);
+            displayDate += ' ~ ' + endDate;
         }
     } else {
         displayDate = 'No activity time';

@@ -5,9 +5,10 @@ import Trait from './Trait';
 import { NFT } from '../../common/types';
 import style from '../../styles/content.module.css';
 import { Markdown } from 'react-marked-renderer';
+import { AnyObject } from 'rss3/types/extend';
 
 interface NFTDetailProps {
-    detail: NFT;
+    detail: AnyObject;
     market: 'opensea' | 'rarible';
 }
 
@@ -21,7 +22,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             </h2>
             <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start">
                 <MarketTag market={market} />
-                <ScanTag chain={detail.chain} />
+                <ScanTag chain={detail.chain.split('.')[0]} />
             </div>
             {detail.description && (
                 <div>
@@ -35,9 +36,14 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
                 <div>
                     <h3 className={subtitle}>Properties</h3>
                     <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start mt-3">
-                        {detail.traits.map((item, index) => (
-                            <Trait traitType={item.trait_type} traitValue={item.value} key={index} />
-                        ))}
+                        {detail.traits.map(
+                            (
+                                item: { trait_type: String | null | undefined; value: String | null | undefined },
+                                index: React.Key | null | undefined,
+                            ) => (
+                                <Trait traitType={item.trait_type} traitValue={item.value} key={index} />
+                            ),
+                        )}
                     </div>
                 </div>
             )}

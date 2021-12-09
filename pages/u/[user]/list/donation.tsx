@@ -13,13 +13,14 @@ import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import buffer from '../../../../common/buffer';
+import { AnyObject } from 'rss3/types/extend';
 
 const Donation: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
     const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
-    const [donation, setDonation] = useState<GitcoinResponse | null>(null);
+    const [donation, setDonation] = useState<AnyObject | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -31,8 +32,10 @@ const Donation: NextPage = () => {
     };
 
     const loadDonations = async () => {
-        const { listed } = await utils.initAssets('Gitcoin-Donation');
-        return listed;
+        // const { listed } = await utils.initAssets('Gitcoin-Donation');
+        // return listed;
+        const { donations } = await utils.initAssets();
+        return donations;
     };
 
     useEffect(() => {
@@ -72,10 +75,10 @@ const Donation: NextPage = () => {
                     {listedDonation.map((asset, index) => (
                         <DonationCard
                             key={index}
-                            imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                            name={asset.info.title || 'Inactive Project'}
-                            contribCount={asset.info.total_contribs || 0}
-                            contribDetails={asset.info.token_contribs || []}
+                            imageUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
+                            name={asset.detail.title || 'Inactive Project'}
+                            contribCount={asset.detail.total_contribs || 0}
+                            contribDetails={asset.detail.token_contribs || []}
                             clickEvent={() => {
                                 openModal(persona?.address || '', 'EVM+', asset.identity, asset.id);
                             }}

@@ -13,13 +13,14 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import buffer from '../../../../common/buffer';
+import { AnyObject } from 'rss3/types/extend';
 
 const Nft: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
-    const [NFT, setNFT] = useState<NFT>();
-    const [listedNFT, setlistedNFT] = useState<GeneralAssetWithTags[]>([]);
+    const [NFT, setNFT] = useState<AnyObject>();
+    const [listedNFT, setlistedNFT] = useState<AnyObject[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -31,8 +32,10 @@ const Nft: NextPage = () => {
     };
 
     const loadNFTs = async () => {
-        const { listed } = await utils.initAssets('NFT');
-        return listed;
+        // const { listed } = await utils.initAssets('NFT');
+        // return listed;
+        const { nfts } = await utils.initAssets();
+        return nfts;
     };
 
     useEffect(() => {
@@ -41,14 +44,12 @@ const Nft: NextPage = () => {
         }
     }, [router.isReady]);
 
-    const openModal = async (address: string, platform: string, identity: string, id: string, type: string) => {
+    const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(address, platform, identity, id, type)) {
+        if (!buffer.checkBuffer(asset.id)) {
             setNFT(undefined);
-            const res = await RSS3.getNFTDetails(address, platform, identity, id, type);
-            buffer.updateBuffer(address, platform, identity, id, type);
-            setNFT(res?.data);
+            setNFT(asset.detail);
         }
     };
 
@@ -74,19 +75,19 @@ const Nft: NextPage = () => {
                             key={index}
                             className="relative cursor-pointer"
                             onClick={() => {
-                                openModal(persona?.address || '', 'EVM+', asset.identity, asset.id, asset.type);
+                                openModal(asset);
                             }}
                         >
                             <NFTItem
                                 size={208}
-                                previewUrl={asset.info.image_preview_url}
-                                detailUrl={asset.info.animation_url}
+                                previewUrl={asset.detail.image_preview_url}
+                                detailUrl={asset.detail.animation_url}
                                 isShowingDetails={false}
                             />
                             <NFTBadges
                                 location="overlay"
-                                chain={asset.type.split('-')[0]}
-                                collectionImg={asset.info.collection_icon}
+                                chain={asset.detail.chain.split('.')[0]}
+                                collectionImg={asset.detail.collection_icon}
                             />
                         </div>
                     ))}

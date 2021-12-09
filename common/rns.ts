@@ -45,7 +45,7 @@ export default {
         if (isPureRNS) {
             return domainInfo.rnsName.replace(config.rns.suffix, '') || '';
         } else {
-            return domainInfo.rnsName.replace(config.rns.suffix, '') || domainInfo.ensName || '';
+            return domainInfo.rnsName?.replace(config.rns.suffix, '') || domainInfo.ensName || '';
         }
     },
     async name2Addr(name: string) {

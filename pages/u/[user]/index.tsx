@@ -24,6 +24,7 @@ import SingleDonation from '../../../components/details/SingleDonation';
 import SingleFootprint from '../../../components/details/SingleFootprint';
 import Button from '../../../components/buttons/Button';
 import { utils as RSS3Utils } from 'rss3';
+import { AnyObject } from 'rss3/types/extend';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -45,9 +46,12 @@ const ProfilePage: NextPage = () => {
     const [followings, setFollowings] = useState<RSS3ID[]>([]);
 
     const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
-    const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
-    const [donationItems, setDonationItems] = useState<GeneralAssetWithTags[]>([]);
-    const [footprintItems, setFootprintItems] = useState<GeneralAssetWithTags[]>([]);
+    // const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
+    // const [donationItems, setDonationItems] = useState<GeneralAssetWithTags[]>([]);
+    // const [footprintItems, setFootprintItems] = useState<GeneralAssetWithTags[]>([]);
+    const [nftItems, setNftItems] = useState<AnyObject[]>([]);
+    const [donationItems, setDonationItems] = useState<AnyObject[]>([]);
+    const [footprintItems, setFootprintItems] = useState<AnyObject[]>([]);
 
     const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
     const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
@@ -152,10 +156,10 @@ const ProfilePage: NextPage = () => {
     let content =
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-    const loadAssets = async (type: string, limit?: number) => {
-        const { listed } = await utils.initAssets(type, limit);
-        return listed;
-    };
+    // const loadAssets = async (type: string, limit?: number) => {
+    //     const { listed } = await utils.initAssets(type, limit);
+    //     return listed;
+    // };
 
     const init = async () => {
         const aon = (router.query.user as string) || '';
@@ -165,7 +169,6 @@ const ProfilePage: NextPage = () => {
         checkOwner();
         console.log(pageOwner.assets);
         if (profile) {
-            console.log(pageOwner.isReady);
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
@@ -187,16 +190,20 @@ const ProfilePage: NextPage = () => {
                 ].concat(listed),
             );
 
+            const allAssets = await utils.initAssets();
             // Assets
-            setTimeout(async () => {
-                setNftItems(await loadAssets('NFT', 4));
-            }, 0);
-            setTimeout(async () => {
-                setDonationItems(await loadAssets('Donation', 4));
-            }, 0);
-            setTimeout(async () => {
-                setFootprintItems(await loadAssets('POAP', 5));
-            }, 0);
+            // setTimeout(async () => {
+            //     setNftItems(await loadAssets('NFT', 4));
+            // }, 0);
+            // setTimeout(async () => {
+            //     setDonationItems(await loadAssets('Donation', 4));
+            // }, 0);
+            // setTimeout(async () => {
+            //     setFootprintItems(await loadAssets('POAP', 5));
+            // }, 0);
+            setNftItems(allAssets.nfts.slice(0, 4));
+            // setDonationItems(allAssets.donations);
+            setFootprintItems(allAssets.footprints);
         }
     };
 
@@ -263,7 +270,7 @@ const ProfilePage: NextPage = () => {
         addEventListener(Events.disconnect, checkOwner);
     }, []);
 
-    const getModalDetail = async (asset: GeneralAssetWithTags, type: 'nft' | 'donation' | 'footprint') => {
+    const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint') => {
         document.body.style.overflow = 'hidden';
         let data;
         // if (type === 'nft') {
@@ -317,11 +324,11 @@ const ProfilePage: NextPage = () => {
                         toUserPage={toUserPage}
                     >
                         {accountItems.map((account, index) => {
-                            let accountInfo = account.id.split('-');
-                            return accountInfo[0] === 'EVM+' ? (
-                                <EVMpAccountItem key={index} size="sm" address={accountInfo[1]} />
+                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
+                            return accountInfo.platform === 'EVM+' ? (
+                                <EVMpAccountItem key={index} size="sm" address={accountInfo.identity} />
                             ) : (
-                                <AccountItem key={index} size="sm" chain={accountInfo[0]} />
+                                <AccountItem key={index} size="sm" chain={accountInfo.platform} />
                             );
                         })}
                     </Profile>
@@ -350,12 +357,12 @@ const ProfilePage: NextPage = () => {
                                             getModalDetail(asset, 'nft');
                                         }}
                                     >
-                                        {/* <NFTItem
-                                            key={asset.platform + asset.id}
-                                            previewUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                                        <NFTItem
+                                            key={asset.id}
+                                            previewUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
                                             isShowingDetails={false}
                                             size={70}
-                                        /> */}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -363,10 +370,10 @@ const ProfilePage: NextPage = () => {
 
                         <AssetCard title="Donations" color="donation" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
-                                {/* {donationItems.map((asset, i) => (
-                                    <div key={asset.platform + asset.id} className="flex cursor-pointer">
+                                {donationItems.map((asset, i) => (
+                                    <div key={asset.id} className="flex cursor-pointer">
                                         <ImageHolder
-                                            imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
+                                            imageUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
                                             isFullRound={false}
                                             size={70}
                                             onClick={() => {
@@ -374,28 +381,28 @@ const ProfilePage: NextPage = () => {
                                             }}
                                         />
                                     </div>
-                                ))} */}
+                                ))}
                             </div>
                         </AssetCard>
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="footprint" headerButtons={assetCardButtons.Footprint}>
                             <div className="flex flex-col w-full">
-                                {/* {footprintItems.map((asset, i) => (
+                                {footprintItems.map((asset, i) => (
                                     <FootprintCard
-                                        key={asset.platform + asset.id}
-                                        imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                                        startDate={asset.info.start_date}
-                                        endDate={asset.info.end_date}
-                                        city={asset.info.city}
-                                        country={asset.info.country}
+                                        key={i}
+                                        imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                        startDate={asset.detail.start_date}
+                                        endDate={asset.detail.end_date}
+                                        city={asset.detail.city}
+                                        country={asset.detail.country}
                                         username={username}
-                                        activity={asset.info.title || ''}
+                                        activity={asset.detail.name || ''}
                                         clickEvent={() => {
                                             getModalDetail(asset, 'footprint');
                                         }}
                                     />
-                                ))} */}
+                                ))}
                             </div>
                         </AssetCard>
                     </div>

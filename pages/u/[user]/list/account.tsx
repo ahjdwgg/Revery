@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { RSS3Account } from 'rss3-next/types/rss3';
+import { RSS3Account } from '../../../../common/rss3Types';
 import AccountCard from '../../../../components/accounts/AccountCard';
 import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';
@@ -10,10 +10,12 @@ import Modal from '../../../../components/modal/Modal';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import { useRouter } from 'next/router';
 import utils from '../../../../common/utils';
+import { utils as RSS3Utils } from 'rss3';
+import { stringify } from 'querystring';
 
 interface ModalDetail {
     hidden: boolean;
-    account?: RSS3Account;
+    accountInfo?: { platform: string; identity: string };
 }
 
 const Account: NextPage = () => {
@@ -26,10 +28,6 @@ const Account: NextPage = () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         const { listed } = await utils.initAccounts();
-        listed.unshift({
-            platform: 'EVM+',
-            identity: pageOwner.address,
-        });
         setListedAccounts(listed);
         setPersona(pageOwner);
     };
@@ -42,7 +40,7 @@ const Account: NextPage = () => {
 
     const [modal, setModal] = useState<ModalDetail>({
         hidden: true,
-        account: undefined,
+        accountInfo: { platform: '', identity: '' },
     });
 
     return (
@@ -57,20 +55,23 @@ const Account: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.account} text={'Edit'} />
                 </section>
                 <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">
-                    {listedAccounts.map((account, index) => (
-                        <AccountCard
-                            key={index}
-                            chain={account.platform}
-                            address={account.identity}
-                            clickEvent={() => {
-                                document.body.style.overflow = 'hidden';
-                                setModal({
-                                    hidden: false,
-                                    account: account,
-                                });
-                            }}
-                        />
-                    ))}
+                    {listedAccounts.map((account, index) => {
+                        let accountInfo = RSS3Utils.id.parseAccount(account.id);
+                        return (
+                            <AccountCard
+                                key={index}
+                                chain={accountInfo.platform}
+                                address={accountInfo.identity}
+                                clickEvent={() => {
+                                    document.body.style.overflow = 'hidden';
+                                    setModal({
+                                        hidden: false,
+                                        accountInfo: accountInfo,
+                                    });
+                                }}
+                            />
+                        );
+                    })}
                 </section>
             </div>
             <Modal
@@ -85,7 +86,7 @@ const Account: NextPage = () => {
                     });
                 }}
             >
-                <SingleAccount chain={modal.account?.platform} address={modal.account?.identity} />
+                <SingleAccount chain={modal.accountInfo?.platform} address={modal.accountInfo?.identity} />
             </Modal>
         </>
     );

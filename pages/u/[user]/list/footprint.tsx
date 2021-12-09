@@ -13,13 +13,14 @@ import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import buffer from '../../../../common/buffer';
+import { AnyObject } from 'rss3/types/extend';
 
 const Footprint: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<POAPResponse | null>(null);
-    const [listedFootprint, setListedFootprint] = useState<GeneralAssetWithTags[]>([]);
+    const [listedFootprint, setListedFootprint] = useState<AnyObject[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -31,8 +32,10 @@ const Footprint: NextPage = () => {
     };
 
     const loadFootprints = async () => {
-        const { listed } = await utils.initAssets('POAP');
-        return listed;
+        // const { listed } = await utils.initAssets('POAP');
+        // return listed;
+        const { footprints } = await utils.initAssets();
+        return footprints;
     };
 
     useEffect(() => {
@@ -72,13 +75,13 @@ const Footprint: NextPage = () => {
                     {listedFootprint.map((asset, index) => (
                         <FootprintCard
                             key={index}
-                            imageUrl={asset.info.image_preview_url || config.undefinedImageAlt}
-                            startDate={asset.info.start_date}
-                            endDate={asset.info.end_date}
-                            city={asset.info.country}
-                            country={asset.info.city}
+                            imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                            startDate={asset.detail.start_date}
+                            endDate={asset.detail.end_date}
+                            city={asset.detail.country}
+                            country={asset.detail.city}
                             username={persona?.profile?.name || ''}
-                            activity={asset.info.title || ''}
+                            activity={asset.detail.name || ''}
                             clickEvent={() => {
                                 openModal(persona?.address || '', 'EVM+', asset.identity, asset.id);
                             }}

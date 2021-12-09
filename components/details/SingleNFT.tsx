@@ -2,8 +2,9 @@ import NFTBadges from '../assets/NFTBadges';
 import NFTItem from '../assets/NFTItem';
 import NFTDetail from './NFTDetail';
 import { NFT } from '../../common/types';
+import { AnyObject } from 'rss3/types/extend';
 
-export default function SingleNFT(props: { NFT: NFT }) {
+export default function SingleNFT(props: { NFT: AnyObject }) {
     let { NFT } = props;
 
     return (
@@ -12,7 +13,11 @@ export default function SingleNFT(props: { NFT: NFT }) {
                 <span className="flex-1 w-0 text-xl font-semibold text-left capitalize truncate text-nft">
                     {NFT.name}
                 </span>
-                <NFTBadges location="header" chain={NFT.chain} collectionImg={NFT.collection?.image_url} />
+                <NFTBadges
+                    location="header"
+                    chain={NFT.chain.split('.')[0]}
+                    collectionImg={NFT.collection?.image_url}
+                />
             </div>
             <NFTItem
                 size={640}

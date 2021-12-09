@@ -3,6 +3,8 @@ import config from './config';
 import RSS3, { IAssetProfile, IRSS3 } from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
+import { id } from 'ethers/lib/utils';
+import { AnyObject } from 'rss3/types/extend';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -95,12 +97,11 @@ interface AssetsList {
     unlisted: GeneralAssetWithTags[];
 }
 
-async function initAssets(type: string, limit?: number) {
-    const listed: GeneralAssetWithTags[] = [];
-    const unlisted: GeneralAssetWithTags[] = [];
+async function initAssets(type?: string, limit?: number) {
+    // const listed: GeneralAssetWithTags[] = [];
+    // const unlisted: GeneralAssetWithTags[] = [];
 
     const pageOwner = RSS3.getPageOwner();
-    const apiUser = RSS3.getAPIUser();
     // const assetInRSS3 = (await pageOwner.assets?.auto.getListFile(pageOwner.address)) || [];
 
     // const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
@@ -115,15 +116,49 @@ async function initAssets(type: string, limit?: number) {
     //         }
     //     }
     // }
+    async function getAssetDetails(parsedAssetList: AnyObject[]) {
+        const assetIDList = parsedAssetList.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        const assetDetails = await pageOwner.assets?.getDetails({
+            persona: pageOwner.address,
+            assets: assetIDList ? assetIDList : [''],
+            full: true,
+        });
+        return assetDetails;
+    }
+    const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
+    // console.log('assets?.auto.getListFile');
+    // console.log(assetList);
 
-    console.log('assets?.auto.getListFile');
-    console.log(await pageOwner.assets?.auto.getListFile(pageOwner.address));
-    console.log('RSS3APIPersona.files.get');
-    console.log(await pageOwner.files.get(pageOwner.address));
+    const taggedList = (await pageOwner.files.get(pageOwner.address))._pass.assets;
+    // console.log('RSS3APIPersona.files.get');
+    // console.log(taggedList);
 
+    // const assetDetails = await pageOwner.assets?.getDetails({
+    //     persona: pageOwner.address,
+    //     assets: assetList?assetList:[''],
+    //     full:true
+    //     });
+    // console.log('RSS3APIPersona.assets?.getDetails');
+    // console.log(assetDetails);
+
+    const parsedAssets = assetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
+    // console.log(parsedAssets)
+    const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    // console.log('nfts')
+    // console.log(nfts)
+    // const donations = parsedAssets?.filter(asset=>asset.type.split('.')[1]==='Donation')
+    const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
+    const nftDetails = await getAssetDetails(nfts ? nfts : [{}]);
+    // const donationDetails = await getAssetDetails(donations?donations:[{}]);
+    const footprintDetails = await getAssetDetails(footprints ? footprints : [{}]);
+    console.log(nftDetails?.slice(0, 1));
+    console.log(footprintDetails?.slice(0, 1));
     return {
-        listed: utils.sortByOrderTag(listed).slice(0, limit),
-        unlisted: unlisted.slice(0, limit),
+        nfts: nftDetails ? nftDetails : [],
+        // donations: donationDetails?donationDetails:[],
+        footprints: footprintDetails ? footprintDetails : [],
     };
 }
 
