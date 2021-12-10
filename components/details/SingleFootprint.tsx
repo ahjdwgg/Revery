@@ -1,11 +1,12 @@
+import { AnyObject } from 'rss3/types/extend';
 import { POAPResponse } from '../../common/types';
 import FootprintDetail from './FootprintDetail';
 
-export default function SingleFootprint(props: { POAPInfo: POAPResponse }) {
+export default function SingleFootprint(props: { POAPInfo: AnyObject }) {
     let { POAPInfo } = props;
 
     const ImgStyle = {
-        backgroundImage: `url(${POAPInfo.data.event.image_url})`,
+        backgroundImage: `url(${POAPInfo.image_url})`,
     };
 
     return (
@@ -14,7 +15,7 @@ export default function SingleFootprint(props: { POAPInfo: POAPResponse }) {
                 className="w-full bg-center bg-no-repeat bg-cover rounded-full aspect-w-1 aspect-h-1"
                 style={ImgStyle}
             />
-            <FootprintDetail detail={POAPInfo.data} />
+            <FootprintDetail detail={POAPInfo} />
         </div>
     );
 }

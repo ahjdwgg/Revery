@@ -1,20 +1,19 @@
 import React from 'react';
 import { BiCalendar, BiLinkAlt, BiLocationPlus } from 'react-icons/bi';
+import { AnyObject } from 'rss3/types/extend';
 import { formatDate } from '../../common/timeStamp';
 import { POAP } from '../../common/types';
 import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
 
 interface FootprintDetailProps {
-    detail: POAP;
+    detail: AnyObject;
 }
 
-function getDate(detail: POAP): string {
+function getDate(detail: AnyObject): string {
     return (
-        formatDate(detail.event.start_date) +
-        (detail.event.end_date && detail.event.end_date !== detail.event.start_date
-            ? ` ~ ${formatDate(detail.event.end_date)}`
-            : '')
+        formatDate(detail.start_date) +
+        (detail.end_date && detail.end_date !== detail.start_date ? ` ~ ${formatDate(detail.end_date)}` : '')
     );
 }
 
@@ -26,7 +25,7 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
             <section className="w-full">
                 <div className="flex flex-row items-center gap-2">
                     <h2 className="flex-1 overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
-                        {detail.event.name}
+                        {detail.name}
                     </h2>
                     <Button
                         isOutlined={false}
@@ -35,13 +34,13 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                         width="w-8"
                         height="h-8"
                         onClick={() => {
-                            window.open(detail.event.event_url);
+                            window.open(detail.event_url);
                         }}
                     />
                 </div>
                 <div className="flex flex-row items-center justify-start gap-2 my-1 text-primary">
                     <BiLinkAlt />
-                    <span className="flex-1 text-sm leading-normal truncate">{detail.event.event_url}</span>
+                    <span className="flex-1 text-sm leading-normal truncate">{detail.event_url}</span>
                 </div>
             </section>
             <section className="w-full">
@@ -51,15 +50,13 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                 </div>
                 <div className="flex flex-row items-center gap-2">
                     <BiLocationPlus className="text-primary" />
-                    <span className="flex-1 w-0 truncate">
-                        {detail.event.city || detail.event.country || 'Metaverse'}
-                    </span>
+                    <span className="flex-1 w-0 truncate">{detail.city || detail.country || 'Metaverse'}</span>
                 </div>
             </section>
-            {detail.event.description && (
+            {detail.description && (
                 <section>
                     <h3 className={subtitle}>Description</h3>
-                    <p>{detail.event.description}</p>
+                    <p>{detail.description}</p>
                 </section>
             )}
         </div>

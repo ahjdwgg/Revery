@@ -19,7 +19,7 @@ const Footprint: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
-    const [footprint, setFootprint] = useState<POAPResponse | null>(null);
+    const [footprint, setFootprint] = useState<AnyObject>();
     const [listedFootprint, setListedFootprint] = useState<AnyObject[]>([]);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
@@ -44,14 +44,12 @@ const Footprint: NextPage = () => {
         }
     }, [router.isReady]);
 
-    const openModal = async (address: string, platform: string, identity: string, id: string) => {
+    const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(address, platform, identity, id, 'xDai-POAP')) {
-            setFootprint(null);
-            const res = await RSS3.getFootprintDetail(address, platform, identity, id);
-            buffer.updateBuffer(address, platform, identity, id, 'xDai-POAP');
-            setFootprint(res);
+        if (!buffer.checkBuffer(asset.id)) {
+            setFootprint(undefined);
+            setFootprint(asset.detail);
         }
     };
 
@@ -83,7 +81,7 @@ const Footprint: NextPage = () => {
                             username={persona?.profile?.name || ''}
                             activity={asset.detail.name || ''}
                             clickEvent={() => {
-                                openModal(persona?.address || '', 'EVM+', asset.identity, asset.id);
+                                openModal(asset.id);
                             }}
                         />
                     ))}

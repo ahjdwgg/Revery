@@ -11,8 +11,9 @@ export default function ModalLoading(props: { color: string }) {
 }
 
 const textColor = new Map([
-    ['nft', 'text-nft'],
-    ['footprint', 'text-footprint'],
-    ['donation', 'text-donation'],
-    ['primary', 'text-primary'],
+    ['account', 'text-primary-asset'],
+    ['nft', 'text-primary-asset'],
+    ['footprint', 'text-primary-asset'],
+    ['donation', 'text-primary-asset'],
+    ['primary', 'text-primary-asset'],
 ]);

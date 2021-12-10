@@ -126,7 +126,11 @@ async function initAssets(type?: string, limit?: number) {
             full: true,
         });
         console.log(assetDetails);
-        return assetDetails;
+        if (assetDetails) {
+            return assetDetails;
+        } else {
+            return [];
+        }
     }
     const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
     // console.log('assets?.auto.getListFile');
@@ -149,15 +153,20 @@ async function initAssets(type?: string, limit?: number) {
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     // console.log('nfts')
     // console.log(nfts)
-    // const donations = parsedAssets?.filter(asset=>asset.type.split('.')[1]==='Donation')
+    const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
-    const nftDetails = await getAssetDetails(nfts ? nfts : [{}]);
-    // const donationDetails = await getAssetDetails(donations?donations:[{}]);
-    const footprintDetails = await getAssetDetails(footprints ? footprints : [{}]);
+
+    let nftDetails: AnyObject[] = [];
+    let donationDetails: AnyObject[] = [];
+    let footprintDetails: AnyObject[] = [];
+
+    if (nfts && nfts.length > 0) nftDetails = await getAssetDetails(nfts);
+    if (donations && donations.length > 0) donationDetails = await getAssetDetails(donations);
+    if (footprints && footprints.length > 0) footprintDetails = await getAssetDetails(footprints);
     return {
-        nfts: nftDetails ? nftDetails : [],
-        // donations: donationDetails?donationDetails:[],
-        footprints: footprintDetails ? footprintDetails : [],
+        nfts: nftDetails,
+        donations: donationDetails,
+        footprints: footprintDetails,
     };
 }
 

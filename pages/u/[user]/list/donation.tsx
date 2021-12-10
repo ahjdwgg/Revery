@@ -19,7 +19,7 @@ const Donation: NextPage = () => {
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
-    const [listedDonation, setlistedDonation] = useState<GeneralAssetWithTags[]>([]);
+    const [listedDonation, setlistedDonation] = useState<AnyObject[]>([]);
     const [donation, setDonation] = useState<AnyObject | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
@@ -44,14 +44,12 @@ const Donation: NextPage = () => {
         }
     }, [router.isReady]);
 
-    const openModal = async (address: string, platform: string, identity: string, id: string) => {
+    const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(address, platform, identity, id, 'Gitcoin-Donation')) {
-            setDonation(null);
-            const res = await RSS3.getGitcoinDonation(address, platform, identity, id);
-            buffer.updateBuffer(address, platform, identity, id, 'Gitcoin-Donation');
-            setDonation(res);
+        if (!buffer.checkBuffer(asset.id)) {
+            // setDonation(undefined);
+            setDonation(asset.detail);
         }
     };
 
@@ -80,7 +78,7 @@ const Donation: NextPage = () => {
                             contribCount={asset.detail.total_contribs || 0}
                             contribDetails={asset.detail.token_contribs || []}
                             clickEvent={() => {
-                                openModal(persona?.address || '', 'EVM+', asset.identity, asset.id);
+                                openModal(asset.id);
                             }}
                         />
                     ))}

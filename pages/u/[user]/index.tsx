@@ -27,10 +27,11 @@ import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../../../components/content/ItemCard';
 import { BiLoaderCircle } from 'react-icons/bi';
+import SingleAccount from '../../../components/details/SingleAccount';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
-    details?: NFT | GitcoinResponse | POAPResponse | null;
+    details?: AnyObject;
 }
 
 const ProfilePage: NextPage = () => {
@@ -266,7 +267,7 @@ const ProfilePage: NextPage = () => {
         addEventListener(Events.disconnect, checkOwner);
     }, []);
 
-    const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint') => {
+    const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
         let data;
         // if (type === 'nft') {
@@ -279,17 +280,19 @@ const ProfilePage: NextPage = () => {
         setModal({
             hidden: false,
             type: type,
-            details: data,
+            details: asset.detail,
         });
     };
 
     const getModalDisplay = () => {
         if (modal.type === 'nft') {
-            return <SingleNFT NFT={modal.details as NFT} />;
+            return <SingleNFT NFT={modal.details ? modal.details : {}} />;
         } else if (modal.type === 'donation') {
-            return <SingleDonation Gitcoin={modal.details as GitcoinResponse} />;
+            return <SingleDonation Gitcoin={modal.details ? modal.details : {}} />;
         } else if (modal.type === 'footprint') {
-            return <SingleFootprint POAPInfo={modal.details as POAPResponse} />;
+            return <SingleFootprint POAPInfo={modal.details ? modal.details : {}} />;
+        } else if (modal.type == 'account') {
+            return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
         }
     };
 
@@ -322,7 +325,14 @@ const ProfilePage: NextPage = () => {
                         {accountItems.map((account, index) => {
                             let accountInfo = RSS3Utils.id.parseAccount(account.id);
                             return accountInfo.platform === 'EVM+' ? (
-                                <EVMpAccountItem key={index} size="sm" address={accountInfo.identity} />
+                                <EVMpAccountItem
+                                    key={index}
+                                    size="sm"
+                                    address={accountInfo.identity}
+                                    onClick={() => {
+                                        getModalDetail(accountInfo, 'account');
+                                    }}
+                                />
                             ) : (
                                 <AccountItem key={index} size="sm" chain={accountInfo.platform} />
                             );
@@ -429,7 +439,13 @@ const ProfilePage: NextPage = () => {
                     </div>
                 </section>
             </div>
-            <Modal hidden={modal.hidden} closeEvent={closeModal} theme={modal.type} isCenter={false} size="lg">
+            <Modal
+                hidden={modal.hidden}
+                closeEvent={closeModal}
+                theme={'primary'}
+                isCenter={modal.type === 'account' ? true : false}
+                size={modal.type === 'account' ? 'md' : 'lg'}
+            >
                 {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
             </Modal>
 
