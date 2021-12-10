@@ -8,6 +8,7 @@ import { Markdown } from 'react-marked-renderer';
 import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
 import NFTCard from '../assets/NFTCard';
+import { imgRegSrc } from '../../common/image';
 
 interface ItemCardProps {
     avatarUrl: string;
@@ -68,6 +69,10 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
 
     if (target.field) {
         iconSVG = categorize(target.field);
+    }
+
+    if (!images && content) {
+        images = imgRegSrc(content);
     }
 
     return (
