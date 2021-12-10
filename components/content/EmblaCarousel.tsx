@@ -39,8 +39,21 @@ const EmblaCarousel = ({ slides }: any) => {
                     <div className={style.embla__container}>
                         {slides.map((imgSrc: string, index: number) => (
                             <div className="pl-2.5 min-w-full relative" key={index}>
-                                <div className="relative overflow-hidden aspect-w-16 aspect-h-9">
-                                    <img src={imgSrc} alt={imgSrc} className="object-cover cursor-grab" />
+                                <div
+                                    className="relative overflow-hidden aspect-w-16 aspect-h-9"
+                                    onClick={(e: any) => {
+                                        if (slides.length > 1) {
+                                            e.stopPropagation();
+                                        }
+                                    }}
+                                >
+                                    <img
+                                        src={imgSrc}
+                                        alt={imgSrc}
+                                        className={`object-cover ${
+                                            slides.length > 1 ? 'cursor-grab' : 'cursor-pointer'
+                                        }`}
+                                    />
                                 </div>
                             </div>
                         ))}
@@ -53,7 +66,14 @@ const EmblaCarousel = ({ slides }: any) => {
                     <div className="w-full overflow-hidden" ref={thumbViewportRef}>
                         <div className={`${style.embla__container} ${style.embla__container__thumb}`}>
                             {slides.map((imgSrc: string, index: number) => (
-                                <Thumb onClick={() => onThumbClick(index)} imgSrc={imgSrc} key={index} />
+                                <Thumb
+                                    onClick={(e: any) => {
+                                        onThumbClick(index);
+                                        e.stopPropagation();
+                                    }}
+                                    imgSrc={imgSrc}
+                                    key={index}
+                                />
                             ))}
                         </div>
                     </div>

@@ -22,6 +22,7 @@ interface ItemCardProps {
         field: string;
         action: {
             type: string;
+            payload: string;
         };
     };
 }
@@ -56,6 +57,26 @@ const getTopic = (field: string, type: string) => {
     return content;
 };
 
+const toExternalLink = (field: string, payload: string) => {
+    if (field.includes('Twitter')) {
+        window.open('https://twitter.com/' + field.split('-')[3] + '/status/' + payload);
+    } else if (field.includes('Misskey')) {
+        return window.open('https://nya.one/notes/8sufsk86r0' + payload);
+    } else if (field.includes('Mirror-XYZ')) {
+        console.log('coming soon');
+    }
+};
+
+const toExternalProfile = (field: string) => {
+    if (field.includes('Twitter')) {
+        window.open('https://twitter.com/' + field.split('-')[3]);
+    } else if (field.includes('Misskey')) {
+        return window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]);
+    } else if (field.includes('Mirror-XYZ')) {
+        console.log('coming soon');
+    }
+};
+
 const fixSchemas = (url: string) => {
     let fixedUrl = url;
     if (url.startsWith('ipfs://')) {
@@ -83,9 +104,13 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     alt={username}
                     width={32}
                     height={32}
-                    className="rounded-full"
+                    className="rounded-full cursor-pointer"
+                    onClick={() => toExternalProfile(target.field)}
                 />
-                <div className="flex flex-row items-center gap-2">
+                <div
+                    className="flex flex-row items-center gap-2 cursor-pointer"
+                    onClick={() => toExternalProfile(target.field)}
+                >
                     <span className="text-base font-semibold">{username}</span>
                     {iconSVG && (
                         <>
@@ -97,7 +122,12 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                 </div>
             </div>
             {!asset ? (
-                <div className="mt-2 ml-10 border-l-2 pl-2 border-opacity-50 border-primary select-none">
+                <div
+                    className="mt-2 ml-10 border-l-2 pl-2 border-opacity-50 border-primary select-none cursor-pointer"
+                    onClick={() => {
+                        toExternalLink(target.field, target.action.payload);
+                    }}
+                >
                     {title && <div className="text-base font-semibold">{title}</div>}
                     {content && <Markdown markdown={content} />}
                     {images && images?.length > 0 && <EmblaCarousel slides={images} />}
