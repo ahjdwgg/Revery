@@ -67,22 +67,24 @@ const toExternalLink = (field: string, payload: string) => {
     }
 };
 
+const toExternalLinkWithAsset = (field: string, eventUrl: string) => {
+    if (field.includes('xDai.POAP')) {
+        window.open(eventUrl);
+    } else if (field.includes('Polygon.NFT')) {
+        window.open('https://polygonscan.com/token/' + field.split('-')[4].replaceAll('.', '?a='));
+    } else if (field.includes('Ethereum.NFT')) {
+        window.open('https://etherscan.io/token/' + field.split('-')[4].replaceAll('.', '?a='));
+    }
+};
+
 const toExternalProfile = (field: string) => {
     if (field.includes('Twitter')) {
         window.open('https://twitter.com/' + field.split('-')[3]);
     } else if (field.includes('Misskey')) {
-        return window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]);
+        window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]);
     } else if (field.includes('Mirror-XYZ')) {
         console.log('coming soon');
     }
-};
-
-const fixSchemas = (url: string) => {
-    let fixedUrl = url;
-    if (url.startsWith('ipfs://')) {
-        fixedUrl = url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
-    }
-    return fixedUrl;
 };
 
 const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStamp, target }: ItemCardProps) => {
@@ -123,7 +125,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
             </div>
             {!asset ? (
                 <div
-                    className="mt-2 ml-10 border-l-2 pl-2 border-opacity-50 border-primary select-none cursor-pointer"
+                    className="mt-2 ml-10 border-l-2 pl-2 border-opacity-50 border-primary cursor-pointer"
                     onClick={() => {
                         toExternalLink(target.field, target.action.payload);
                     }}
@@ -134,16 +136,20 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                 </div>
             ) : (
                 <NFTCard
+                    info={getTopic(target.field, target.action.type)}
                     name={asset.detail.name}
                     desc={asset.detail.description}
-                    imageUrl={fixSchemas(
+                    imageUrl={
                         asset.detail.image_preview_url ||
-                            asset.detail.image_url ||
-                            asset.detail.image_thumbnail_url ||
-                            asset.detail.animation_url ||
-                            asset.detail.animation_original_url ||
-                            config.undefinedImageAlt,
-                    )}
+                        asset.detail.image_url ||
+                        asset.detail.image_thumbnail_url ||
+                        asset.detail.animation_url ||
+                        asset.detail.animation_original_url ||
+                        config.undefinedImageAlt
+                    }
+                    onClick={() => {
+                        toExternalLinkWithAsset(target.field, asset.detail.event_url);
+                    }}
                 />
             )}
         </div>

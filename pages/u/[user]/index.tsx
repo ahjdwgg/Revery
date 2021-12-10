@@ -13,7 +13,7 @@ import RSS3 from '../../../common/rss3';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
-import { GeneralAssetWithTags, GitcoinResponse, NFT, POAPResponse } from '../../../common/types';
+import { GitcoinResponse, NFT, POAPResponse } from '../../../common/types';
 import Events from '../../../common/events';
 import NFTItem from '../../../components/assets/NFTItem';
 
