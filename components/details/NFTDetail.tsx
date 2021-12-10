@@ -14,6 +14,37 @@ interface NFTDetailProps {
 
 export default function NFTDetail({ detail, market }: NFTDetailProps) {
     const subtitle = 'text-lg font-medium capitalize text-primary my-2';
+    function toMarket(address: string, tokenId: string) {
+        switch (market) {
+            case 'opensea':
+                switch (detail.chain.split('.')[0]) {
+                    case 'Polygon':
+                        window.open(`https://opensea.io/assets/matic/${address}/${tokenId}`);
+                        break;
+                    default:
+                        window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                        break;
+                }
+                break;
+            case 'rarible':
+                window.open(`https://rarible.com/token/${address}:${tokenId}`);
+                break;
+        }
+    }
+
+    function toScan(address: string, tokenId: string) {
+        switch (detail.chain.split('.')[0]) {
+            case 'BSC':
+                window.open(`https://bscscan.com/token/${address}?a=${tokenId}`);
+                break;
+            case 'Ethereum':
+                window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
+                break;
+            case 'Polygon':
+                window.open(`https://polygonscan.com/token/${address}?a=${tokenId}`);
+                break;
+        }
+    }
 
     return (
         <div className="flex flex-col items-start justify-start gap-5 filter">
@@ -21,8 +52,11 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
                 {detail.name + ' #' + detail.token_id}
             </h2>
             <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start">
-                <MarketTag market={market} />
-                <ScanTag chain={detail.chain.split('.')[0]} />
+                <MarketTag market={market} onClick={() => toMarket(detail.asset_contract?.address, detail.token_id)} />
+                <ScanTag
+                    chain={detail.chain.split('.')[0]}
+                    onClick={() => toScan(detail.asset_contract?.address, detail.token_id)}
+                />
             </div>
             {detail.description && (
                 <div>
