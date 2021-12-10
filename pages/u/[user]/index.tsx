@@ -161,8 +161,6 @@ const ProfilePage: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(aon);
         setTimeout(async () => {
             const { listed, haveMore } = await utils.initContent();
-            console.log(listed);
-
             setContent(listed);
             setHaveMoreContent(haveMore);
             setContentLoading(false);

@@ -29,8 +29,8 @@ export default function Logo({ size }: LogoProp) {
             <rect x="64.1682" y="24.0312" width="6.20679" height="1.59547" fill="#0072FF" />
             <rect x="66.875" y="21.4375" width="4.53125" height="1.59375" fill="#0072FF" />
             <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M72.0448 20.3115H69.777L66.0642 11.1852H64.1682V9.21716H69.7842V11.1852H68.4402L70.8882 17.4492L73.2882 11.1852H71.7762V9.21716H77.2722V11.1852H75.5922L72.0448 20.3115Z"
                 fill="black"
             />

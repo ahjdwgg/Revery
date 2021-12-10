@@ -227,7 +227,7 @@ async function initContent(timestamp: string = '') {
     let assetSet = new Set<string>();
     let profileSet = new Set<string>();
     let haveMore = true;
-    const apiUser = RSS3.getAPIUser();
+    const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
     const items =

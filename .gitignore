@@ -36,8 +36,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# JetBrains Idea
+# Idea
 .idea/
+.vscode/
 package-lock.json
 yarn.lock
 yarn.lock
