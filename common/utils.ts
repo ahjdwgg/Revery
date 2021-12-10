@@ -153,8 +153,6 @@ async function initAssets(type?: string, limit?: number) {
     const nftDetails = await getAssetDetails(nfts ? nfts : [{}]);
     // const donationDetails = await getAssetDetails(donations?donations:[{}]);
     const footprintDetails = await getAssetDetails(footprints ? footprints : [{}]);
-    console.log(nftDetails?.slice(0, 1));
-    console.log(footprintDetails?.slice(0, 1));
     return {
         nfts: nftDetails ? nftDetails : [],
         // donations: donationDetails?donationDetails:[],
@@ -207,14 +205,82 @@ async function initAccounts() {
     };
 }
 
+function isAsset(field: string | undefined): boolean {
+    let condition = ['NFT', 'POAP'];
+    if (field && condition.find((item) => field.includes(item))) {
+        return true;
+    }
+    return false;
+}
+
 async function initContent() {
+    let assetSet = new Set<string>();
+    let profileSet = new Set<string>();
+    const apiUser = RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
-    const listed = await pageOwner.items?.getListByPersona({
-        persona: pageOwner.address,
-        limit: 30,
-        tsp: '',
+
+    const items =
+        (await pageOwner.items?.getListByPersona({
+            persona: pageOwner.address,
+            limit: 999,
+            tsp: '',
+        })) || [];
+
+    profileSet.add(pageOwner.address);
+    items.forEach((item) => {
+        if (isAsset(item.target?.field)) {
+            assetSet.add(item.target?.field.substring(7, item.target.field.length - 1));
+        }
+        profileSet.add(item.id.split('-')[0]);
     });
-    return { listed };
+
+    const details =
+        assetSet.size !== 0
+            ? (await pageOwner.assets?.getDetails({
+                  persona: pageOwner.address,
+                  assets: Array.from(assetSet),
+                  full: true,
+              })) || []
+            : [];
+
+    const profiles = (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [];
+
+    const listed: any[] = [];
+    items.forEach((item) => {
+        let temp: any;
+
+        const profile = profiles.find((element: any) => {
+            element.persona === item.id.split('-')[0];
+        }) || {
+            avatar: pageOwner.profile?.avatar,
+            name: pageOwner.name,
+        };
+
+        temp = {
+            ...item,
+            avatar: profile.avatar[0] || config.undefinedImageAlt,
+            username: profile.name,
+        };
+
+        if (isAsset(item.target?.field)) {
+            const asset = details.find((asset) => {
+                asset.id === item.target?.field.substring(7, item.target.field.length - 1);
+            });
+
+            if (asset) {
+                listed.push({
+                    ...temp,
+                    details: {
+                        ...asset,
+                    },
+                });
+            }
+        } else {
+            listed.push({ ...temp });
+        }
+    });
+
+    return listed;
 }
 
 function extractEmbedFields(raw: string, fieldsEmbed: string[]) {

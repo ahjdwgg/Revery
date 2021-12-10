@@ -10,13 +10,14 @@ import { timeDifferent } from '../../common/timeStamp';
 interface ContentProps {
     avatarUrl: string;
     username: string;
-    content: string;
+    title?: string;
+    content?: string;
     images?: string[];
     timeStamp: number;
     type?: string;
 }
 
-const ContentCard = ({ avatarUrl, username, content, images, timeStamp, type }: ContentProps) => {
+const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, type }: ContentProps) => {
     let iconSVG = null;
 
     if (type) {
@@ -40,15 +41,16 @@ const ContentCard = ({ avatarUrl, username, content, images, timeStamp, type }: 
             <div className="flex flex-row items-center gap-x-3">
                 <Image src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
                 <div className="text-base font-semibold">{username}</div>
+                <>
+                    <span className="opacity-20">{timeDifferent(timeStamp)}</span>
+                    {type && iconSVG && (
+                        <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
+                    )}
+                </>
             </div>
-            <div className="mt-2 text-base leading-5 whitespace-pre-line select-none">{content}</div>
+            {title && <div className="mt-2 text-base font-semibold">{title}</div>}
+            {content && <div className="mt-1 text-base leading-5 whitespace-pre-line select-none">{content}</div>}
             {images && images?.length > 0 && <EmblaCarousel slides={images} />}
-            <div className="flex flex-row items-center justify-end mt-2 text-sm gap-x-2">
-                <span className="opacity-20">{timeDifferent(timeStamp)}</span>
-                {type && iconSVG && (
-                    <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
-                )}
-            </div>
         </div>
     );
 };

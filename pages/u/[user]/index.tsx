@@ -25,6 +25,8 @@ import SingleFootprint from '../../../components/details/SingleFootprint';
 import Button from '../../../components/buttons/Button';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
+import ItemCard from '../../../components/content/ItemCard';
+import { BiLoaderCircle } from 'react-icons/bi';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -52,6 +54,9 @@ const ProfilePage: NextPage = () => {
     const [nftItems, setNftItems] = useState<AnyObject[]>([]);
     const [donationItems, setDonationItems] = useState<AnyObject[]>([]);
     const [footprintItems, setFootprintItems] = useState<AnyObject[]>([]);
+
+    const [content, setContent] = useState<any[]>([]);
+    const [isContentLoading, setContentLoading] = useState(true);
 
     const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
     const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
@@ -142,20 +147,6 @@ const ProfilePage: NextPage = () => {
         type: 'primary',
     });
 
-    let slides = [
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-    ];
-
-    let content =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
     // const loadAssets = async (type: string, limit?: number) => {
     //     const { listed } = await utils.initAssets(type, limit);
     //     return listed;
@@ -165,6 +156,11 @@ const ProfilePage: NextPage = () => {
         const aon = (router.query.user as string) || '';
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
+        setTimeout(async () => {
+            setContent(await utils.initContent());
+            setContentLoading(false);
+        }, 0);
+
         const profile = pageOwner.profile;
         checkOwner();
         console.log(pageOwner.assets);
@@ -332,18 +328,43 @@ const ProfilePage: NextPage = () => {
                             );
                         })}
                     </Profile>
-                    {[...Array(1)].map((_, i) => (
-                        <ContentCard
-                            key={i}
-                            avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
-                            username="Fendi"
-                            content={content}
-                            images={slides}
-                            timeStamp={0x60de434e}
-                            type="Twitter"
-                        />
-                    ))}
-                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                    <section>
+                        {isContentLoading ? (
+                            <div className="w-full flex flex-row justify-center items-center h-32">
+                                <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
+                            </div>
+                        ) : (
+                            <>
+                                {content.map((item, index) => {
+                                    if (item.id.includes('auto')) {
+                                        return (
+                                            <ItemCard
+                                                key={index}
+                                                avatarUrl={item.avatar}
+                                                username={item.username}
+                                                content={item.summary || null}
+                                                asset={item.details}
+                                                timeStamp={new Date(item.date_updated).valueOf()}
+                                                target={item.target}
+                                            />
+                                        );
+                                    } else {
+                                        return (
+                                            <ContentCard
+                                                key={index}
+                                                avatarUrl={item.avatar}
+                                                username={item.username}
+                                                title={item.title}
+                                                content={item.summary}
+                                                timeStamp={new Date(item.date_updated).valueOf()}
+                                            />
+                                        );
+                                    }
+                                })}
+                                <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                            </>
+                        )}
+                    </section>
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">

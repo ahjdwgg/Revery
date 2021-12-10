@@ -1,5 +1,5 @@
 export const timeDifferent = (timeStamp: number): string => {
-    const date1: any = new Date(timeStamp * 1000);
+    const date1: any = new Date(timeStamp);
     const date2: any = Date.now();
     const diffTime = Math.abs(date2 - date1);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -14,5 +14,5 @@ export const timeDifferent = (timeStamp: number): string => {
 };
 
 export const formatDate = (ts: string): string => {
-    return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
+    return new Date(parseInt(ts)).toLocaleDateString('en-US');
 };
