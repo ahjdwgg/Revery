@@ -65,13 +65,13 @@ const Donation: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <Button isOutlined={true} color={COLORS.donation} text={'Back'} onClick={() => router.back()} />
-                    <h1 className="text-lg font-bold text-left text-donation">
+                    <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
+                    <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Donations" : 'Donations'}
                     </h1>
-                    <Button isOutlined={true} color={COLORS.donation} text={'Edit'} />
+                    <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-1 gap-4 py-4 lg:grid-cols-2">
+                <section className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-2">
                     {listedDonation.map((asset, index) => (
                         <DonationCard
                             key={index}
@@ -86,8 +86,8 @@ const Donation: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'gitcoin'} isCenter={false} size="lg">
-                {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="donation" />}
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+                {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="primary" />}
             </Modal>
         </>
     );

@@ -22,8 +22,8 @@ const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: Acc
             )}
             <span className="text-lg font-bold text-left">{formatter(address)}</span>
             <div className="flex flex-row items-center gap-x-2">
-                <Button isOutlined={true} color={COLORS.donation} text={'Copy'} />
-                <Button isOutlined={false} color={COLORS.account} icon={'external'} />
+                <Button isOutlined={true} color={COLORS.primary} text={'Copy'} />
+                <Button isOutlined={false} color={COLORS.primary} icon={'external'} />
             </div>
         </section>
     );

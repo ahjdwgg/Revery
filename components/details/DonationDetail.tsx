@@ -21,7 +21,7 @@ export default function DonationDetail({ detail }: DonationDetailProps) {
                     {detail.data.grant.title}
                 </h2>
                 <div
-                    className="flex flex-row items-center justify-start gap-2 my-1 text-donation"
+                    className="flex flex-row items-center justify-start gap-2 my-1 text-primary"
                     onClick={() => {
                         window.open(detail.data.grant.reference_url);
                     }}
@@ -36,7 +36,7 @@ export default function DonationDetail({ detail }: DonationDetailProps) {
                 <h3 className={`${subtitle} my-2`}>Description</h3>
                 <p className="line-clamp-5">{detail.data.grant.description || 'No information provided by Gitcoin.'}</p>
             </div>
-            <div className="text-donation">
+            <div className="text-primary">
                 <h3 className={subtitle}>Contributions</h3>
                 <div className="text-3xl font-medium">{amounts.length}</div>
             </div>

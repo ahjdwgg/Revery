@@ -48,15 +48,15 @@ const FootprintCard = ({
             </section>
             <section className="flex flex-col justify-around flex-1 text-sm leading-normal text-body-text">
                 <div className="flex flex-row items-center gap-2">
-                    <BiCalendar className="text-footprint" />
+                    <BiCalendar className="text-primary" />
                     <span className="flex-1 w-0 truncate">{displayDate}</span>
                 </div>
                 <div className="flex flex-row items-center gap-2">
-                    <BiLocationPlus className="text-footprint" />
+                    <BiLocationPlus className="text-primary" />
                     <span className="flex-1 w-0 truncate">{location}</span>
                 </div>
                 <div className="flex flex-row gap-2 font-medium">
-                    <div className="text-footprint">{username} attended</div>
+                    <div className="text-primary">{username} attended</div>
                     <div className="flex-1 w-0 truncate">{activity}</div>
                 </div>
             </section>

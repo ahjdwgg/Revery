@@ -13,7 +13,7 @@ interface NFTDetailProps {
 }
 
 export default function NFTDetail({ detail, market }: NFTDetailProps) {
-    const subtitle = 'text-lg font-medium capitalize text-nft my-2';
+    const subtitle = 'text-lg font-medium capitalize text-primary my-2';
 
     return (
         <div className="flex flex-col items-start justify-start gap-5 filter">

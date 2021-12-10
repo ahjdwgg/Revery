@@ -63,11 +63,11 @@ const Nft: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 py-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <Button isOutlined={true} color={COLORS.nft} text={'Back'} onClick={() => router.back()} />
-                    <h1 className="text-lg font-bold text-left text-nft">
+                    <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
+                    <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s NFTs" : 'NFTs'}
                     </h1>
-                    <Button isOutlined={true} color={COLORS.nft} text={'Edit'} />
+                    <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
                     {listedNFT.map((asset, index) => (
@@ -94,8 +94,8 @@ const Nft: NextPage = () => {
                 </section>
             </div>
 
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'nft'} isCenter={false} size="lg">
-                {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="nft" />}
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+                {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="primary" />}
             </Modal>
         </>
     );

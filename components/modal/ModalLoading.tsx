@@ -14,4 +14,5 @@ const textColor = new Map([
     ['nft', 'text-nft'],
     ['footprint', 'text-footprint'],
     ['donation', 'text-donation'],
+    ['primary', 'text-primary'],
 ]);

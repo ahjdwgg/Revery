@@ -12,14 +12,14 @@ export default function SingleAccount({ chain, address }: SingleAccountProps) {
     return (
         <>
             {chain !== 'EVM+' ? (
-                <AccountItem chain={chain} size="lg" outline="account" />
+                <AccountItem chain={chain} size="lg" />
             ) : (
-                <EVMpAccountItem address={address} size="lg" outline="account" />
+                <EVMpAccountItem address={address} size="lg" />
             )}
             <span className="w-full px-4 text-lg font-bold text-center break-all">{address}</span>
             <div className="flex flex-row items-center gap-x-2">
-                <Button isOutlined={true} color={COLORS.donation} text={'Copy'} />
-                <Button isOutlined={false} color={COLORS.account} icon={'external'} />
+                <Button isOutlined={true} color={COLORS.primary} text={'Copy'} />
+                <Button isOutlined={false} color={COLORS.primary} icon={'external'} />
             </div>
         </>
     );

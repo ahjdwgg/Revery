@@ -368,7 +368,7 @@ const ProfilePage: NextPage = () => {
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
-                        <AssetCard title="NFTs" color="nft" headerButtons={assetCardButtons.NFT}>
+                        <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
                             <div className="grid grid-cols-2 gap-3">
                                 {nftItems.map((asset, i) => (
                                     <div
@@ -389,7 +389,7 @@ const ProfilePage: NextPage = () => {
                             </div>
                         </AssetCard>
 
-                        <AssetCard title="Donations" color="donation" headerButtons={assetCardButtons.Donation}>
+                        <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
                                 {donationItems.map((asset, i) => (
                                     <div key={asset.id} className="flex cursor-pointer">
@@ -407,7 +407,7 @@ const ProfilePage: NextPage = () => {
                         </AssetCard>
                     </div>
                     <div>
-                        <AssetCard title="Footprints" color="footprint" headerButtons={assetCardButtons.Footprint}>
+                        <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
                             <div className="flex flex-col w-full">
                                 {footprintItems.map((asset, i) => (
                                     <FootprintCard

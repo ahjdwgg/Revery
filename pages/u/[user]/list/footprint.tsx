@@ -65,11 +65,11 @@ const Footprint: NextPage = () => {
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
                 <section className="flex flex-row justify-between w-full my-4">
-                    <Button isOutlined={true} color={COLORS.footprint} text={'Back'} onClick={() => router.back()} />
-                    <h1 className="text-lg font-bold text-left text-footprint">
+                    <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
+                    <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Footprint" : 'Footprints'}
                     </h1>
-                    <Button isOutlined={true} color={COLORS.footprint} text={'Edit'} />
+                    <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
                     {listedFootprint.map((asset, index) => (
@@ -89,8 +89,8 @@ const Footprint: NextPage = () => {
                     ))}
                 </section>
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'footprint'} isCenter={false} size="lg">
-                {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="footprint" />}
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+                {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="primary" />}
             </Modal>
         </>
     );

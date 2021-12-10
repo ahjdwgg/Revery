@@ -7,7 +7,7 @@ interface NFTBadgesProps {
 const NFTBadges = ({ location, chain, collectionImg }: NFTBadgesProps) => {
     const containerClass = `${classes.containerBase} ${classes.containerExtend[location]}`;
     const badgeClass = `${classes.badgeBase} ${classes.badgeExtend[location]}`;
-    const chainBaseClass = 'p-0.5 w-6 h-6 bg-white rounded-full';
+    const chainBaseClass = `${classes.badgeExtend[location]} bg-white rounded-full`;
     const chainClass = `w-full h-full ${classes.badgeBase} ${badgeChain.get(chain)}`;
 
     const collectionImgStyle = {
@@ -31,7 +31,7 @@ const classes = {
         overlay: 'absolute right-2.5 top-2.5',
         header: '',
     },
-    badgeBase: 'bg-center bg-no-repeat bg-cover rounded-full bg-item-bg border-sm border-item-border shadow-nft',
+    badgeBase: 'bg-center bg-no-repeat bg-cover rounded-full bg-item-bg border-sm border-item-border shadow',
     badgeExtend: {
         overlay: 'w-6 h-6',
         header: 'w-7 h-7',
