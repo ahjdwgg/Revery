@@ -64,6 +64,10 @@ module.exports = {
                 Misskey: 'url(/chains/Misskey.png)',
                 Twitter: 'url(/chains/Twitter.png)',
             }),
+            cursor: {
+                move: 'move',
+                grab: 'grab',
+            },
         },
     },
     variants: {

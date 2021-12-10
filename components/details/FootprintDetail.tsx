@@ -4,7 +4,6 @@ import { formatDate } from '../../common/timeStamp';
 import { POAP } from '../../common/types';
 import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
-import style from '../../styles/content.module.css';
 
 interface FootprintDetailProps {
     detail: POAP;
@@ -60,7 +59,7 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
             {detail.event.description && (
                 <section>
                     <h3 className={subtitle}>Description</h3>
-                    <div className={style.content}>{detail.event.description}</div>
+                    <p>{detail.event.description}</p>
                 </section>
             )}
         </div>
