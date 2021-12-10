@@ -28,6 +28,7 @@ import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../../../components/content/ItemCard';
 import { BiLoaderCircle } from 'react-icons/bi';
 import SingleAccount from '../../../components/details/SingleAccount';
+import { COLORS } from '../../../components/buttons/variables';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -58,6 +59,7 @@ const ProfilePage: NextPage = () => {
 
     const [content, setContent] = useState<any[]>([]);
     const [isContentLoading, setContentLoading] = useState(true);
+    const [haveMoreContent, setHaveMoreContent] = useState(true);
 
     const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
     const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
@@ -158,7 +160,11 @@ const ProfilePage: NextPage = () => {
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
         setTimeout(async () => {
-            setContent(await utils.initContent());
+            const { listed, haveMore } = await utils.initContent();
+            console.log(listed);
+
+            setContent(listed);
+            setHaveMoreContent(haveMore);
             setContentLoading(false);
         }, 0);
 
@@ -259,13 +265,20 @@ const ProfilePage: NextPage = () => {
 
     useEffect(() => {
         // init();
-        console.log(address);
+        setContentLoading(true);
     }, [address]);
 
     useEffect(() => {
         addEventListener(Events.connect, checkOwner);
         addEventListener(Events.disconnect, checkOwner);
     }, []);
+
+    const loadMoreContent = async () => {
+        const timestamp = [...content].pop().date_created;
+        const { listed, haveMore } = await utils.initContent(timestamp);
+        setContent([...content, ...listed]);
+        setHaveMoreContent(haveMore);
+    };
 
     const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
@@ -340,7 +353,7 @@ const ProfilePage: NextPage = () => {
                     </Profile>
                     <section>
                         {isContentLoading ? (
-                            <div className="w-full flex flex-row justify-center items-center h-32">
+                            <div className="flex flex-row items-center justify-center w-full h-32">
                                 <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
                             </div>
                         ) : (
@@ -371,7 +384,20 @@ const ProfilePage: NextPage = () => {
                                         );
                                     }
                                 })}
-                                <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                {haveMoreContent ? (
+                                    <div className="flex flex-row justify-center w-full py-8">
+                                        <Button
+                                            isOutlined={false}
+                                            color={COLORS.primary}
+                                            text={'Load more'}
+                                            width={'w-32'}
+                                            height={'h-8'}
+                                            onClick={loadMoreContent}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                )}
                             </>
                         )}
                     </section>
@@ -464,7 +490,7 @@ const ProfilePage: NextPage = () => {
                     <div className="flex justify-center">
                         <div className="inline px-12 pt-8 pb-12">
                             {`You will be redirect to`}
-                            <span className="text-primary mx-2">{otherProductRedirectSettings.product}</span>
+                            <span className="mx-2 text-primary">{otherProductRedirectSettings.product}</span>
                             {`to set up your`}
                             <span className={`mx-2 text-${otherProductRedirectSettings.colorStyle}`}>
                                 {otherProductRedirectSettings.type}

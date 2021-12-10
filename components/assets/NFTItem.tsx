@@ -55,7 +55,9 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                 <iframe className={containerClasses} style={containerStyles} src={mainUrl} />
             )}
             {getContentType(mainUrl) === 'model' && (
-                <DynamicModelViewer className={containerClasses} style={containerStyles} src={mainUrl} />
+                <div onClick={(e: any) => e.stopPropagation()}>
+                    <DynamicModelViewer className={containerClasses} style={containerStyles} src={mainUrl} />
+                </div>
             )}
             {getContentType(mainUrl) === 'video' && (
                 <video

@@ -223,18 +223,21 @@ function isAsset(field: string | undefined): boolean {
     return false;
 }
 
-async function initContent() {
+async function initContent(timestamp: string = '') {
     let assetSet = new Set<string>();
     let profileSet = new Set<string>();
+    let haveMore = true;
     const apiUser = RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
     const items =
         (await pageOwner.items?.getListByPersona({
             persona: pageOwner.address,
-            limit: 999,
-            tsp: '',
+            limit: 30,
+            tsp: timestamp,
         })) || [];
+
+    haveMore = items.length === 30;
 
     profileSet.add(pageOwner.address);
     items.forEach((item) => {
@@ -291,7 +294,10 @@ async function initContent() {
         }
     });
 
-    return listed;
+    return {
+        listed: listed,
+        haveMore: haveMore,
+    };
 }
 
 function extractEmbedFields(raw: string, fieldsEmbed: string[]) {

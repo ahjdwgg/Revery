@@ -114,6 +114,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     onClick={() => toExternalProfile(target.field)}
                 >
                     <span className="text-base font-semibold">{username}</span>
+                    {asset && <span>{getTopic(target.field, target.action.type)}</span>}
                     {iconSVG && (
                         <>
                             <span>post on</span>
@@ -125,7 +126,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
             </div>
             {!asset ? (
                 <div
-                    className="mt-2 ml-10 border-l-2 pl-2 border-opacity-50 border-primary cursor-pointer"
+                    className="pl-2 mt-2 ml-10 border-l-2 border-opacity-50 cursor-pointer border-primary"
                     onClick={() => {
                         toExternalLink(target.field, target.action.payload);
                     }}
@@ -136,7 +137,6 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                 </div>
             ) : (
                 <NFTCard
-                    info={getTopic(target.field, target.action.type)}
                     name={asset.detail.name}
                     desc={asset.detail.description}
                     imageUrl={
