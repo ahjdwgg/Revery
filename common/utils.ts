@@ -230,7 +230,7 @@ async function initContent() {
     profileSet.add(pageOwner.address);
     items.forEach((item) => {
         if (isAsset(item.target?.field)) {
-            assetSet.add(item.target?.field.substring(7, item.target.field.length - 1));
+            assetSet.add(item.target?.field.substring(7, item.target.field.length));
         }
         profileSet.add(item.id.split('-')[0]);
     });
@@ -244,7 +244,8 @@ async function initContent() {
               })) || []
             : [];
 
-    const profiles = (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [];
+    const profiles =
+        profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
 
     const listed: any[] = [];
     items.forEach((item) => {
@@ -264,9 +265,9 @@ async function initContent() {
         };
 
         if (isAsset(item.target?.field)) {
-            const asset = details.find((asset) => {
-                asset.id === item.target?.field.substring(7, item.target.field.length - 1);
-            });
+            const asset = details.find(
+                (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
+            );
 
             if (asset) {
                 listed.push({

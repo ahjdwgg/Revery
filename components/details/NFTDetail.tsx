@@ -61,9 +61,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.description && (
                 <div>
                     <h3 className={subtitle}>Description</h3>
-                    <p>
-                        <Markdown markdown={detail.description} />
-                    </p>
+                    <Markdown markdown={detail.description} />
                 </div>
             )}
             {detail.traits && detail.traits.length > 0 && (
@@ -84,9 +82,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.collection?.description && (
                 <div>
                     <h3 className={subtitle}>About {detail.collection?.name}</h3>
-                    <p>
-                        <Markdown markdown={detail.collection?.description} />
-                    </p>
+                    <Markdown markdown={detail.collection?.description} />
                 </div>
             )}
         </div>
