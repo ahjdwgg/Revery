@@ -35,7 +35,7 @@ export default function NFTDetail({ detail, market }: NFTDetailProps) {
             {detail.traits && detail.traits.length > 0 && (
                 <div>
                     <h3 className={subtitle}>Properties</h3>
-                    <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start mt-3">
+                    <div className="flex flex-row flex-wrap gap-2.5 items-center justify-start mt-3 w-160">
                         {detail.traits.map(
                             (
                                 item: { trait_type: String | null | undefined; value: String | null | undefined },

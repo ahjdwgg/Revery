@@ -8,6 +8,7 @@ import ImageHolder from './ImageHolder';
 import RSS3 from '../common/rss3';
 import { useRouter } from 'next/router';
 import config from '../common/config';
+import Logo from './icons/Logo';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
@@ -106,10 +107,17 @@ function Header() {
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
                         <nav className="hidden w-full md:flex md:flex-grow">
+                            <Logo />
                             <div className="flex flex-row justify-end w-full gap-x-8">
                                 {isLoggedIn ? (
                                     <>
-                                        <Button isOutlined={false} color={COLORS.primary} text={'Create Now'} />
+                                        <Button
+                                            isOutlined={false}
+                                            color={COLORS.primary}
+                                            text={'Create Now'}
+                                            width={'w-32'}
+                                            height={'h-8'}
+                                        />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
                                         </div>

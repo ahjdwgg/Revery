@@ -125,6 +125,7 @@ async function initAssets(type?: string, limit?: number) {
             assets: assetIDList ? assetIDList : [''],
             full: true,
         });
+        console.log(assetDetails);
         return assetDetails;
     }
     const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
