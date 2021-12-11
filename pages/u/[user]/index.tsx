@@ -341,11 +341,18 @@ const ProfilePage: NextPage = () => {
                                     size="sm"
                                     address={accountInfo.identity}
                                     onClick={() => {
-                                        getModalDetail(accountInfo, 'account');
+                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
                                     }}
                                 />
                             ) : (
-                                <AccountItem key={index} size="sm" chain={accountInfo.platform} />
+                                <AccountItem
+                                    key={index}
+                                    size="sm"
+                                    chain={accountInfo.platform}
+                                    onClick={() => {
+                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                    }}
+                                />
                             );
                         })}
                     </Profile>
