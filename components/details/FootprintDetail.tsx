@@ -12,8 +12,7 @@ interface FootprintDetailProps {
 
 function getDate(detail: AnyObject): string {
     return (
-        formatDate(detail.start_date) +
-        (detail.end_date && detail.end_date !== detail.start_date ? ` ~ ${formatDate(detail.end_date)}` : '')
+        detail.start_date + (detail.end_date && detail.end_date !== detail.start_date ? ` ~ ${detail.end_date}` : '')
     );
 }
 
@@ -38,10 +37,12 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                         }}
                     />
                 </div>
-                <div className="flex flex-row items-center justify-start gap-2 my-1 text-primary">
-                    <BiLinkAlt />
-                    <span className="flex-1 text-sm leading-normal truncate">{detail.event_url}</span>
-                </div>
+                {detail.event_url && (
+                    <div className="flex flex-row items-center justify-start gap-2 my-1 text-primary">
+                        <BiLinkAlt />
+                        <span className="flex-1 text-sm leading-normal truncate">{detail.event_url}</span>
+                    </div>
+                )}
             </section>
             <section className="w-full">
                 <div className="flex flex-row items-center gap-2">

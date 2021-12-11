@@ -18,7 +18,7 @@ const NFTCard = ({ name, desc, imageUrl, onClick }: NFTCardProps) => {
                     <div className="text-base font-semibold line-clamp-1">{name}</div>
                 ) : (
                     <div className="text-base font-semibold line-clamp-1 opacity-20">
-                        Oops, no detail found for this NFT.
+                        Oops, no detail found for this asset.
                     </div>
                 )}
                 {name || desc ? <p className="line-clamp-3">{desc}</p> : <p className="line-clamp-3 opacity-20">:(</p>}

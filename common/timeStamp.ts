@@ -14,5 +14,5 @@ export const timeDifferent = (timeStamp: number): string => {
 };
 
 export const formatDate = (ts: string): string => {
-    return new Date(parseInt(ts)).toLocaleDateString('en-US');
+    return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
 };

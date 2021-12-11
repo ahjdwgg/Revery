@@ -125,7 +125,7 @@ async function initAssets(type?: string, limit?: number) {
             assets: assetIDList ? assetIDList : [''],
             full: true,
         });
-        console.log(assetDetails);
+        // console.log(assetDetails);
         if (assetDetails) {
             return assetDetails;
         } else {
@@ -216,7 +216,7 @@ async function initAccounts() {
 }
 
 function isAsset(field: string | undefined): boolean {
-    let condition = ['NFT', 'POAP'];
+    let condition = ['NFT', 'POAP', 'Gitcoin'];
     if (field && condition.find((item) => field.includes(item))) {
         return true;
     }
@@ -282,17 +282,40 @@ async function initContent(timestamp: string = '') {
             );
 
             if (asset) {
+                let details;
+                if (item.target?.field.includes('Gitcoin')) {
+                    // handle Gitcoin record
+                    details = {
+                        name: asset.detail.grant.title,
+                        description: asset.detail.grant.description,
+                        image_url: asset.detail.grant.logo,
+                        reference_url: asset.detail.grant.reference_url,
+                    };
+                } else {
+                    // handle NFT and POAP
+                    details = {
+                        name: asset.detail.name,
+                        description: asset.detail.description,
+                        image_url:
+                            asset.detail.image_preview_url ||
+                            asset.detail.image_url ||
+                            asset.detail.image_thumbnail_url ||
+                            asset.detail.animation_url ||
+                            asset.detail.animation_original_url,
+                        reference_url: asset.detail.event_url,
+                    };
+                }
                 listed.push({
                     ...temp,
-                    details: {
-                        ...asset,
-                    },
+                    details: details,
                 });
             }
         } else {
             listed.push({ ...temp });
         }
     });
+
+    console.log(listed);
 
     return {
         listed: listed,
