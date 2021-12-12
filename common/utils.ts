@@ -97,29 +97,9 @@ interface AssetsList {
 }
 
 async function initAssets() {
-    // const listed: GeneralAssetWithTags[] = [];
-    // const unlisted: GeneralAssetWithTags[] = [];
-
     const pageOwner = RSS3.getPageOwner();
-    // const assetInRSS3 = (await pageOwner.assets?.auto.getListFile(pageOwner.address)) || [];
-
-    // const assetInAssetProfile = await getAssetProfileWaitTillSuccess(pageOwner.address, type);
-    // const allAssets = await utils.mergeAssetsTags(assetInRSS3 ? assetInRSS3 : [''], assetInAssetProfile);
-
-    // for (const asset of assetInRSS3) {
-    //     if (asset.type.endsWith(type)) {
-    //         if (asset.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
-    //             unlisted.push(asset);
-    //         } else {
-    //             listed.push(asset);
-    //         }
-    //     }
-    // }
-
     const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
-
     const taggedList = (await pageOwner.files.get(pageOwner.address))._pass.assets;
-
     const hidedList = taggedList.filter((asset: any) => asset.hasOwnProperty('hide'));
 
     const orderedList = taggedList
@@ -155,29 +135,19 @@ async function initAssets() {
 
     console.log('listed & ordered assets');
     console.log(orderedAssetList?.length);
-    // let parsedAssets = <AnyObject[] | undefined>[];
 
-    // if (taggedList.length===0) {
-    //     parsedAssets = assetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
-    // }else {
-    //     const listedAssets = assetList?.filter((asset)=>{
-    //         const tagged = taggedList.find((tagged: { id: string; })=>tagged.id===asset);
-    //         if (tagged?.hasOwnProperty('hide')) {
-    //             return false;
-    //         } else {
-    //             return true;
-    //         }
-    //     });
-    //     // console.log(listedAssets?.length)
-    //     // const orderedAssets = listedAssets.sort((a: { order: number; },b: { order: number; })=>a.order-b.order);
-    //     // console.log(orderedAssets)
-    //     // parsedAssets = orderedAssets.map((asset: string) => RSS3Utils.id.parseAsset(asset));
-    // }
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
-    // console.log(parsedAssets)
+
+    console.log('NFT');
+    console.log(nfts);
+    console.log('donations');
+    console.log(donations);
+    console.log('Footprints');
+    console.log(footprints);
+
     return {
         nfts: nfts && nfts.length > 0 ? nfts : <AnyObject[]>[],
         donations: donations && donations.length > 0 ? donations : <AnyObject[]>[],
@@ -191,19 +161,15 @@ async function loadAssets(parsedAssets: AnyObject[]) {
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
-    console.log(assetIDList);
-    const assetDetails = await pageOwner.assets?.getDetails({
-        persona: pageOwner.address,
-        assets: assetIDList ? assetIDList : [''],
-        full: true,
-    });
-    console.log('asset details');
-    console.log(assetDetails);
-    if (assetDetails) {
-        return assetDetails;
-    } else {
-        return <AnyObject[]>[];
-    }
+    const assetDetails =
+        assetIDList.length !== 0
+            ? (await pageOwner.assets?.getDetails({
+                  persona: pageOwner.address,
+                  assets: assetIDList,
+                  full: true,
+              })) || []
+            : [];
+    return assetDetails;
 }
 
 async function getOrderedAssets() {}

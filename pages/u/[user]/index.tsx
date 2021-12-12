@@ -150,9 +150,7 @@ const ProfilePage: NextPage = () => {
 
     const loadAssetDetails = async (assetList: AnyObject[], limit: number) => {
         const assetDetails = await utils.loadAssets(assetList);
-        console.log(assetList);
         const previewAssets = limit <= assetDetails.length ? assetDetails.slice(0, limit) : assetDetails;
-        // console.log(previewAssets)
         return previewAssets;
     };
 
