@@ -25,7 +25,7 @@ const EVMpAccountItem = ({
     }
 
     return (
-        <div className={`${AccountSize.get(size)} p-1 rounded-full`} style={style} onClick={onClick}>
+        <div className={`${AccountSize.get(size)} p-1 rounded-full cursor-pointer`} style={style} onClick={onClick}>
             <div
                 className={`w-full h-full bg-center bg-no-repeat bg-cover bg-EVM bg-85 ${
                     address ? 'mix-blend-overlay' : 'opacity-50'

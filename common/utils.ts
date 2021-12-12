@@ -293,7 +293,7 @@ async function initContent(timestamp: string = '') {
             listed.push({ ...temp });
         }
     });
-
+    console.log(listed);
     return {
         listed: listed,
         haveMore: haveMore,

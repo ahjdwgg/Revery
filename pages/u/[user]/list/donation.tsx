@@ -73,10 +73,10 @@ const Donation: NextPage = () => {
                     {listedDonation.map((asset, index) => (
                         <DonationCard
                             key={index}
-                            imageUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
-                            name={asset.detail.title || 'Inactive Project'}
-                            contribCount={asset.detail.total_contribs || 0}
-                            contribDetails={asset.detail.token_contribs || []}
+                            imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
+                            name={asset.detail.grant.title || 'Inactive Project'}
+                            contribCount={asset.detail.txs.length || 0}
+                            contribDetails={asset.detail.txs || []}
                             clickEvent={() => {
                                 openModal(asset.id);
                             }}

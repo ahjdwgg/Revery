@@ -203,8 +203,8 @@ const ProfilePage: NextPage = () => {
             //     setFootprintItems(await loadAssets('POAP', 5));
             // }, 0);
             setNftItems(allAssets.nfts.slice(0, 4));
-            // setDonationItems(allAssets.donations);
-            setFootprintItems(allAssets.footprints);
+            setDonationItems(allAssets.donations.slice(0, 4));
+            setFootprintItems(allAssets.footprints.slice(0, 6));
         }
     };
 
@@ -426,9 +426,9 @@ const ProfilePage: NextPage = () => {
                         <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
                                 {donationItems.map((asset, i) => (
-                                    <div key={asset.id} className="flex cursor-pointer">
+                                    <div key={i} className="flex cursor-pointer">
                                         <ImageHolder
-                                            imageUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
+                                            imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
                                             isFullRound={false}
                                             size={70}
                                             onClick={() => {
