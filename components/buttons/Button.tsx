@@ -121,13 +121,13 @@ const Button = ({
 const iconClass = 'w-full h-full';
 
 const iconSVGMap = new Map([
-    [BUTTON_ICONS.expand, <BiExpandAlt className={`${iconClass} p-0.5`} />],
-    [BUTTON_ICONS.plus, <BiPlus className={iconClass} />],
-    [BUTTON_ICONS.minus, <BiMinus className={iconClass} />],
-    [BUTTON_ICONS.external, <FiArrowUpRight className={iconClass} />],
-    [BUTTON_ICONS.check, <BiCheck className={iconClass} />],
-    [BUTTON_ICONS.loading, <BiLoaderAlt className={`${iconClass} animate-spin`} />],
-    [BUTTON_ICONS.circle, <BiLoaderCircle className="w-full h-6 animate-spin" />],
+    [BUTTON_ICONS.expand, <BiExpandAlt key={BUTTON_ICONS.expand} className={`${iconClass} p-0.5`} />],
+    [BUTTON_ICONS.plus, <BiPlus key={BUTTON_ICONS.plus} className={iconClass} />],
+    [BUTTON_ICONS.minus, <BiMinus key={BUTTON_ICONS.minus} className={iconClass} />],
+    [BUTTON_ICONS.external, <FiArrowUpRight key={BUTTON_ICONS.external} className={iconClass} />],
+    [BUTTON_ICONS.check, <BiCheck key={BUTTON_ICONS.check} className={iconClass} />],
+    [BUTTON_ICONS.loading, <BiLoaderAlt key={BUTTON_ICONS.loading} className={`${iconClass} animate-spin`} />],
+    [BUTTON_ICONS.circle, <BiLoaderCircle key={BUTTON_ICONS.circle} className="w-full h-6 animate-spin" />],
 ]);
 
 export default Button;

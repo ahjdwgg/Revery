@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import config from '../../common/config';

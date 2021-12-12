@@ -50,7 +50,7 @@ const Home: NextPage = () => {
                             type="Twitter"
                         />
                     ))}
-                    <div className="w-full py-8 text-sm text-center">That's all :p</div>
+                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <RecommendSection groups={recommendGroups} />
