@@ -35,7 +35,8 @@ const Donation: NextPage = () => {
         // const { listed } = await utils.initAssets('Gitcoin-Donation');
         // return listed;
         const { donations } = await utils.initAssets();
-        return donations;
+        const detailList = await utils.loadAssets(donations);
+        return detailList;
     };
 
     useEffect(() => {
@@ -78,7 +79,7 @@ const Donation: NextPage = () => {
                             contribCount={asset.detail.txs.length || 0}
                             contribDetails={asset.detail.txs || []}
                             clickEvent={() => {
-                                openModal(asset.id);
+                                openModal(asset);
                             }}
                         />
                     ))}

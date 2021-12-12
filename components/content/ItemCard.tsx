@@ -41,9 +41,9 @@ function categorize(field: string) {
 
 const getTopic = (field: string, type: string) => {
     const topic = new Map([
-        ['add', 'Got an '],
-        ['update', 'Transfer an '],
-        ['delete', 'Remove an '],
+        ['add', 'Got one '],
+        ['update', 'Transfer one '],
+        ['delete', 'Remove one '],
     ]);
 
     let content = topic.get(type) || '';
@@ -52,6 +52,8 @@ const getTopic = (field: string, type: string) => {
         content += 'NFT';
     } else if (field.includes('POAP')) {
         content += 'POAP';
+    } else if (field.includes('Gitcoin')) {
+        content += 'donation record';
     }
 
     return content;
@@ -68,7 +70,7 @@ const toExternalLink = (field: string, payload: string) => {
 };
 
 const toExternalLinkWithAsset = (field: string, eventUrl: string) => {
-    if (field.includes('xDai.POAP')) {
+    if (field.includes('xDai.POAP') || field.includes('Gitcoin')) {
         window.open(eventUrl);
     } else if (field.includes('Polygon.NFT')) {
         window.open('https://polygonscan.com/token/' + field.split('-')[4].replaceAll('.', '?a='));
@@ -89,6 +91,7 @@ const toExternalProfile = (field: string) => {
 
 const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStamp, target }: ItemCardProps) => {
     let iconSVG = null;
+    content = content?.replaceAll('">,<img', '"><img');
 
     if (target.field) {
         iconSVG = categorize(target.field);
@@ -137,18 +140,11 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                 </div>
             ) : (
                 <NFTCard
-                    name={asset.detail.name}
-                    desc={asset.detail.description}
-                    imageUrl={
-                        asset.detail.image_preview_url ||
-                        asset.detail.image_url ||
-                        asset.detail.image_thumbnail_url ||
-                        asset.detail.animation_url ||
-                        asset.detail.animation_original_url ||
-                        config.undefinedImageAlt
-                    }
+                    name={asset.name}
+                    desc={asset.description}
+                    imageUrl={asset.image_url || config.undefinedImageAlt}
                     onClick={() => {
-                        toExternalLinkWithAsset(target.field, asset.detail.event_url);
+                        toExternalLinkWithAsset(target.field, asset.reference_url);
                     }}
                 />
             )}

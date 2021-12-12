@@ -3,8 +3,8 @@ interface DonationCardProps {
     name: string;
     contribCount: number;
     contribDetails: {
-        token: string;
-        amount: string;
+        symbol: string;
+        formatedAmount: string;
     }[];
     clickEvent?: () => void;
 }
@@ -29,8 +29,8 @@ const DonationCard = ({ imageUrl, name, contribCount, contribDetails, clickEvent
                     </div>
                     {contribDetails.map((contrib, i) => (
                         <div key={i} className="text-primary">
-                            <div className="font-semibold">{contrib.amount}</div>
-                            <div className="font-normal">{contrib.token}</div>
+                            <div className="font-semibold">{contrib.formatedAmount}</div>
+                            <div className="font-normal">{contrib.symbol}</div>
                         </div>
                     ))}
                 </div>

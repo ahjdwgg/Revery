@@ -1,5 +1,4 @@
 import DonationDetail from './DonationDetail';
-import { GitcoinResponse } from '../../common/types';
 import { AnyObject } from 'rss3/types/extend';
 
 export default function SingleDonation(props: { Gitcoin: AnyObject }) {

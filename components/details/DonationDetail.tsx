@@ -39,10 +39,10 @@ export default function DonationDetail({ detail }: DonationDetailProps) {
             </div>
             <div className="text-primary">
                 <h3 className={subtitle}>Contributions</h3>
-                <div className="text-3xl font-medium">{amounts.length}</div>
+                <div className="text-3xl font-medium">{detail.txs.length}</div>
             </div>
             <div className="flex flex-col w-full gap-y-2">
-                {amounts.map((item: DonationInfo, index: React.Key | null | undefined) => (
+                {detail.txs.map((item: any, index: number) => (
                     <Payment donation={item} key={index} />
                 ))}
             </div>

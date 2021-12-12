@@ -150,10 +150,13 @@ const ProfilePage: NextPage = () => {
         type: 'primary',
     });
 
-    // const loadAssets = async (type: string, limit?: number) => {
-    //     const { listed } = await utils.initAssets(type, limit);
-    //     return listed;
-    // };
+    const loadAssetDetails = async (assetList: AnyObject[], limit: number) => {
+        const assetDetails = await utils.loadAssets(assetList);
+        console.log(assetList);
+        const previewAssets = limit <= assetDetails.length ? assetDetails.slice(0, limit) : assetDetails;
+        // console.log(previewAssets)
+        return previewAssets;
+    };
 
     const init = async () => {
         const aon = (router.query.user as string) || '';
@@ -168,7 +171,7 @@ const ProfilePage: NextPage = () => {
 
         const profile = pageOwner.profile;
         checkOwner();
-        console.log(pageOwner.assets);
+        // console.log(pageOwner.assets);
         if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -191,20 +194,18 @@ const ProfilePage: NextPage = () => {
                 ].concat(listed),
             );
 
-            const allAssets = await utils.initAssets();
             // Assets
-            // setTimeout(async () => {
-            //     setNftItems(await loadAssets('NFT', 4));
-            // }, 0);
-            // setTimeout(async () => {
-            //     setDonationItems(await loadAssets('Donation', 4));
-            // }, 0);
-            // setTimeout(async () => {
-            //     setFootprintItems(await loadAssets('POAP', 5));
-            // }, 0);
-            setNftItems(allAssets.nfts.slice(0, 4));
-            setDonationItems(allAssets.donations.slice(0, 4));
-            setFootprintItems(allAssets.footprints.slice(0, 6));
+            const allAssets = await utils.initAssets();
+
+            setTimeout(async () => {
+                setNftItems(await loadAssetDetails(allAssets.nfts, 4));
+            }, 0);
+            setTimeout(async () => {
+                setDonationItems(await loadAssetDetails(allAssets.donations, 4));
+            }, 0);
+            setTimeout(async () => {
+                setFootprintItems(await loadAssetDetails(allAssets.footprints, 6));
+            }, 0);
         }
     };
 
@@ -239,7 +240,6 @@ const ProfilePage: NextPage = () => {
 
     const toRSS3BioEditAssetNotice = (type: string, route: string, colorStyle: ModalColorStyle) => {
         // to RSS3.Bio edit this
-
         const product = 'RSS3Bio';
         const loginUser = RSS3.getLoginUser();
         const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
@@ -272,7 +272,7 @@ const ProfilePage: NextPage = () => {
     }, []);
 
     const loadMoreContent = async () => {
-        const timestamp = [...content].pop().date_created;
+        const timestamp = [...content].pop()?.date_created || '';
         const { listed, haveMore } = await utils.initContent(timestamp);
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
@@ -341,11 +341,18 @@ const ProfilePage: NextPage = () => {
                                     size="sm"
                                     address={accountInfo.identity}
                                     onClick={() => {
-                                        getModalDetail(accountInfo, 'account');
+                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
                                     }}
                                 />
                             ) : (
-                                <AccountItem key={index} size="sm" chain={accountInfo.platform} />
+                                <AccountItem
+                                    key={index}
+                                    size="sm"
+                                    chain={accountInfo.platform}
+                                    onClick={() => {
+                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                    }}
+                                />
                             );
                         })}
                     </Profile>
@@ -404,60 +411,68 @@ const ProfilePage: NextPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
                             <div className="grid grid-cols-2 gap-3">
-                                {nftItems.map((asset, i) => (
-                                    <div
-                                        className="cursor-pointer"
-                                        key={i}
-                                        onClick={() => {
-                                            getModalDetail(asset, 'nft');
-                                        }}
-                                    >
-                                        <NFTItem
-                                            key={asset.id}
-                                            previewUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
-                                            isShowingDetails={false}
-                                            size={70}
-                                        />
-                                    </div>
-                                ))}
+                                {nftItems.length > 0
+                                    ? nftItems.map((asset, i) => (
+                                          <div
+                                              className="cursor-pointer"
+                                              key={i}
+                                              onClick={() => {
+                                                  getModalDetail(asset, 'nft');
+                                              }}
+                                          >
+                                              <NFTItem
+                                                  key={asset.id}
+                                                  previewUrl={
+                                                      asset.detail.image_preview_url || config.undefinedImageAlt
+                                                  }
+                                                  isShowingDetails={false}
+                                                  size={70}
+                                              />
+                                          </div>
+                                      ))
+                                    : null}
                             </div>
                         </AssetCard>
 
                         <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
                             <div className="grid grid-cols-2 gap-3">
-                                {donationItems.map((asset, i) => (
-                                    <div key={i} className="flex cursor-pointer">
-                                        <ImageHolder
-                                            imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
-                                            isFullRound={false}
-                                            size={70}
-                                            onClick={() => {
-                                                getModalDetail(asset, 'donation');
-                                            }}
-                                        />
-                                    </div>
-                                ))}
+                                {donationItems.length > 0
+                                    ? donationItems.map((asset, i) => (
+                                          <div key={i} className="flex cursor-pointer">
+                                              <ImageHolder
+                                                  imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
+                                                  isFullRound={false}
+                                                  size={70}
+                                                  onClick={() => {
+                                                      getModalDetail(asset, 'donation');
+                                                  }}
+                                              />
+                                          </div>
+                                      ))
+                                    : null}
                             </div>
                         </AssetCard>
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
                             <div className="flex flex-col w-full">
-                                {footprintItems.map((asset, i) => (
-                                    <FootprintCard
-                                        key={i}
-                                        imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                                        startDate={asset.detail.start_date}
-                                        endDate={asset.detail.end_date}
-                                        city={asset.detail.city}
-                                        country={asset.detail.country}
-                                        username={username}
-                                        activity={asset.detail.name || ''}
-                                        clickEvent={() => {
-                                            getModalDetail(asset, 'footprint');
-                                        }}
-                                    />
-                                ))}
+                                {footprintItems.length > 0
+                                    ? footprintItems.map((asset, i) => (
+                                          <FootprintCard
+                                              key={i}
+                                              imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                              startDate={asset.detail.start_date}
+                                              endDate={asset.detail.end_date}
+                                              city={asset.detail.city}
+                                              country={asset.detail.country}
+                                              username={username}
+                                              activity={asset.detail.name || ''}
+                                              clickEvent={() => {
+                                                  getModalDetail(asset, 'footprint');
+                                              }}
+                                          />
+                                      ))
+                                    : null}
                             </div>
                         </AssetCard>
                     </div>

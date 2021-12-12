@@ -35,7 +35,8 @@ const Nft: NextPage = () => {
         // const { listed } = await utils.initAssets('NFT');
         // return listed;
         const { nfts } = await utils.initAssets();
-        return nfts;
+        const detailList = await utils.loadAssets(nfts);
+        return detailList;
     };
 
     useEffect(() => {

@@ -32,10 +32,9 @@ const Footprint: NextPage = () => {
     };
 
     const loadFootprints = async () => {
-        // const { listed } = await utils.initAssets('POAP');
-        // return listed;
         const { footprints } = await utils.initAssets();
-        return footprints;
+        const detailList = await utils.loadAssets(footprints);
+        return detailList;
     };
 
     useEffect(() => {
@@ -81,7 +80,7 @@ const Footprint: NextPage = () => {
                             username={persona?.profile?.name || ''}
                             activity={asset.detail.name || ''}
                             clickEvent={() => {
-                                openModal(asset.id);
+                                openModal(asset);
                             }}
                         />
                     ))}
