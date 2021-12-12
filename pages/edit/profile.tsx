@@ -11,9 +11,12 @@ import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
-import { RSS3Account } from 'rss3-next/types/rss3';
+import { RSS3Account } from '../../common/rss3Types';
 import Modal, { ModalColorStyle } from '../../components/modal/Modal';
 import { useRouter } from 'next/router';
+import { utils as RSS3Utils } from 'rss3';
+import { stringify } from 'querystring';
+import { AnyObject } from 'rss3/types/extend';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -28,7 +31,7 @@ const Profile: NextPage = () => {
     const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
 
-    const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
+    const [accountItems, setAccountItems] = useState<AnyObject[]>([]);
 
     const [notice, setNotice] = useState('');
     const [isShowingNotice, setIsShowingNotice] = useState(false);
@@ -187,13 +190,14 @@ const Profile: NextPage = () => {
 
         await RSS3.setPageOwner(loginUser.address);
         const { listed } = await utils.initAccounts();
+        const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
         setAccountItems(
             [
                 {
                     platform: 'EVM+',
                     identity: RSS3.getLoginUser().address,
                 },
-            ].concat(listed),
+            ].concat(accountList),
         );
         setIsLoading(false);
     };
@@ -342,7 +346,7 @@ const Profile: NextPage = () => {
             </div>
 
             <Modal
-                theme={otherProductRedirectSettings.colorStyle}
+                theme={'primary'}
                 size={'sm'}
                 isCenter={true}
                 hidden={!isShowingRedirectNotice}
@@ -387,7 +391,7 @@ const Profile: NextPage = () => {
             </Modal>
 
             <Modal
-                theme={'account'}
+                theme={'primary'}
                 size={'md'}
                 isCenter={true}
                 hidden={!isShowingNotice}
@@ -414,7 +418,7 @@ const Profile: NextPage = () => {
             </Modal>
 
             <Modal
-                theme={'account'}
+                theme={'primary'}
                 size={'md'}
                 isCenter={true}
                 hidden={!isProfileSaved}

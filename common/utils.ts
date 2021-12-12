@@ -133,7 +133,7 @@ async function initAssets() {
     console.log('hide is true assets');
     console.log(hidedList.length);
     console.log('has order number assets');
-    console.log(orderedList);
+    console.log(orderedList.length);
 
     if (hidedList.length > 0) {
         hidedList.map((hidedAsset: { id: string }) => {
@@ -191,11 +191,14 @@ async function loadAssets(parsedAssets: AnyObject[]) {
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
+    console.log(assetIDList);
     const assetDetails = await pageOwner.assets?.getDetails({
         persona: pageOwner.address,
         assets: assetIDList ? assetIDList : [''],
         full: true,
     });
+    console.log('asset details');
+    console.log(assetDetails);
     if (assetDetails) {
         return assetDetails;
     } else {

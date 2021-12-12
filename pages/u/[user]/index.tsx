@@ -491,7 +491,7 @@ const ProfilePage: NextPage = () => {
             </Modal>
 
             <Modal
-                theme={otherProductRedirectSettings.colorStyle}
+                theme={'primary'}
                 size={'sm'}
                 isCenter={true}
                 hidden={!isShowingRedirectNotice}

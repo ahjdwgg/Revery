@@ -41,19 +41,19 @@ function categorize(field: string) {
 
 const getTopic = (field: string, type: string) => {
     const topic = new Map([
-        ['add', 'Got one '],
-        ['update', 'Transferred one '],
-        ['delete', 'Removed one '],
+        ['add', 'got '],
+        ['update', 'transferred '],
+        ['delete', 'removed '],
     ]);
 
     let content = topic.get(type) || '';
 
     if (field.includes('NFT')) {
-        content += 'NFT';
+        content += 'an NFT';
     } else if (field.includes('POAP')) {
-        content += 'POAP';
+        content += 'a footprint';
     } else if (field.includes('Gitcoin')) {
-        content += 'donation record';
+        content += 'a donation record';
     }
 
     return content;
@@ -130,7 +130,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}
                     {iconSVG && (
                         <>
-                            <span>post on</span>
+                            <span>posted on</span>
                             <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
                         </>
                     )}
