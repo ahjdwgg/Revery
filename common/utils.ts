@@ -3,7 +3,6 @@ import config from './config';
 import RSS3 from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
-import { id } from 'ethers/lib/utils';
 import { AnyObject } from 'rss3/types/extend';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -233,11 +232,11 @@ async function initContent(timestamp: string = '') {
     const items =
         (await pageOwner.items?.getListByPersona({
             persona: pageOwner.address,
-            limit: 30,
+            limit: 35,
             tsp: timestamp,
         })) || [];
 
-    haveMore = items.length === 30;
+    haveMore = items.length === 35;
 
     profileSet.add(pageOwner.address);
     items.forEach((item) => {
