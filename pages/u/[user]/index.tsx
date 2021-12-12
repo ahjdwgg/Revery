@@ -50,9 +50,6 @@ const ProfilePage: NextPage = () => {
     const [followings, setFollowings] = useState<RSS3ID[]>([]);
 
     const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
-    // const [nftItems, setNftItems] = useState<GeneralAssetWithTags[]>([]);
-    // const [donationItems, setDonationItems] = useState<GeneralAssetWithTags[]>([]);
-    // const [footprintItems, setFootprintItems] = useState<GeneralAssetWithTags[]>([]);
     const [nftItems, setNftItems] = useState<AnyObject[]>([]);
     const [donationItems, setDonationItems] = useState<AnyObject[]>([]);
     const [footprintItems, setFootprintItems] = useState<AnyObject[]>([]);
@@ -60,6 +57,7 @@ const ProfilePage: NextPage = () => {
     const [content, setContent] = useState<any[]>([]);
     const [isContentLoading, setContentLoading] = useState(true);
     const [haveMoreContent, setHaveMoreContent] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
     const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
@@ -149,11 +147,6 @@ const ProfilePage: NextPage = () => {
         hidden: true,
         type: 'primary',
     });
-
-    // const loadAssets = async (type: string, limit?: number) => {
-    //     const { listed } = await utils.initAssets(type, limit);
-    //     return listed;
-    // };
 
     const init = async () => {
         const aon = (router.query.user as string) || '';
@@ -271,22 +264,16 @@ const ProfilePage: NextPage = () => {
     }, []);
 
     const loadMoreContent = async () => {
+        setIsLoadingMore(true);
         const timestamp = [...content].pop()?.date_created || '';
         const { listed, haveMore } = await utils.initContent(timestamp);
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
+        setIsLoadingMore(false);
     };
 
     const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
-        let data;
-        // if (type === 'nft') {
-        //     data = (await RSS3.getNFTDetails(address, 'EVM+', asset.identity, asset.id, asset.type))?.data;
-        // } else if (type === 'donation') {
-        //     data = await RSS3.getGitcoinDonation(address, 'EVM+', asset.identity, asset.id);
-        // } else if (type === 'footprint') {
-        //     data = await RSS3.getFootprintDetail(address, 'EVM+', asset.identity, asset.id);
-        // }
         setModal({
             hidden: false,
             type: type,
@@ -355,13 +342,13 @@ const ProfilePage: NextPage = () => {
                             );
                         })}
                     </Profile>
-                    <section>
+                    <>
                         {isContentLoading ? (
                             <div className="flex flex-row items-center justify-center w-full h-32">
                                 <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
                             </div>
                         ) : (
-                            <>
+                            <section className="flex flex-col items-center justify-start gap-y-2.5">
                                 {content.map((item, index) => {
                                     if (item.id.includes('auto')) {
                                         return (
@@ -390,21 +377,31 @@ const ProfilePage: NextPage = () => {
                                 })}
                                 {haveMoreContent ? (
                                     <div className="flex flex-row justify-center w-full py-8">
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            text={'Load more'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                            onClick={loadMoreContent}
-                                        />
+                                        {isLoadingMore ? (
+                                            <Button
+                                                isOutlined={false}
+                                                color={COLORS.primary}
+                                                icon="circle"
+                                                width={'w-32'}
+                                                height={'h-8'}
+                                            />
+                                        ) : (
+                                            <Button
+                                                isOutlined={false}
+                                                color={COLORS.primary}
+                                                text={'Load more'}
+                                                width={'w-32'}
+                                                height={'h-8'}
+                                                onClick={loadMoreContent}
+                                            />
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
                                 )}
-                            </>
+                            </section>
                         )}
-                    </section>
+                    </>
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">

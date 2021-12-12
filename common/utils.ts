@@ -215,7 +215,7 @@ async function initAccounts() {
 }
 
 function isAsset(field: string | undefined): boolean {
-    let condition = ['NFT', 'POAP', 'Gitcoin'];
+    const condition = ['NFT', 'POAP', 'Gitcoin'];
     if (field && condition.find((item) => field.includes(item))) {
         return true;
     }
@@ -223,8 +223,8 @@ function isAsset(field: string | undefined): boolean {
 }
 
 async function initContent(timestamp: string = '') {
-    let assetSet = new Set<string>();
-    let profileSet = new Set<string>();
+    const assetSet = new Set<string>();
+    const profileSet = new Set<string>();
     let haveMore = true;
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
@@ -288,7 +288,7 @@ async function initContent(timestamp: string = '') {
                         name: asset.detail.grant.title,
                         description: asset.detail.grant.description,
                         image_url: asset.detail.grant.logo,
-                        reference_url: asset.detail.grant.reference_url,
+                        reference_url: `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`,
                     };
                 } else {
                     // handle NFT and POAP
