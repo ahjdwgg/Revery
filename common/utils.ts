@@ -1,6 +1,6 @@
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
-import RSS3, { IAssetProfile, IRSS3 } from './rss3';
+import RSS3 from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 import { id } from 'ethers/lib/utils';
@@ -314,8 +314,6 @@ async function initContent(timestamp: string = '') {
             listed.push({ ...temp });
         }
     });
-
-    console.log(listed);
 
     return {
         listed: listed,

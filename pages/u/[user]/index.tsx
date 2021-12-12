@@ -203,8 +203,8 @@ const ProfilePage: NextPage = () => {
             //     setFootprintItems(await loadAssets('POAP', 5));
             // }, 0);
             setNftItems(allAssets.nfts.slice(0, 4));
-            // setDonationItems(allAssets.donations);
-            setFootprintItems(allAssets.footprints);
+            setDonationItems(allAssets.donations.slice(0, 4));
+            setFootprintItems(allAssets.footprints.slice(0, 5));
         }
     };
 
@@ -239,7 +239,6 @@ const ProfilePage: NextPage = () => {
 
     const toRSS3BioEditAssetNotice = (type: string, route: string, colorStyle: ModalColorStyle) => {
         // to RSS3.Bio edit this
-
         const product = 'RSS3Bio';
         const loginUser = RSS3.getLoginUser();
         const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
@@ -272,7 +271,7 @@ const ProfilePage: NextPage = () => {
     }, []);
 
     const loadMoreContent = async () => {
-        const timestamp = [...content].pop().date_created;
+        const timestamp = [...content].pop()?.date_created || '';
         const { listed, haveMore } = await utils.initContent(timestamp);
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
@@ -435,7 +434,7 @@ const ProfilePage: NextPage = () => {
                                 {donationItems.map((asset, i) => (
                                     <div key={asset.id} className="flex cursor-pointer">
                                         <ImageHolder
-                                            imageUrl={asset.detail.image_preview_url || config.undefinedImageAlt}
+                                            imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
                                             isFullRound={false}
                                             size={70}
                                             onClick={() => {
