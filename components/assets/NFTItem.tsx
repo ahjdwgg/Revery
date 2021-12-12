@@ -22,7 +22,7 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     const fixSchemas = (url: string) => {
         let fixedUrl = url;
         if (url.startsWith('ipfs://')) {
-            fixedUrl = url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+            fixedUrl = url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
         }
         return fixedUrl;
     };
