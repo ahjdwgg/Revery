@@ -13,6 +13,7 @@ export const BUTTON_ICONS = {
     minus: 'minus',
     external: 'external',
     check: 'check',
+    circle: 'circle',
     loading: 'loading',
 };
 

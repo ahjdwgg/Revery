@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
 import config from '../../common/config';
 
 interface NFTItemProps {
@@ -22,7 +23,7 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     const fixSchemas = (url: string) => {
         let fixedUrl = url;
         if (url.startsWith('ipfs://')) {
-            fixedUrl = url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+            fixedUrl = url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
         }
         return fixedUrl;
     };
@@ -30,9 +31,11 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     const fixedPreviewUrl = fixSchemas(previewUrl || '');
     const fixedDetailUrl = fixSchemas(detailUrl || '');
 
-    const mainUrl = isShowingDetails
-        ? fixedDetailUrl || fixedPreviewUrl || config.undefinedImageAlt
-        : fixedPreviewUrl || fixedDetailUrl || config.undefinedImageAlt;
+    const [mainUrl, setMainUrl] = useState(
+        isShowingDetails
+            ? fixedDetailUrl || fixedPreviewUrl || config.undefinedImageAlt
+            : fixedPreviewUrl || fixedDetailUrl || config.undefinedImageAlt,
+    );
     type contentTypes = 'html' | 'model' | 'video' | 'image';
     const getContentType = (url: string): contentTypes => {
         // Should better use Content-Type to detect, but don't know how to do that
@@ -73,7 +76,13 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                 />
             )}
             {getContentType(mainUrl) === 'image' && (
-                <img className={containerClasses} style={containerStyles} src={mainUrl} alt="NFT Image" />
+                <img
+                    className={containerClasses}
+                    style={containerStyles}
+                    src={mainUrl}
+                    alt="NFT Image"
+                    onError={() => setMainUrl(config.undefinedImageAlt)}
+                />
             )}
         </div>
     );

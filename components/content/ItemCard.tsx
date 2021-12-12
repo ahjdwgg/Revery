@@ -8,7 +8,7 @@ import { Markdown } from 'react-marked-renderer';
 import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
 import NFTCard from '../assets/NFTCard';
-import { imgRegSrc } from '../../common/image';
+import { imgRegSrc, mdImgRegSrc } from '../../common/image';
 
 interface ItemCardProps {
     avatarUrl: string;
@@ -32,7 +32,7 @@ function categorize(field: string) {
         return <Arweave />;
     } else if (field.includes('Twitter')) {
         return <Twitter />;
-    } else if (field.includes('Mirror-XYZ')) {
+    } else if (field.includes('Mirror.XYZ')) {
         return <Mirror />;
     } else if (field.includes('Misskey')) {
         return <Misskey />;
@@ -42,8 +42,8 @@ function categorize(field: string) {
 const getTopic = (field: string, type: string) => {
     const topic = new Map([
         ['add', 'Got one '],
-        ['update', 'Transfer one '],
-        ['delete', 'Remove one '],
+        ['update', 'Transferred one '],
+        ['delete', 'Removed one '],
     ]);
 
     let content = topic.get(type) || '';
@@ -60,45 +60,55 @@ const getTopic = (field: string, type: string) => {
 };
 
 const toExternalLink = (field: string, payload: string) => {
-    if (field.includes('Twitter')) {
-        window.open('https://twitter.com/' + field.split('-')[3] + '/status/' + payload);
-    } else if (field.includes('Misskey')) {
-        return window.open('https://nya.one/notes/8sufsk86r0' + payload);
-    } else if (field.includes('Mirror-XYZ')) {
-        console.log('coming soon');
+    if (field.includes('Mirror.XYZ')) {
+        window.open(payload);
+    } else {
+        const dic: { [key: string]: () => void } = {
+            Twitter: () => window.open('https://twitter.com/' + field.split('-')[3] + '/status/' + payload),
+            Misskey: () => window.open('https://nya.one/notes/' + payload),
+        };
+        dic[field.split('-')[2]]?.call('');
     }
 };
 
 const toExternalLinkWithAsset = (field: string, eventUrl: string) => {
-    if (field.includes('xDai.POAP') || field.includes('Gitcoin')) {
-        window.open(eventUrl);
-    } else if (field.includes('Polygon.NFT')) {
-        window.open('https://polygonscan.com/token/' + field.split('-')[4].replaceAll('.', '?a='));
-    } else if (field.includes('Ethereum.NFT')) {
-        window.open('https://etherscan.io/token/' + field.split('-')[4].replaceAll('.', '?a='));
-    }
+    const dic: { [key: string]: () => void } = {
+        'xDai.POAP': () => window.open(eventUrl),
+        'Gitcoin.Donation': () => window.open(eventUrl),
+        'Gitcoin.Grant': () => window.open(eventUrl),
+        'Polygon.NFT': () => window.open('https://polygonscan.com/token/' + field.split('-')[4].replaceAll('.', '?a=')),
+        'Ethereum.NFT': () => window.open('https://etherscan.io/token/' + field.split('-')[4].replaceAll('.', '?a=')),
+        'BSC.NFT': () => window.open('https://bscscan.com/token/' + field.split('-')[4].replaceAll('.', '?a=')),
+    };
+    dic[field.split('-')[3]]?.call('');
 };
 
-const toExternalProfile = (field: string) => {
-    if (field.includes('Twitter')) {
-        window.open('https://twitter.com/' + field.split('-')[3]);
-    } else if (field.includes('Misskey')) {
-        window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]);
-    } else if (field.includes('Mirror-XYZ')) {
-        console.log('coming soon');
+const toExternalProfile = (field: string, payload: string) => {
+    if (field.includes('Mirror.XYZ')) {
+        window.open(payload.split('.mirror.xyz')[0] + '.mirror.xyz');
+    } else {
+        const dic: { [key: string]: () => void } = {
+            Twitter: () => window.open('https://twitter.com/' + field.split('-')[3]),
+            Misskey: () => window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]),
+        };
+        dic[field.split('-')[2]]?.call('');
     }
 };
 
 const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStamp, target }: ItemCardProps) => {
     let iconSVG = null;
-    content = content?.replaceAll('">,<img', '"><img');
 
     if (target.field) {
         iconSVG = categorize(target.field);
     }
 
     if (!images && content) {
-        images = imgRegSrc(content);
+        let { newStr, srcArr } =
+            target.field.includes('Twitter') || target.field.includes('Misskey')
+                ? imgRegSrc(content)
+                : mdImgRegSrc(content);
+        content = newStr;
+        images = srcArr;
     }
 
     return (
@@ -110,11 +120,11 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     width={32}
                     height={32}
                     className="rounded-full cursor-pointer"
-                    onClick={() => toExternalProfile(target.field)}
+                    onClick={() => toExternalProfile(target.field, target.action.payload)}
                 />
                 <div
                     className="flex flex-row items-center gap-2 cursor-pointer"
-                    onClick={() => toExternalProfile(target.field)}
+                    onClick={() => toExternalProfile(target.field, target.action.payload)}
                 >
                     <span className="text-base font-semibold">{username}</span>
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}

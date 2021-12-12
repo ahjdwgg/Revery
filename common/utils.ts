@@ -3,7 +3,6 @@ import config from './config';
 import RSS3 from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
-import { id } from 'ethers/lib/utils';
 import { AnyObject } from 'rss3/types/extend';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -251,7 +250,7 @@ async function initAccounts() {
 }
 
 function isAsset(field: string | undefined): boolean {
-    let condition = ['NFT', 'POAP', 'Gitcoin'];
+    const condition = ['NFT', 'POAP', 'Gitcoin'];
     if (field && condition.find((item) => field.includes(item))) {
         return true;
     }
@@ -259,8 +258,8 @@ function isAsset(field: string | undefined): boolean {
 }
 
 async function initContent(timestamp: string = '') {
-    let assetSet = new Set<string>();
-    let profileSet = new Set<string>();
+    const assetSet = new Set<string>();
+    const profileSet = new Set<string>();
     let haveMore = true;
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
@@ -268,11 +267,11 @@ async function initContent(timestamp: string = '') {
     const items =
         (await pageOwner.items?.getListByPersona({
             persona: pageOwner.address,
-            limit: 30,
+            limit: 35,
             tsp: timestamp,
         })) || [];
 
-    haveMore = items.length === 30;
+    haveMore = items.length === 35;
 
     profileSet.add(pageOwner.address);
     items.forEach((item) => {
@@ -324,7 +323,7 @@ async function initContent(timestamp: string = '') {
                         name: asset.detail.grant.title,
                         description: asset.detail.grant.description,
                         image_url: asset.detail.grant.logo,
-                        reference_url: asset.detail.grant.reference_url,
+                        reference_url: `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`,
                     };
                 } else {
                     // handle NFT and POAP
