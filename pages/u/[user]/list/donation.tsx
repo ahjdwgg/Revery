@@ -8,6 +8,7 @@ import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
 import { GeneralAssetWithTags, GitcoinResponse } from '../../../../common/types';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
+import { BiLoaderAlt } from 'react-icons/bi';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
@@ -20,6 +21,7 @@ const Donation: NextPage = () => {
 
     const [modalHidden, setModalHidden] = useState(true);
     const [listedDonation, setlistedDonation] = useState<AnyObject[]>([]);
+    const [listedDonationIsEmpty, setListedDonationIsEmpty] = useState<boolean | null>(null);
     const [donation, setDonation] = useState<AnyObject | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
@@ -28,6 +30,11 @@ const Donation: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadDonations();
         setlistedDonation(orderAsset);
+        if (orderAsset.length > 0) {
+            setListedDonationIsEmpty(false);
+        } else {
+            setListedDonationIsEmpty(true);
+        }
         setPersona(pageOwner);
     };
 
@@ -70,20 +77,32 @@ const Donation: NextPage = () => {
                     </h1>
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-2">
-                    {listedDonation.map((asset, index) => (
-                        <DonationCard
-                            key={index}
-                            imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
-                            name={asset.detail.grant.title || 'Inactive Project'}
-                            contribCount={asset.detail.txs.length || 0}
-                            contribDetails={asset.detail.txs || []}
-                            clickEvent={() => {
-                                openModal(asset);
-                            }}
-                        />
-                    ))}
-                </section>
+                {!listedDonation.length && listedDonationIsEmpty === null ? (
+                    <div className="flex w-full justify-center items-center py-10">
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                    </div>
+                ) : listedDonationIsEmpty ? (
+                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                        {persona
+                            ? persona.profile?.name + "'s Donations list is empty :)"
+                            : 'Donations list is empty :)'}
+                    </div>
+                ) : (
+                    <section className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-2">
+                        {listedDonation.map((asset, index) => (
+                            <DonationCard
+                                key={index}
+                                imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
+                                name={asset.detail.grant.title || 'Inactive Project'}
+                                contribCount={asset.detail.txs.length || 0}
+                                contribDetails={asset.detail.txs || []}
+                                clickEvent={() => {
+                                    openModal(asset);
+                                }}
+                            />
+                        ))}
+                    </section>
+                )}
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
                 {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="primary" />}

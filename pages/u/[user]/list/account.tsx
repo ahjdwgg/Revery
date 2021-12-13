@@ -7,6 +7,7 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleAccount from '../../../../components/details/SingleAccount';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
+import { BiLoaderAlt } from 'react-icons/bi';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import { useRouter } from 'next/router';
 import utils from '../../../../common/utils';
@@ -22,6 +23,7 @@ const Account: NextPage = () => {
     const router = useRouter();
 
     const [listedAccounts, setListedAccounts] = useState<RSS3Account[]>([]);
+    const [listedAccountsIsEmpty, setListedAccountsIsEmpty] = useState<boolean | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -29,6 +31,11 @@ const Account: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         const { listed } = await utils.initAccounts();
         setListedAccounts(listed);
+        if (listed.length > 0) {
+            setListedAccountsIsEmpty(false);
+        } else {
+            setListedAccountsIsEmpty(true);
+        }
         setPersona(pageOwner);
     };
 
@@ -54,25 +61,35 @@ const Account: NextPage = () => {
                     </h1>
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
-                <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">
-                    {listedAccounts.map((account, index) => {
-                        let accountInfo = RSS3Utils.id.parseAccount(account.id);
-                        return (
-                            <AccountCard
-                                key={index}
-                                chain={accountInfo.platform}
-                                address={accountInfo.identity}
-                                clickEvent={() => {
-                                    document.body.style.overflow = 'hidden';
-                                    setModal({
-                                        hidden: false,
-                                        accountInfo: accountInfo,
-                                    });
-                                }}
-                            />
-                        );
-                    })}
-                </section>
+                {!listedAccounts.length && listedAccountsIsEmpty === null ? (
+                    <div className="flex w-full justify-center items-center py-10">
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                    </div>
+                ) : listedAccountsIsEmpty ? (
+                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                        {persona ? persona.profile?.name + "'s Accounts list is empty :)" : 'Accounts list is empty :)'}
+                    </div>
+                ) : (
+                    <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">
+                        {listedAccounts.map((account, index) => {
+                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
+                            return (
+                                <AccountCard
+                                    key={index}
+                                    chain={accountInfo.platform}
+                                    address={accountInfo.identity}
+                                    clickEvent={() => {
+                                        document.body.style.overflow = 'hidden';
+                                        setModal({
+                                            hidden: false,
+                                            accountInfo: accountInfo,
+                                        });
+                                    }}
+                                />
+                            );
+                        })}
+                    </section>
+                )}
             </div>
             <Modal
                 hidden={modal.hidden}
