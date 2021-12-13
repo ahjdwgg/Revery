@@ -46,6 +46,7 @@ function Header() {
             if (await RSS3.connect.walletConnect()) {
                 initAccount();
                 closeModal();
+                reloadPage();
                 return;
             }
         } catch (e) {
@@ -60,6 +61,7 @@ function Header() {
             if (await RSS3.connect.metamask()) {
                 initAccount();
                 closeModal();
+                reloadPage();
                 return;
             }
         } catch (e) {
@@ -86,6 +88,10 @@ function Header() {
         RSS3.disconnect();
         setIsLoggedIn(false);
         reloadPage();
+    };
+
+    const reloadPage = () => {
+        router.reload();
     };
 
     // detect whether user has scrolled the page down by 10px
