@@ -26,6 +26,7 @@ interface ProfileProps {
     onFollow: () => void;
     toEditProfile?: () => void;
     toExternalUserSite?: () => void;
+    toRss3BioUserSite?: () => void;
     toUserPage: (addrOrName: string) => void;
 }
 
@@ -43,6 +44,7 @@ const Profile = ({
     onFollow,
     toEditProfile,
     toExternalUserSite,
+    toRss3BioUserSite,
     toUserPage,
 }: ProfileProps) => {
     const router = useRouter();
@@ -152,7 +154,7 @@ const Profile = ({
                     </span>
                 </div>
                 <div className={`flex flex-row gap-x-2 ${!(rns || link) && 'hidden'}`}>
-                    {rns && <LinkButton text={rns} color={COLORS.primary} />}
+                    {rns && <LinkButton text={rns + '.rss3'} color={COLORS.primary} onClick={toRss3BioUserSite} />}
                     {link && <LinkButton text={link} color={COLORS.primary} onClick={toExternalUserSite} link={true} />}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>

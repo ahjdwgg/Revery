@@ -300,6 +300,13 @@ const ProfilePage: NextPage = () => {
         }
     };
 
+    const toRss3BioUserSite = () => {
+        if (link) {
+            const url = RSS3.buildProductBaseURL('RSS3Bio', '', link);
+            window.open(url, '_blank');
+        }
+    };
+
     const toUserPage = async (addr: string) => {
         await router.push(`/u/${addr}`);
     };
@@ -419,6 +426,7 @@ const ProfilePage: NextPage = () => {
                         onFollow={onFollow}
                         toEditProfile={toEditProfile}
                         toExternalUserSite={toExternalUserSite}
+                        toRss3BioUserSite={toRss3BioUserSite}
                         toUserPage={toUserPage}
                     >
                         {accountItems.map((account, index) => {
