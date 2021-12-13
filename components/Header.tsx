@@ -110,7 +110,9 @@ function Header() {
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
                         <nav className="hidden w-full md:flex md:flex-grow">
-                            <Logo />
+                            <div className="cursor-pointer" onClick={() => router.push(`/`)}>
+                                <Logo />
+                            </div>
                             <div className="flex flex-row justify-end w-full gap-x-4">
                                 {isLoggedIn ? (
                                     <>
