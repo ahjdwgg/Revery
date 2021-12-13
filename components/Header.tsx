@@ -46,6 +46,7 @@ function Header() {
             if (await RSS3.connect.walletConnect()) {
                 initAccount();
                 closeModal();
+                reloadPage();
                 return;
             }
         } catch (e) {
@@ -60,6 +61,7 @@ function Header() {
             if (await RSS3.connect.metamask()) {
                 initAccount();
                 closeModal();
+                reloadPage();
                 return;
             }
         } catch (e) {
@@ -80,6 +82,16 @@ function Header() {
     const toProfilePage = () => {
         const { name } = RSS3.getLoginUser();
         router.push(`/u/${name}`);
+    };
+
+    const logout = () => {
+        RSS3.disconnect();
+        setIsLoggedIn(false);
+        reloadPage();
+    };
+
+    const reloadPage = () => {
+        router.reload();
     };
 
     // detect whether user has scrolled the page down by 10px
@@ -108,7 +120,7 @@ function Header() {
                     <div className="flex items-center justify-between h-12 md:h-16">
                         <nav className="hidden w-full md:flex md:flex-grow">
                             <Logo />
-                            <div className="flex flex-row justify-end w-full gap-x-8">
+                            <div className="flex flex-row justify-end w-full gap-x-4">
                                 {isLoggedIn ? (
                                     <>
                                         <Button
@@ -117,6 +129,14 @@ function Header() {
                                             text={'Create Now'}
                                             width={'w-32'}
                                             height={'h-8'}
+                                        />
+                                        <Button
+                                            isOutlined={true}
+                                            color={COLORS.primary}
+                                            text={'Logout'}
+                                            width={'w-18'}
+                                            height={'h-8'}
+                                            onClick={logout}
                                         />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
