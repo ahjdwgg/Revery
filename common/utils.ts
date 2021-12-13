@@ -317,7 +317,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             listed.push({ ...temp });
         }
     });
-    console.log(listed);
+
     return {
         listed: listed,
         haveMore: haveMore,
