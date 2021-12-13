@@ -37,19 +37,8 @@ interface ModalDetail {
 
 const Home: NextPage = () => {
     const router = useRouter();
-    const addrOrName = useRef<string>('');
-    const [isOwner, setIsOwner] = useState(false);
-
-    const [link, setLink] = useState<string>('');
-    const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
-    const [username, setUsername] = useState<string>('');
     const [address, setAddress] = useState<string>('');
-    const [bio, setBio] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
-    const [followers, setFollowers] = useState<RSS3ID[]>([]);
-    const [followings, setFollowings] = useState<RSS3ID[]>([]);
-
-    const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
 
     const [content, setContent] = useState<any[]>([]);
     const [isContentLoading, setContentLoading] = useState(true);
@@ -90,41 +79,13 @@ const Home: NextPage = () => {
         if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
-            setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
-            setUsername(profile?.name || '');
             setAddress(pageOwner?.address || '');
-            setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
-            setLink(pageOwner.name);
-            setFollowers(pageOwner.followers || []);
-            setFollowings(pageOwner.followings || []);
-
-            // Accounts
-            const { listed } = await utils.initAccounts();
-            setAccountItems(
-                [
-                    {
-                        id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
-                    },
-                ].concat(listed),
-            );
         }
     };
 
     const checkOwner = () => {
         const latestIsOwner = RSS3.isNowOwner();
-        setIsOwner(latestIsOwner);
-    };
-
-    const toEditProfile = async () => {
-        await router.push('/edit/profile');
-    };
-
-    const toExternalUserSite = () => {
-        if (website) {
-            const url = website.replace(/^https?:\/\//, '');
-            window.open(`https://${url}`, '_blank');
-        }
     };
 
     const toUserPage = async (addr: string) => {
@@ -248,14 +209,14 @@ const Home: NextPage = () => {
                     </>
                 </section>
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
-                    <RecommendSection groups={recommendGroups} />
+                    <RecommendSection groups={recommendGroups} toUserPage={toUserPage} />
                 </section>
             </div>
             <Modal
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account' ? true : false}
+                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}

@@ -9,9 +9,10 @@ interface GroupInfo extends GroupItemProps {
 
 interface RecommendSectionProps {
     groups: GroupInfo[];
+    toUserPage: (userId: string) => void;
 }
 
-const RecommendSection = ({ groups }: RecommendSectionProps) => {
+const RecommendSection = ({ groups, toUserPage }: RecommendSectionProps) => {
     const [activeGroupId, setActiveGroupId] = useState(0);
 
     return (
@@ -33,6 +34,7 @@ const RecommendSection = ({ groups }: RecommendSectionProps) => {
                                 bio={user.bio}
                                 ethAddress={user.ethAddress}
                                 rns={user.rns}
+                                toUserPage={toUserPage}
                             />
                         ))}
                     </div>
