@@ -9,6 +9,9 @@ import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
 import NFTCard from '../assets/NFTCard';
 import { imgRegSrc, mdImgRegSrc } from '../../common/image';
+import NFTIcon from '../icons/NFTIcon';
+import FootprintIcon from '../icons/FootprintIcon';
+import GitcoinIcon from '../icons/GitcoinIcon';
 
 interface ItemCardProps {
     avatarUrl: string;
@@ -25,17 +28,54 @@ interface ItemCardProps {
             payload: string;
         };
     };
+    toUserProfile: () => void;
+    showAssetDetail: () => void;
 }
 
 function categorize(field: string) {
     if (field.includes('Arweave')) {
-        return <Arweave />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
+                    <Arweave />
+                </div>
+            </>
+        );
     } else if (field.includes('Twitter')) {
-        return <Twitter />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
+                    <Twitter />
+                </div>
+            </>
+        );
     } else if (field.includes('Mirror.XYZ')) {
-        return <Mirror />;
+        return (
+            <>
+                <span></span>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
+                    {'posted on '}
+                    <Mirror />
+                </div>
+            </>
+        );
     } else if (field.includes('Misskey')) {
-        return <Misskey />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
+                    <Misskey />
+                </div>
+            </>
+        );
+    } else if (field.includes('NFT')) {
+        return <NFTIcon />;
+    } else if (field.includes('POAP')) {
+        return <FootprintIcon />;
+    } else if (field.includes('Gitcoin')) {
+        return <GitcoinIcon />;
     }
 }
 
@@ -53,7 +93,8 @@ const getTopic = (field: string, type: string) => {
     } else if (field.includes('POAP')) {
         content += 'a footprint';
     } else if (field.includes('Gitcoin')) {
-        content += 'a donation record';
+        content = content.replace('got', 'made');
+        content += 'a donation';
     }
 
     return content;
@@ -71,18 +112,6 @@ const toExternalLink = (field: string, payload: string) => {
     }
 };
 
-const toExternalLinkWithAsset = (field: string, eventUrl: string) => {
-    const dic: { [key: string]: () => void } = {
-        'xDai.POAP': () => window.open(eventUrl),
-        'Gitcoin.Donation': () => window.open(eventUrl),
-        'Gitcoin.Grant': () => window.open(eventUrl),
-        'Polygon.NFT': () => window.open('https://polygonscan.com/token/' + field.split('-')[4].replaceAll('.', '?a=')),
-        'Ethereum.NFT': () => window.open('https://etherscan.io/token/' + field.split('-')[4].replaceAll('.', '?a=')),
-        'BSC.NFT': () => window.open('https://bscscan.com/token/' + field.split('-')[4].replaceAll('.', '?a=')),
-    };
-    dic[field.split('-')[3]]?.call('');
-};
-
 const toExternalProfile = (field: string, payload: string) => {
     if (field.includes('Mirror.XYZ')) {
         window.open(payload.split('.mirror.xyz')[0] + '.mirror.xyz');
@@ -95,7 +124,18 @@ const toExternalProfile = (field: string, payload: string) => {
     }
 };
 
-const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStamp, target }: ItemCardProps) => {
+const ItemCard = ({
+    avatarUrl,
+    username,
+    title,
+    content,
+    images,
+    asset,
+    timeStamp,
+    target,
+    toUserProfile,
+    showAssetDetail,
+}: ItemCardProps) => {
     let iconSVG = null;
 
     if (target.field) {
@@ -120,20 +160,19 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     width={32}
                     height={32}
                     className="rounded-full cursor-pointer"
-                    onClick={() => toExternalProfile(target.field, target.action.payload)}
+                    onClick={() => {
+                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
+                    }}
                 />
                 <div
                     className="flex flex-row items-center gap-2 cursor-pointer"
-                    onClick={() => toExternalProfile(target.field, target.action.payload)}
+                    onClick={() => {
+                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
+                    }}
                 >
                     <span className="text-base font-semibold">{username}</span>
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}
-                    {iconSVG && (
-                        <>
-                            <span>posted on</span>
-                            <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
-                        </>
-                    )}
+                    {iconSVG && <>{iconSVG}</>}
                     <span className="opacity-20">{timeDifferent(timeStamp)}</span>
                 </div>
             </div>
@@ -153,9 +192,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                     name={asset.name}
                     desc={asset.description}
                     imageUrl={asset.image_url || config.undefinedImageAlt}
-                    onClick={() => {
-                        toExternalLinkWithAsset(target.field, asset.reference_url);
-                    }}
+                    onClick={() => showAssetDetail()}
                 />
             )}
         </div>

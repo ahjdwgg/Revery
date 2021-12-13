@@ -75,7 +75,6 @@ const Home: NextPage = () => {
         }, 0);
 
         const profile = pageOwner.profile;
-        checkOwner();
         // console.log(pageOwner.assets);
         if (profile) {
             // Profile
@@ -83,10 +82,6 @@ const Home: NextPage = () => {
             setAddress(pageOwner?.address || '');
             setWebsite(fieldsMatch?.['SITE'] || '');
         }
-    };
-
-    const checkOwner = () => {
-        const latestIsOwner = RSS3.isNowOwner();
     };
 
     const toUserPage = async (addr: string) => {
@@ -106,11 +101,6 @@ const Home: NextPage = () => {
         setContentLoading(true);
     }, [address]);
 
-    useEffect(() => {
-        addEventListener(Events.connect, checkOwner);
-        addEventListener(Events.disconnect, checkOwner);
-    }, []);
-
     const loadMoreContent = async () => {
         setIsLoadingMore(true);
         const timestamp = [...content].pop()?.date_created || '';
@@ -120,7 +110,30 @@ const Home: NextPage = () => {
         setIsLoadingMore(false);
     };
 
-    const getModalDetail = async (asset: AnyObject, type: 'account') => {
+    const fetchAssetDetail = async (field: string) => {
+        const dic: { [key: string]: 'nft' | 'donation' | 'footprint' | 'account' } = {
+            'xDai.POAP': 'footprint',
+            'Gitcoin.Donation': 'donation',
+            'Gitcoin.Grant': 'donation',
+            'Polygon.NFT': 'nft',
+            'Ethereum.NFT': 'nft',
+            'BSC.NFT': 'nft',
+        };
+
+        const pageOwner = await RSS3.getPageOwner();
+
+        const asset = await pageOwner.assets?.getDetails({
+            persona: pageOwner.address,
+            assets: [field.replace('assets-', '')],
+            full: true,
+        });
+
+        if (asset?.length === 1) {
+            getModalDetail(asset[0], dic[field.split('-')[3]]);
+        }
+    };
+
+    const getModalDetail = (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
         setModal({
             hidden: false,
@@ -130,7 +143,13 @@ const Home: NextPage = () => {
     };
 
     const getModalDisplay = () => {
-        if (modal.type == 'account') {
+        if (modal.type === 'nft') {
+            return <SingleNFT NFT={modal.details ? modal.details : {}} />;
+        } else if (modal.type === 'donation') {
+            return <SingleDonation Gitcoin={modal.details ? modal.details : {}} />;
+        } else if (modal.type === 'footprint') {
+            return <SingleFootprint POAPInfo={modal.details ? modal.details : {}} />;
+        } else if (modal.type == 'account') {
             return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
         }
     };
@@ -166,6 +185,10 @@ const Home: NextPage = () => {
                                                 asset={item.details}
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
+                                                toUserProfile={async () =>
+                                                    await router.push(`/u/${item.target.field.split('-')[2]}`)
+                                                }
+                                                showAssetDetail={() => fetchAssetDetail(item.target.field)}
                                             />
                                         );
                                     } else {

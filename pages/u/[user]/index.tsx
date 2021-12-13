@@ -185,7 +185,6 @@ const ProfilePage: NextPage = () => {
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
             setUsername(profile?.name || '');
             setAddress(pageOwner?.address || '');
-            console.log('username, address', username, address);
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
@@ -350,7 +349,30 @@ const ProfilePage: NextPage = () => {
         setIsLoadingMore(false);
     };
 
-    const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
+    const fetchAssetDetail = async (field: string) => {
+        const dic: { [key: string]: 'nft' | 'donation' | 'footprint' | 'account' } = {
+            'xDai.POAP': 'footprint',
+            'Gitcoin.Donation': 'donation',
+            'Gitcoin.Grant': 'donation',
+            'Polygon.NFT': 'nft',
+            'Ethereum.NFT': 'nft',
+            'BSC.NFT': 'nft',
+        };
+
+        const pageOwner = await RSS3.getPageOwner();
+
+        const asset = await pageOwner.assets?.getDetails({
+            persona: pageOwner.address,
+            assets: [field.replace('assets-', '')],
+            full: true,
+        });
+
+        if (asset?.length === 1) {
+            getModalDetail(asset[0], dic[field.split('-')[3]]);
+        }
+    };
+
+    const getModalDetail = (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
         setModal({
             hidden: false,
@@ -440,6 +462,10 @@ const ProfilePage: NextPage = () => {
                                                 asset={item.details}
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
+                                                toUserProfile={async () =>
+                                                    await router.push(item.target.field.split('-')[2])
+                                                }
+                                                showAssetDetail={() => fetchAssetDetail(item.target.field)}
                                             />
                                         );
                                     } else {

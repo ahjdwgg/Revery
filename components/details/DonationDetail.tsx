@@ -21,17 +21,19 @@ export default function DonationDetail({ detail }: DonationDetailProps) {
                 <h2 className="overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
                     {detail.grant.title}
                 </h2>
-                <div
-                    className="flex flex-row items-center justify-start gap-2 my-1 text-primary"
-                    onClick={() => {
-                        window.open(detail.grant.reference_url);
-                    }}
-                >
-                    <BiLinkAlt />
-                    <span className="flex-1 text-sm leading-normal truncate cursor-pointer">
-                        {detail.grant.reference_url}
-                    </span>
-                </div>
+                {detail.grant.reference_url && (
+                    <div
+                        className="flex flex-row items-center justify-start gap-2 my-1 text-primary"
+                        onClick={() => {
+                            window.open(detail.grant.reference_url);
+                        }}
+                    >
+                        <BiLinkAlt />
+                        <span className="flex-1 text-sm leading-normal truncate cursor-pointer">
+                            {detail.grant.reference_url}
+                        </span>
+                    </div>
+                )}
             </section>
             <div>
                 <h3 className={`${subtitle} my-2`}>Description</h3>
