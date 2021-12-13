@@ -27,10 +27,10 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
                 }
             }}
         >
-            <section className="animate-fade-in-up flex flex-row items-center flex-shrink-0">
+            <section className="animate-fade-in flex flex-row items-center flex-shrink-0">
                 <ImageHolder imageUrl={avatarUrl} isFullRound={true} size={36} />
             </section>
-            <section className="animate-fade-in-up flex flex-col flex-grow">
+            <section className="animate-fade-in flex flex-col flex-grow">
                 <div className="flex flex-row items-center gap-1.5">
                     <span className="font-semibold text-sm">{username}</span>
                     <LinkButton key={address} text={address} />
