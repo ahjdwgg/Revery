@@ -98,38 +98,46 @@ interface AssetsList {
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
+
     let assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
-    console.log(assetList);
-    let taggedList = [];
+
+    let taggedList = <{ id: string; hide?: boolean; order?: number }[]>[];
     const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
     taggedList = passTags ? passTags : [];
-    const hidedList = taggedList.filter((asset: any) => asset.hasOwnProperty('hide'));
+
+    const hiddenList = taggedList
+        .filter((asset: any) => asset.hasOwnProperty('hide'))
+        .map((asset: { id: string }) => asset.id);
 
     const orderedList = taggedList
         .filter((asset: any) => !asset.hasOwnProperty('hide'))
-        .sort((a: any, b: any) => a.order - b.order);
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((asset: { id: string }) => asset.id);
 
     console.log('total assets');
     console.log(assetList?.length);
     console.log('tagged assets');
     console.log(taggedList.length);
+
+    console.log(assetList?.filter((asset) => taggedList.find((tagged: { id: string }) => tagged.id === asset)));
+    console.log(taggedList?.filter((tagged) => !assetList?.find((asset) => tagged.id === asset)));
+
     console.log('hide is true assets');
-    console.log(hidedList.length);
+    console.log(hiddenList);
     console.log('has order number assets');
     console.log(orderedList.length);
-
-    if (hidedList.length > 0) {
-        assetList = assetList?.filter((asset) => !hidedList.includes(asset));
+    if (hiddenList.length > 0) {
+        assetList = assetList?.filter((asset) => hiddenList.indexOf(asset) < 0);
     }
-    console.log('remove hided');
+    console.log('remove hidden');
     console.log(assetList);
     if (orderedList.length > 0) {
-        assetList = assetList?.filter((asset) => !orderedList.includes(asset));
+        assetList = assetList?.filter((asset) => orderedList.indexOf(asset) < 0);
     }
     console.log('listed unordered assets');
     console.log(assetList);
 
-    const orderedAssetList = assetList?.concat(orderedList.map((asset: { id: string }) => asset.id));
+    const orderedAssetList = assetList?.concat(orderedList);
 
     console.log('listed & ordered assets');
     console.log(orderedAssetList?.length);
