@@ -186,42 +186,6 @@ const Home: NextPage = () => {
             <Header />
             <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
                 <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
-                    <Profile
-                        avatarUrl={avatarUrl}
-                        username={username}
-                        bio={bio}
-                        followers={followers}
-                        followings={followings}
-                        rns={link}
-                        link={website}
-                        isOwner={isOwner}
-                        toEditProfile={toEditProfile}
-                        toExternalUserSite={toExternalUserSite}
-                        toUserPage={toUserPage}
-                    >
-                        {accountItems.map((account, index) => {
-                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
-                            return accountInfo.platform === 'EVM+' ? (
-                                <EVMpAccountItem
-                                    key={index}
-                                    size="sm"
-                                    address={accountInfo.identity}
-                                    onClick={() => {
-                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
-                                    }}
-                                />
-                            ) : (
-                                <AccountItem
-                                    key={index}
-                                    size="sm"
-                                    chain={accountInfo.platform}
-                                    onClick={() => {
-                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
-                                    }}
-                                />
-                            );
-                        })}
-                    </Profile>
                     <>
                         {isContentLoading ? (
                             <div className="flex flex-row items-center justify-center w-full h-32">
