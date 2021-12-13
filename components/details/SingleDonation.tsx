@@ -1,11 +1,12 @@
 import DonationDetail from './DonationDetail';
 import { AnyObject } from 'rss3/types/extend';
+import config from '../../common/config';
 
 export default function SingleDonation(props: { Gitcoin: AnyObject }) {
     let { Gitcoin } = props;
 
     const ImgStyle = {
-        backgroundImage: `url(${Gitcoin.grant.logo})`,
+        backgroundImage: `url(${Gitcoin.grant.logo || config.undefinedImageAlt})`,
     };
 
     return (

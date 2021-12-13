@@ -399,7 +399,7 @@ const Profile: NextPage = () => {
             >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
-                        <span className="mx-2 text-account">Oops</span>
+                        <span className="mx-2 text-primary">Oops</span>
                     </div>
 
                     <div className="flex justify-center">{notice}</div>
@@ -407,7 +407,7 @@ const Profile: NextPage = () => {
                     <div className="flex justify-center gap-x-3">
                         <Button
                             isOutlined={true}
-                            color={'account'}
+                            color={'primary'}
                             text={'OK'}
                             fontSize={'text-base'}
                             width={'w-24'}
@@ -426,7 +426,7 @@ const Profile: NextPage = () => {
             >
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
-                        <span className="mx-2 text-account">Succeed</span>
+                        <span className="mx-2 text-primary">Succeed</span>
                     </div>
 
                     <div className="flex justify-center">Profile saved successfully.</div>
@@ -434,7 +434,7 @@ const Profile: NextPage = () => {
                     <div className="flex justify-center">
                         <Button
                             isOutlined={true}
-                            color={'account'}
+                            color={'primary'}
                             text={'OK'}
                             fontSize={'text-base'}
                             width={'w-48'}
