@@ -7,7 +7,6 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleNFT from '../../../../components/details/SingleNFT';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
-import { GeneralAssetWithTags, NFT } from '../../../../common/types';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
@@ -35,8 +34,7 @@ const Nft: NextPage = () => {
         // const { listed } = await utils.initAssets('NFT');
         // return listed;
         const { nfts } = await utils.initAssets();
-        const detailList = await utils.loadAssets(nfts);
-        return detailList;
+        return await utils.loadAssets(nfts);
     };
 
     useEffect(() => {
@@ -49,13 +47,13 @@ const Nft: NextPage = () => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
         if (!buffer.checkBuffer(asset.id)) {
-            setNFT(undefined);
             setNFT(asset.detail);
         }
     };
 
     const closeModal = () => {
         document.body.style.overflow = '';
+        setNFT(undefined);
         setModalHidden(true);
     };
 
