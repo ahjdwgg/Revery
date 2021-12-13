@@ -1,6 +1,6 @@
 import { BUTTON_ICONS, COLORS, COLORTOSTYLE } from './variables';
 import { FiArrowUpRight } from 'react-icons/fi';
-import { BiExpandAlt, BiPlus, BiMinus, BiCheck, BiLoaderAlt, BiLoaderCircle } from 'react-icons/bi';
+import { BiExpandAlt, BiPlus, BiMinus, BiCheck, BiLoaderAlt, BiLoaderCircle, BiLogOut } from 'react-icons/bi';
 import { ReactNode } from 'react';
 
 interface ButtonInterface {
@@ -128,6 +128,7 @@ const iconSVGMap = new Map([
     [BUTTON_ICONS.check, <BiCheck key={BUTTON_ICONS.check} className={iconClass} />],
     [BUTTON_ICONS.loading, <BiLoaderAlt key={BUTTON_ICONS.loading} className={`${iconClass} animate-spin`} />],
     [BUTTON_ICONS.circle, <BiLoaderCircle key={BUTTON_ICONS.circle} className="w-full h-6 animate-spin" />],
+    [BUTTON_ICONS.logout, <BiLogOut key={BUTTON_ICONS.logout} className={`${iconClass} pl-0.2 pr-0.8 py-0.5`} />],
 ]);
 
 export default Button;

@@ -15,6 +15,7 @@ export const BUTTON_ICONS = {
     check: 'check',
     circle: 'circle',
     loading: 'loading',
+    logout: 'logout',
 };
 
 interface colorToStyleInterface {

@@ -11,7 +11,7 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
 import utils from '../../common/utils';
-
+import { useRouter } from 'next/router';
 interface ProfileProps {
     avatarUrl: string;
     username: string;
@@ -45,11 +45,14 @@ const Profile = ({
     toExternalUserSite,
     toUserPage,
 }: ProfileProps) => {
+    const router = useRouter();
+
     const [modalHidden, setModalHidden] = useState(true);
     const [followType, setFollowType] = useState('');
 
     const [foList, setFoList] = useState<UserItemProps[]>([]);
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoading = useRef<boolean>(false);
 
     const openModal = () => {
@@ -103,6 +106,16 @@ const Profile = ({
         setFollowType('Followers');
         loadFoList(followers);
         openModal();
+    };
+
+    const logout = () => {
+        RSS3.disconnect();
+        setIsLoggedIn(false);
+        reloadPage();
+    };
+
+    const reloadPage = () => {
+        router.reload();
     };
 
     return (

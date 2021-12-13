@@ -4,6 +4,7 @@ import RSS3 from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
+import { formatter } from './address';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -98,43 +99,46 @@ interface AssetsList {
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
-    const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
 
-    let taggedList = [];
+    let assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
+
+    let taggedList = <{ id: string; hide?: boolean; order?: number }[]>[];
     const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
     taggedList = passTags ? passTags : [];
-    const hidedList = taggedList.filter((asset: any) => asset.hasOwnProperty('hide'));
+
+    const hiddenList = taggedList
+        .filter((asset: any) => asset.hasOwnProperty('hide'))
+        .map((asset: { id: string }) => asset.id);
 
     const orderedList = taggedList
         .filter((asset: any) => !asset.hasOwnProperty('hide'))
-        .sort((a: any, b: any) => a.order - b.order);
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((asset: { id: string }) => asset.id);
 
     console.log('total assets');
     console.log(assetList?.length);
     console.log('tagged assets');
     console.log(taggedList.length);
+
+    console.log(assetList?.filter((asset) => taggedList.find((tagged: { id: string }) => tagged.id === asset)));
+    console.log(taggedList?.filter((tagged) => !assetList?.find((asset) => tagged.id === asset)));
+
     console.log('hide is true assets');
-    console.log(hidedList.length);
+    console.log(hiddenList);
     console.log('has order number assets');
     console.log(orderedList.length);
-
-    if (hidedList.length > 0) {
-        hidedList.map((hidedAsset: { id: string }) => {
-            const hidedIndex = assetList?.findIndex((asset) => asset === hidedAsset.id);
-            if (hidedIndex) assetList?.splice(hidedIndex, 1);
-        });
+    if (hiddenList.length > 0) {
+        assetList = assetList?.filter((asset) => hiddenList.indexOf(asset) < 0);
     }
-
+    console.log('remove hidden');
+    console.log(assetList);
     if (orderedList.length > 0) {
-        orderedList.map((orderedAsset: { id: string }) => {
-            const orderedIndex = assetList?.findIndex((asset) => asset === orderedAsset.id);
-            if (orderedIndex) assetList?.splice(orderedIndex, 1);
-        });
+        assetList = assetList?.filter((asset) => orderedList.indexOf(asset) < 0);
     }
     console.log('listed unordered assets');
-    console.log(assetList?.length);
+    console.log(assetList);
 
-    const orderedAssetList = assetList?.concat(orderedList.map((asset: { id: string }) => asset.id));
+    const orderedAssetList = assetList?.concat(orderedList);
 
     console.log('listed & ordered assets');
     console.log(orderedAssetList?.length);
@@ -229,7 +233,7 @@ function isAsset(field: string | undefined): boolean {
     return false;
 }
 
-async function initContent(timestamp: string = '') {
+async function initContent(timestamp: string = '', following: boolean = false) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
     let haveMore = true;
@@ -237,11 +241,18 @@ async function initContent(timestamp: string = '') {
     const pageOwner = await RSS3.getPageOwner();
 
     const items =
-        (await pageOwner.items?.getListByPersona({
-            persona: pageOwner.address,
-            limit: 35,
-            tsp: timestamp,
-        })) || [];
+        (following
+            ? await pageOwner.items?.getListByPersona({
+                  persona: pageOwner.address,
+                  linkID: 'following',
+                  limit: 35,
+                  tsp: timestamp,
+              })
+            : await pageOwner.items?.getListByPersona({
+                  persona: pageOwner.address,
+                  limit: 35,
+                  tsp: timestamp,
+              })) || [];
 
     haveMore = items.length === 35;
 
@@ -267,19 +278,11 @@ async function initContent(timestamp: string = '') {
 
     const listed: any[] = [];
     items.forEach((item) => {
-        let temp: any;
-
-        const profile = profiles.find((element: any) => {
-            element.persona === item.id.split('-')[0];
-        }) || {
-            avatar: pageOwner.profile?.avatar,
-            name: pageOwner.name,
-        };
-
-        temp = {
+        const profile = profiles.find((element: any) => element.persona === item.id.split('-')[0]);
+        let temp: any = {
             ...item,
-            avatar: profile.avatar ? profile.avatar[0] : config.undefinedImageAlt,
-            username: profile.name,
+            avatar: profile?.avatar?.[0] || config.undefinedImageAlt,
+            username: profile?.name || formatter(profile?.persona),
         };
 
         if (isAsset(item.target?.field)) {
@@ -295,7 +298,9 @@ async function initContent(timestamp: string = '') {
                         name: asset.detail.grant.title,
                         description: asset.detail.grant.description,
                         image_url: asset.detail.grant.logo,
-                        reference_url: `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`,
+                        reference_url: asset.detail.grant.id
+                            ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
+                            : 'https://gitcoin.co',
                     };
                 } else {
                     // handle NFT and POAP
@@ -320,7 +325,7 @@ async function initContent(timestamp: string = '') {
             listed.push({ ...temp });
         }
     });
-    // console.log(listed);
+
     return {
         listed: listed,
         haveMore: haveMore,

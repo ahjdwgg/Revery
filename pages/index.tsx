@@ -1,30 +1,54 @@
+import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import { RSS3Account, RSS3ID } from '../common/rss3Types';
+import AccountItem from '../components/accounts/AccountItem';
+import AssetCard, { AssetCardButtonMode } from '../components/assets/AssetCard';
+import FootprintCard from '../components/assets/FootprintCard';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
-import RecommendSection from '../components/users/RecommendSection';
-
+import ImageHolder from '../components/ImageHolder';
+import Profile from '../components/profile/Profile';
 import RSS3 from '../common/rss3';
 import config from '../common/config';
+import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
+import utils from '../common/utils';
+import Events from '../common/events';
+import NFTItem from '../components/assets/NFTItem';
+
+import Modal, { ModalColorStyle } from '../components/modal/Modal';
+import ModalLoading from '../components/modal/ModalLoading';
+import SingleNFT from '../components/details/SingleNFT';
+import SingleDonation from '../components/details/SingleDonation';
+import SingleFootprint from '../components/details/SingleFootprint';
+import Button from '../components/buttons/Button';
+import { utils as RSS3Utils } from 'rss3';
+import { AnyObject } from 'rss3/types/extend';
+import ItemCard from '../components/content/ItemCard';
+import { BiLoaderCircle } from 'react-icons/bi';
+import SingleAccount from '../components/details/SingleAccount';
+import { COLORS } from '../components/buttons/variables';
+import RecommendSection from '../components/users/RecommendSection';
+interface ModalDetail {
+    hidden: boolean;
+    type: ModalColorStyle;
+    details?: AnyObject;
+}
 
 const Home: NextPage = () => {
     const router = useRouter();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [address, setAddress] = useState<string>('');
+    const [website, setWebsite] = useState<string>('');
 
-    let slides = [
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-        'https://i.imgur.com/GdWEt4z.jpg',
-    ];
+    const [content, setContent] = useState<any[]>([]);
+    const [isContentLoading, setContentLoading] = useState(true);
+    const [haveMoreContent, setHaveMoreContent] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-    let content =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+    const [modal, setModal] = useState<ModalDetail>({
+        hidden: true,
+        type: 'primary',
+    });
 
     const recommendGroups = [...Array(3)].map((_, gid) => ({
         name: 'RSS3',
@@ -40,44 +64,163 @@ const Home: NextPage = () => {
     }));
 
     const init = async () => {
-        if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
-            setIsLoggedIn(true);
+        const LoginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.setPageOwner(LoginUser.address);
+        setTimeout(async () => {
+            const { listed, haveMore } = await utils.initContent('', true);
+            setContent(listed);
+            setHaveMoreContent(haveMore);
+            setContentLoading(false);
+        }, 0);
+
+        const profile = pageOwner.profile;
+        checkOwner();
+        // console.log(pageOwner.assets);
+        if (profile) {
+            // Profile
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            setAddress(pageOwner?.address || '');
+            setWebsite(fieldsMatch?.['SITE'] || '');
         }
     };
 
+    const checkOwner = () => {
+        const latestIsOwner = RSS3.isNowOwner();
+    };
+
+    const toUserPage = async (addr: string) => {
+        await router.push(`/u/${addr}`);
+    };
+
+    // Initialize
+
     useEffect(() => {
-        init();
+        if (router.isReady) {
+            init();
+        }
+    }, [router.query.user]);
+
+    useEffect(() => {
+        // init();
+        setContentLoading(true);
+    }, [address]);
+
+    useEffect(() => {
+        addEventListener(Events.connect, checkOwner);
+        addEventListener(Events.disconnect, checkOwner);
     }, []);
+
+    const loadMoreContent = async () => {
+        setIsLoadingMore(true);
+        const timestamp = [...content].pop()?.date_created || '';
+        const { listed, haveMore } = await utils.initContent(timestamp, true);
+        setContent([...content, ...listed]);
+        setHaveMoreContent(haveMore);
+        setIsLoadingMore(false);
+    };
+
+    const getModalDetail = async (asset: AnyObject, type: 'account') => {
+        document.body.style.overflow = 'hidden';
+        setModal({
+            hidden: false,
+            type: type,
+            details: asset.detail,
+        });
+    };
+
+    const getModalDisplay = () => {
+        if (modal.type == 'account') {
+            return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
+        }
+    };
+
+    const closeModal = () => {
+        document.body.style.overflow = '';
+        setModal({
+            hidden: true,
+            type: 'primary',
+        });
+    };
 
     return (
         <>
             <Header />
-            {isLoggedIn ? (
-                <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
-                    <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
-                        {[...Array(2)].map((_, i) => (
-                            <ContentCard
-                                key={i}
-                                avatarUrl="https://i.imgur.com/GdWEt4z.jpg"
-                                username="Fendi"
-                                content={content}
-                                images={slides}
-                                timeStamp={0x60de434e}
-                                type="Twitter"
-                            />
-                        ))}
-                        <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
-                    </section>
-                    <section className="flex flex-col gap-4 pb-16 w-4/11 sticky self-start top-16">
-                        <RecommendSection groups={recommendGroups} />
-                    </section>
-                </div>
-            ) : (
-                <div className="flex flex-col justify-start max-w-6xl px-2 pt-80 mx-auto gap-y-8 h-full">
-                    <p className="font-semibold text-4xl">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
-                    <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
-                </div>
-            )}
+            <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
+                <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
+                    <>
+                        {isContentLoading ? (
+                            <div className="flex flex-row items-center justify-center w-full h-32">
+                                <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
+                            </div>
+                        ) : (
+                            <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                {content.map((item, index) => {
+                                    if (item.id.includes('auto')) {
+                                        return (
+                                            <ItemCard
+                                                key={index}
+                                                avatarUrl={item.avatar}
+                                                username={item.username}
+                                                content={item.summary || null}
+                                                asset={item.details}
+                                                timeStamp={new Date(item.date_updated).valueOf()}
+                                                target={item.target}
+                                            />
+                                        );
+                                    } else {
+                                        return (
+                                            <ContentCard
+                                                key={index}
+                                                avatarUrl={item.avatar}
+                                                username={item.username}
+                                                title={item.title}
+                                                content={item.summary}
+                                                timeStamp={new Date(item.date_updated).valueOf()}
+                                            />
+                                        );
+                                    }
+                                })}
+                                {haveMoreContent ? (
+                                    <div className="flex flex-row justify-center w-full py-8">
+                                        {isLoadingMore ? (
+                                            <Button
+                                                isOutlined={false}
+                                                color={COLORS.primary}
+                                                icon="circle"
+                                                width={'w-32'}
+                                                height={'h-8'}
+                                            />
+                                        ) : (
+                                            <Button
+                                                isOutlined={false}
+                                                color={COLORS.primary}
+                                                text={'Load more'}
+                                                width={'w-32'}
+                                                height={'h-8'}
+                                                onClick={loadMoreContent}
+                                            />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                )}
+                            </section>
+                        )}
+                    </>
+                </section>
+                <section className="flex flex-col gap-4 pb-16 w-4/11">
+                    <RecommendSection groups={recommendGroups} toUserPage={toUserPage} />
+                </section>
+            </div>
+            <Modal
+                hidden={modal.hidden}
+                closeEvent={closeModal}
+                theme={'primary'}
+                isCenter={modal.type === 'account'}
+                size={modal.type === 'account' ? 'md' : 'lg'}
+            >
+                {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
+            </Modal>
         </>
     );
 };
