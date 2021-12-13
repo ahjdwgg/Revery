@@ -28,7 +28,8 @@ interface ItemCardProps {
             payload: string;
         };
     };
-    onClick: () => void;
+    toUserProfile: () => void;
+    showAssetDetail: () => void;
 }
 
 function categorize(field: string) {
@@ -36,7 +37,7 @@ function categorize(field: string) {
         return (
             <>
                 <span>posted on</span>
-                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
                     <Arweave />
                 </div>
             </>
@@ -45,7 +46,7 @@ function categorize(field: string) {
         return (
             <>
                 <span>posted on</span>
-                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
                     <Twitter />
                 </div>
             </>
@@ -53,8 +54,9 @@ function categorize(field: string) {
     } else if (field.includes('Mirror.XYZ')) {
         return (
             <>
-                <span>posted on</span>
-                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                <span></span>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
+                    {'posted on '}
                     <Mirror />
                 </div>
             </>
@@ -63,7 +65,7 @@ function categorize(field: string) {
         return (
             <>
                 <span>posted on</span>
-                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                <div className="flex items-center justify-center w-4 h-4 rounded-full">
                     <Misskey />
                 </div>
             </>
@@ -131,7 +133,8 @@ const ItemCard = ({
     asset,
     timeStamp,
     target,
-    onClick,
+    toUserProfile,
+    showAssetDetail,
 }: ItemCardProps) => {
     let iconSVG = null;
 
@@ -157,11 +160,15 @@ const ItemCard = ({
                     width={32}
                     height={32}
                     className="rounded-full cursor-pointer"
-                    onClick={() => toExternalProfile(target.field, target.action.payload)}
+                    onClick={() => {
+                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
+                    }}
                 />
                 <div
                     className="flex flex-row items-center gap-2 cursor-pointer"
-                    onClick={() => toExternalProfile(target.field, target.action.payload)}
+                    onClick={() => {
+                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
+                    }}
                 >
                     <span className="text-base font-semibold">{username}</span>
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}
@@ -185,7 +192,7 @@ const ItemCard = ({
                     name={asset.name}
                     desc={asset.description}
                     imageUrl={asset.image_url || config.undefinedImageAlt}
-                    onClick={() => onClick()}
+                    onClick={() => showAssetDetail()}
                 />
             )}
         </div>

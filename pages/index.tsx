@@ -184,9 +184,10 @@ const Home: NextPage = () => {
                                                 asset={item.details}
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
-                                                onClick={() => {
-                                                    fetchAssetDetail(item.target.field);
-                                                }}
+                                                toUserProfile={async () =>
+                                                    await router.push(`/u/${item.target.field.split('-')[2]}`)
+                                                }
+                                                showAssetDetail={() => fetchAssetDetail(item.target.field)}
                                             />
                                         );
                                     } else {
