@@ -99,7 +99,10 @@ interface AssetsList {
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
     const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
-    const taggedList = (await pageOwner.files.get(pageOwner.address))._pass.assets;
+
+    let taggedList = [];
+    const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
+    taggedList = passTags ? passTags : [];
     const hidedList = taggedList.filter((asset: any) => asset.hasOwnProperty('hide'));
 
     const orderedList = taggedList
