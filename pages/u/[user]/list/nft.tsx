@@ -82,7 +82,9 @@ const Nft: NextPage = () => {
                         <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
                     </div>
                 ) : listedNFTIsEmpty ? (
-                    <div className="flex w-full justify-center items-center py-10 text-normal">NFTs list is empty.</div>
+                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                        {persona ? persona.profile?.name + "'s NFTs list is empty :)" : 'NFTs list is empty :)'}
+                    </div>
                 ) : (
                     <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
                         {listedNFT.map((asset, index) => (

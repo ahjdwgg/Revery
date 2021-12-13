@@ -67,7 +67,7 @@ const Account: NextPage = () => {
                     </div>
                 ) : listedAccountsIsEmpty ? (
                     <div className="flex w-full justify-center items-center py-10 text-normal">
-                        Accounts list is empty.
+                        {persona ? persona.profile?.name + "'s Accounts list is empty :)" : 'Accounts list is empty :)'}
                     </div>
                 ) : (
                     <section className="grid items-center justify-start grid-cols-1 gap-4 py-4 md:grid-cols-2 gap-x-12">

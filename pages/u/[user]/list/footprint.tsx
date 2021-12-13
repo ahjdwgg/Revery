@@ -81,7 +81,9 @@ const Footprint: NextPage = () => {
                     </div>
                 ) : listedFootprintIsEmpty ? (
                     <div className="flex w-full justify-center items-center py-10 text-normal">
-                        Footprints list is empty.
+                        {persona
+                            ? persona.profile?.name + "'s Footprints list is empty :)"
+                            : 'Footprints list is empty :)'}
                     </div>
                 ) : (
                     <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
