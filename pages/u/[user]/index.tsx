@@ -429,6 +429,7 @@ const ProfilePage: NextPage = () => {
                                                 asset={item.details}
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
+                                                onClick={() => {}}
                                             />
                                         );
                                     } else {

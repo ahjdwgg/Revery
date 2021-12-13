@@ -74,7 +74,6 @@ const Home: NextPage = () => {
         }, 0);
 
         const profile = pageOwner.profile;
-        checkOwner();
         // console.log(pageOwner.assets);
         if (profile) {
             // Profile
@@ -82,10 +81,6 @@ const Home: NextPage = () => {
             setAddress(pageOwner?.address || '');
             setWebsite(fieldsMatch?.['SITE'] || '');
         }
-    };
-
-    const checkOwner = () => {
-        const latestIsOwner = RSS3.isNowOwner();
     };
 
     const toUserPage = async (addr: string) => {
@@ -105,11 +100,6 @@ const Home: NextPage = () => {
         setContentLoading(true);
     }, [address]);
 
-    useEffect(() => {
-        addEventListener(Events.connect, checkOwner);
-        addEventListener(Events.disconnect, checkOwner);
-    }, []);
-
     const loadMoreContent = async () => {
         setIsLoadingMore(true);
         const timestamp = [...content].pop()?.date_created || '';
@@ -119,7 +109,7 @@ const Home: NextPage = () => {
         setIsLoadingMore(false);
     };
 
-    const getModalDetail = async (asset: AnyObject, type: 'account') => {
+    const getModalDetail = async (asset: AnyObject, type: 'nft' | 'donation' | 'footprint' | 'account') => {
         document.body.style.overflow = 'hidden';
         setModal({
             hidden: false,
@@ -165,6 +155,7 @@ const Home: NextPage = () => {
                                                 asset={item.details}
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
+                                                onClick={() => {}}
                                             />
                                         );
                                     } else {

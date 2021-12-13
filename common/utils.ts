@@ -115,45 +115,18 @@ async function initAssets() {
         .sort((a: any, b: any) => a.order - b.order)
         .map((asset: { id: string }) => asset.id);
 
-    console.log('total assets');
-    console.log(assetList?.length);
-    console.log('tagged assets');
-    console.log(taggedList.length);
-
-    console.log(assetList?.filter((asset) => taggedList.find((tagged: { id: string }) => tagged.id === asset)));
-    console.log(taggedList?.filter((tagged) => !assetList?.find((asset) => tagged.id === asset)));
-
-    console.log('hide is true assets');
-    console.log(hiddenList);
-    console.log('has order number assets');
-    console.log(orderedList.length);
     if (hiddenList.length > 0) {
         assetList = assetList?.filter((asset) => hiddenList.indexOf(asset) < 0);
     }
-    console.log('remove hidden');
-    console.log(assetList);
     if (orderedList.length > 0) {
         assetList = assetList?.filter((asset) => orderedList.indexOf(asset) < 0);
     }
-    console.log('listed unordered assets');
-    console.log(assetList);
-
     const orderedAssetList = assetList?.concat(orderedList);
-
-    console.log('listed & ordered assets');
-    console.log(orderedAssetList?.length);
 
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
-
-    console.log('NFT');
-    console.log(nfts);
-    console.log('donations');
-    console.log(donations);
-    console.log('Footprints');
-    console.log(footprints);
 
     return {
         nfts: nfts && nfts.length > 0 ? nfts : <AnyObject[]>[],

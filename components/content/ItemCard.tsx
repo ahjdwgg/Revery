@@ -9,6 +9,9 @@ import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
 import NFTCard from '../assets/NFTCard';
 import { imgRegSrc, mdImgRegSrc } from '../../common/image';
+import NFTIcon from '../icons/NFTIcon';
+import FootprintIcon from '../icons/FootprintIcon';
+import GitcoinIcon from '../icons/GitcoinIcon';
 
 interface ItemCardProps {
     avatarUrl: string;
@@ -25,17 +28,52 @@ interface ItemCardProps {
             payload: string;
         };
     };
+    onClick: () => void;
 }
 
 function categorize(field: string) {
     if (field.includes('Arweave')) {
-        return <Arweave />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                    <Arweave />
+                </div>
+            </>
+        );
     } else if (field.includes('Twitter')) {
-        return <Twitter />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                    <Twitter />
+                </div>
+            </>
+        );
     } else if (field.includes('Mirror.XYZ')) {
-        return <Mirror />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                    <Mirror />
+                </div>
+            </>
+        );
     } else if (field.includes('Misskey')) {
-        return <Misskey />;
+        return (
+            <>
+                <span>posted on</span>
+                <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">
+                    <Misskey />
+                </div>
+            </>
+        );
+    } else if (field.includes('NFT')) {
+        return <NFTIcon />;
+    } else if (field.includes('POAP')) {
+        return <FootprintIcon />;
+    } else if (field.includes('Gitcoin')) {
+        return <GitcoinIcon />;
     }
 }
 
@@ -53,7 +91,8 @@ const getTopic = (field: string, type: string) => {
     } else if (field.includes('POAP')) {
         content += 'a footprint';
     } else if (field.includes('Gitcoin')) {
-        content += 'a donation record';
+        content = content.replace('got', 'made');
+        content += 'a donation';
     }
 
     return content;
@@ -128,12 +167,7 @@ const ItemCard = ({ avatarUrl, username, title, content, images, asset, timeStam
                 >
                     <span className="text-base font-semibold">{username}</span>
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}
-                    {iconSVG && (
-                        <>
-                            <span>posted on</span>
-                            <div className="flex w-4 h-4 rounded-full opacity-100 place-items-center">{iconSVG}</div>
-                        </>
-                    )}
+                    {iconSVG && <>{iconSVG}</>}
                     <span className="opacity-20">{timeDifferent(timeStamp)}</span>
                 </div>
             </div>
