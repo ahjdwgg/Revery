@@ -125,12 +125,15 @@ const Profile = ({
                 <div className="flex flex-row items-center gap-x-4">
                     <div className="text-2xl font-semibold">{username}</div>
                     {isOwner ? (
-                        <Button
-                            text={'Edit Profile'}
-                            color={COLORS.primary}
-                            isOutlined={true}
-                            onClick={toEditProfile}
-                        />
+                        <>
+                            <Button
+                                text={'Edit Profile'}
+                                color={COLORS.primary}
+                                isOutlined={true}
+                                onClick={toEditProfile}
+                            />
+                            <Button icon={'logout'} color={COLORS.primary} isOutlined={true} onClick={logout} />
+                        </>
                     ) : (
                         <Button
                             text={isFollowing ? 'Unfollow' : 'Follow'}
