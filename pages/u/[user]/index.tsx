@@ -170,7 +170,9 @@ const ProfilePage: NextPage = () => {
         }, 0);
 
         const profile = pageOwner.profile;
-        checkOwner();
+        if (!checkOwner()) {
+            checkIsFollowing();
+        }
         // console.log(pageOwner.assets);
         if (profile) {
             // Profile
@@ -218,6 +220,7 @@ const ProfilePage: NextPage = () => {
             setAssetCardButtons(defaultAssetCardButtons);
         }
         setIsOwner(latestIsOwner);
+        return latestIsOwner;
     };
 
     const onFollow = async () => {
@@ -225,27 +228,22 @@ const ProfilePage: NextPage = () => {
         const pageOwner = await RSS3.getPageOwner();
         const file = await pageOwner.files.get();
         if (file.signature) {
-            if (isFollowing) {
+            if (checkIsFollowing()) {
                 await unfollow();
-                pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
             } else {
                 await follow();
-                pageOwner.followers.push(loginUser.address);
             }
             await loginUser.files.sync();
         } else {
-            router.push('/');
+            // Not registered user
         }
     };
 
-    const checkIsFollowing = async () => {
-        const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.getPageOwner();
-        const followList = await loginUser.persona?.links.getList(loginUser.persona.account.address, 'following');
-        if (typeof followList === 'undefined') {
-            setIsFollowing(false);
-            return false;
-        } else if (followList.includes(pageOwner.address)) {
+    const checkIsFollowing = () => {
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = RSS3.getPageOwner();
+        const followList = loginUser.followings;
+        if (followList?.includes(pageOwner.address)) {
             setIsFollowing(true);
             return true;
         } else {
@@ -258,7 +256,9 @@ const ProfilePage: NextPage = () => {
         const loginUser = await RSS3.getLoginUser();
         const pageOwner = await RSS3.getPageOwner();
 
-        if (!(await checkIsFollowing())) {
+        if (!checkIsFollowing()) {
+            pageOwner.followers.push(loginUser.address);
+            loginUser.followings.push(pageOwner.address);
             await loginUser.persona?.links.post('following', pageOwner.address);
         }
 
@@ -269,7 +269,9 @@ const ProfilePage: NextPage = () => {
         const loginUser = await RSS3.getLoginUser();
         const pageOwner = await RSS3.getPageOwner();
 
-        if (await checkIsFollowing()) {
+        if (checkIsFollowing()) {
+            pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
+            loginUser.followings.splice(loginUser.followings.indexOf(pageOwner.address), 1);
             await loginUser.persona?.links.delete('following', pageOwner.address);
         }
 
@@ -545,7 +547,7 @@ const ProfilePage: NextPage = () => {
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account' ? true : false}
+                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
