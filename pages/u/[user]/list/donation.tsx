@@ -79,7 +79,7 @@ const Donation: NextPage = () => {
                 </section>
                 {!listedDonation.length && listedDonationIsEmpty === null ? (
                     <div className="flex w-full justify-center items-center py-10">
-                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     </div>
                 ) : listedDonationIsEmpty ? (
                     <div className="flex w-full justify-center items-center py-10 text-normal">
@@ -105,7 +105,7 @@ const Donation: NextPage = () => {
                 )}
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
-                {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color="primary" />}
+                {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>
     );

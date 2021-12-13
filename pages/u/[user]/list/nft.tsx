@@ -77,7 +77,7 @@ const Nft: NextPage = () => {
                 </section>
                 {!listedNFT.length && listedNFTIsEmpty === null ? (
                     <div className="flex w-full justify-center items-center py-10">
-                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     </div>
                 ) : listedNFTIsEmpty ? (
                     <div className="flex w-full justify-center items-center py-10 text-normal">
@@ -111,7 +111,7 @@ const Nft: NextPage = () => {
             </div>
 
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
-                {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color="primary" />}
+                {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>
     );

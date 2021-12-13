@@ -231,8 +231,8 @@ const Home: NextPage = () => {
                             </section>
                         ) : (
                             <div className="flex flex-col gap-2 w-full py-32 text-sm text-center">
-                                <p>{'Oops, nothing found from your followings.'}</p>
-                                <p>{'Check out some new friends from recommendations for you :P'}</p>
+                                <p>{'Oops, nothing found from your followings:P'}</p>
+                                <p>{'Check out some new friends from recommendations for you!'}</p>
                             </div>
                         )}
                     </>
@@ -248,7 +248,7 @@ const Home: NextPage = () => {
                 isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
-                {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
+                {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}
             </Modal>
         </>
     );

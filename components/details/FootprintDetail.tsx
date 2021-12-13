@@ -22,7 +22,7 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
     return (
         <div className="flex flex-col items-start justify-start gap-5 px-5 py-4 filter">
             <section className="w-full">
-                <div className="flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-2 py-2">
                     <h2 className="flex-1 overflow-hidden text-xl font-semibold capitalize break-all overflow-ellipsis">
                         {detail.name}
                     </h2>
@@ -30,8 +30,6 @@ export default function FootprintDetail({ detail }: FootprintDetailProps) {
                         isOutlined={false}
                         color={COLORS.primary}
                         icon={'external'}
-                        width="w-8"
-                        height="h-8"
                         onClick={() => {
                             window.open(detail.event_url);
                         }}

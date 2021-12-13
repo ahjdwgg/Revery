@@ -508,8 +508,8 @@ const ProfilePage: NextPage = () => {
                             </section>
                         ) : (
                             <div className="flex flex-col gap-2 w-full py-8 text-sm text-center">
-                                <p>{'Oops, nothing found from your activities.'}</p>
-                                <p>{'Post some new activities today :P'}</p>
+                                <p>{'Oops, nothing found from your activities :P'}</p>
+                                <p>{'Post something new or do something fun today!'}</p>
                             </div>
                         )}
                     </>
@@ -620,7 +620,7 @@ const ProfilePage: NextPage = () => {
                 isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
-                {modal.details ? getModalDisplay() : <ModalLoading color={modal.type} />}
+                {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}
             </Modal>
 
             <Modal
