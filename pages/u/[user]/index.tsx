@@ -26,7 +26,7 @@ import Button from '../../../components/buttons/Button';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../../../components/content/ItemCard';
-import { BiLoaderCircle } from 'react-icons/bi';
+import { BiLoaderCircle, BiLoaderAlt } from 'react-icons/bi';
 import SingleAccount from '../../../components/details/SingleAccount';
 import { COLORS } from '../../../components/buttons/variables';
 import rss3 from '../../../common/rss3';
@@ -54,9 +54,13 @@ const ProfilePage: NextPage = () => {
     const [isFollowing, setIsFollowing] = useState(false);
 
     const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
+
     const [nftItems, setNftItems] = useState<AnyObject[]>([]);
     const [donationItems, setDonationItems] = useState<AnyObject[]>([]);
     const [footprintItems, setFootprintItems] = useState<AnyObject[]>([]);
+    const [isNftLoading, setNftLoading] = useState(true);
+    const [isDonationLoading, setDonationLoading] = useState(true);
+    const [isFootprintLoading, setFootprintLoading] = useState(true);
 
     const [content, setContent] = useState<any[]>([]);
     const [isContentLoading, setContentLoading] = useState(true);
@@ -153,9 +157,9 @@ const ProfilePage: NextPage = () => {
     });
 
     const loadAssetDetails = async (assetList: AnyObject[], limit: number) => {
-        const assetDetails = await utils.loadAssets(assetList);
-        const previewAssets = limit <= assetDetails.length ? assetDetails.slice(0, limit) : assetDetails;
-        return previewAssets;
+        const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
+        const assetDetails = await utils.loadAssets(previewList);
+        return assetDetails;
     };
 
     const init = async () => {
@@ -202,12 +206,15 @@ const ProfilePage: NextPage = () => {
 
             setTimeout(async () => {
                 setNftItems(await loadAssetDetails(allAssets.nfts, 4));
+                setNftLoading(false);
             }, 0);
             setTimeout(async () => {
                 setDonationItems(await loadAssetDetails(allAssets.donations, 4));
+                setDonationLoading(false);
             }, 0);
             setTimeout(async () => {
                 setFootprintItems(await loadAssetDetails(allAssets.footprints, 6));
+                setFootprintLoading(false);
             }, 0);
         }
     };
@@ -323,6 +330,9 @@ const ProfilePage: NextPage = () => {
     useEffect(() => {
         // init();
         setContentLoading(true);
+        setNftLoading(true);
+        setDonationLoading(true);
+        setFootprintLoading(true);
     }, [address]);
 
     useEffect(() => {
@@ -414,7 +424,7 @@ const ProfilePage: NextPage = () => {
                     <>
                         {isContentLoading ? (
                             <div className="flex flex-row items-center justify-center w-full h-32">
-                                <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
+                                <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
                             </div>
                         ) : (
                             <section className="flex flex-col items-center justify-start gap-y-2.5">
@@ -475,70 +485,98 @@ const ProfilePage: NextPage = () => {
                 <section className="flex flex-col gap-4 pb-16 w-4/11">
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
-                            <div className="grid grid-cols-2 gap-3">
-                                {nftItems.length > 0
-                                    ? nftItems.map((asset, i) => (
-                                          <div
-                                              className="cursor-pointer"
-                                              key={i}
-                                              onClick={() => {
-                                                  getModalDetail(asset, 'nft');
-                                              }}
-                                          >
-                                              <NFTItem
-                                                  key={asset.id}
-                                                  previewUrl={
-                                                      asset.detail.image_preview_url || config.undefinedImageAlt
-                                                  }
-                                                  isShowingDetails={false}
-                                                  size={70}
-                                              />
-                                          </div>
-                                      ))
-                                    : null}
-                            </div>
+                            {isNftLoading ? (
+                                <div className="flex flex-row items-center justify-center w-full h-32">
+                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-3">
+                                    {nftItems.length > 0 ? (
+                                        nftItems.map((asset, i) => (
+                                            <div
+                                                className="cursor-pointer"
+                                                key={i}
+                                                onClick={() => {
+                                                    getModalDetail(asset, 'nft');
+                                                }}
+                                            >
+                                                <NFTItem
+                                                    key={asset.id}
+                                                    previewUrl={
+                                                        asset.detail.image_preview_url || config.undefinedImageAlt
+                                                    }
+                                                    isShowingDetails={false}
+                                                    size={70}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-base font-semibold line-clamp-1 opacity-20">
+                                            Oops, nothing found :P
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </AssetCard>
 
                         <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
-                            <div className="grid grid-cols-2 gap-3">
-                                {donationItems.length > 0
-                                    ? donationItems.map((asset, i) => (
-                                          <div key={i} className="flex cursor-pointer">
-                                              <ImageHolder
-                                                  imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
-                                                  isFullRound={false}
-                                                  size={70}
-                                                  onClick={() => {
-                                                      getModalDetail(asset, 'donation');
-                                                  }}
-                                              />
-                                          </div>
-                                      ))
-                                    : null}
-                            </div>
+                            {isDonationLoading ? (
+                                <div className="flex flex-row items-center justify-center w-full h-32">
+                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-3">
+                                    {donationItems.length > 0 ? (
+                                        donationItems.map((asset, i) => (
+                                            <div key={i} className="flex cursor-pointer">
+                                                <ImageHolder
+                                                    imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
+                                                    isFullRound={false}
+                                                    size={70}
+                                                    onClick={() => {
+                                                        getModalDetail(asset, 'donation');
+                                                    }}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-base font-medium opacity-20">Oops, nothing found :P</span>
+                                    )}
+                                </div>
+                            )}
                         </AssetCard>
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
-                            <div className="flex flex-col w-full">
-                                {footprintItems.length > 0
-                                    ? footprintItems.map((asset, i) => (
-                                          <FootprintCard
-                                              key={i}
-                                              imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                                              startDate={asset.detail.start_date}
-                                              endDate={asset.detail.end_date}
-                                              city={asset.detail.city}
-                                              country={asset.detail.country}
-                                              username={username}
-                                              activity={asset.detail.name || ''}
-                                              clickEvent={() => {
-                                                  getModalDetail(asset, 'footprint');
-                                              }}
-                                          />
-                                      ))
-                                    : null}
-                            </div>
+                            {isFootprintLoading ? (
+                                <div className="flex flex-row items-center justify-center w-full h-32">
+                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                </div>
+                            ) : (
+                                <div className="flex flex-col w-full">
+                                    {footprintItems.length > 0 ? (
+                                        footprintItems.map((asset, i) => (
+                                            <FootprintCard
+                                                key={i}
+                                                imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                                startDate={asset.detail.start_date}
+                                                endDate={asset.detail.end_date}
+                                                city={asset.detail.city}
+                                                country={asset.detail.country}
+                                                username={username}
+                                                activity={asset.detail.name || ''}
+                                                clickEvent={() => {
+                                                    getModalDetail(asset, 'footprint');
+                                                }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <span className="text-base font-semibold line-clamp-1 opacity-20">
+                                            Oops, nothing found :P
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </AssetCard>
                     </div>
                 </section>
