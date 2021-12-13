@@ -98,8 +98,8 @@ interface AssetsList {
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
-    const assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
-
+    let assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
+    console.log(assetList);
     let taggedList = [];
     const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
     taggedList = passTags ? passTags : [];
@@ -119,20 +119,15 @@ async function initAssets() {
     console.log(orderedList.length);
 
     if (hidedList.length > 0) {
-        hidedList.map((hidedAsset: { id: string }) => {
-            const hidedIndex = assetList?.findIndex((asset) => asset === hidedAsset.id);
-            if (hidedIndex) assetList?.splice(hidedIndex, 1);
-        });
+        assetList = assetList?.filter((asset) => !hidedList.includes(asset));
     }
-
+    console.log('remove hided');
+    console.log(assetList);
     if (orderedList.length > 0) {
-        orderedList.map((orderedAsset: { id: string }) => {
-            const orderedIndex = assetList?.findIndex((asset) => asset === orderedAsset.id);
-            if (orderedIndex) assetList?.splice(orderedIndex, 1);
-        });
+        assetList = assetList?.filter((asset) => !orderedList.includes(asset));
     }
     console.log('listed unordered assets');
-    console.log(assetList?.length);
+    console.log(assetList);
 
     const orderedAssetList = assetList?.concat(orderedList.map((asset: { id: string }) => asset.id));
 
