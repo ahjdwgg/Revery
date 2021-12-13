@@ -16,7 +16,7 @@ const RecommendSection = ({ groups, toUserPage }: RecommendSectionProps) => {
     const [activeGroupId, setActiveGroupId] = useState(0);
 
     return (
-        <div className="flex flex-col p-3">
+        <div className="animate-fade-in-up flex flex-col p-3">
             <div>
                 <span className="text-primary text-md font-semibold">For You</span>
             </div>
@@ -25,7 +25,7 @@ const RecommendSection = ({ groups, toUserPage }: RecommendSectionProps) => {
                     <div className="mt-3 mb-2.5 text-xs">
                         <p>{groups[activeGroupId].intro}</p>
                     </div>
-                    <div className="animate-fade-in-up mt-2.5 pt-5">
+                    <div className="mt-2.5 pt-5">
                         {groups[activeGroupId].users.map((user) => (
                             <UserCard
                                 key={user.ethAddress}
