@@ -290,7 +290,9 @@ async function initContent(timestamp: string = '', following: boolean = false) {
                         name: asset.detail.grant.title,
                         description: asset.detail.grant.description,
                         image_url: asset.detail.grant.logo,
-                        reference_url: `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`,
+                        reference_url: asset.detail.grant.id
+                            ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
+                            : 'https://gitcoin.co',
                     };
                 } else {
                     // handle NFT and POAP
@@ -315,7 +317,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             listed.push({ ...temp });
         }
     });
-    // console.log(listed);
+    console.log(listed);
     return {
         listed: listed,
         haveMore: haveMore,
