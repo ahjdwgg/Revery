@@ -14,6 +14,8 @@ import config from '../common/config';
 import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
 import utils from '../common/utils';
 import Events from '../common/events';
+import { BiLoaderAlt } from 'react-icons/bi';
+
 import NFTItem from '../components/assets/NFTItem';
 
 import Modal, { ModalColorStyle } from '../components/modal/Modal';
@@ -25,7 +27,6 @@ import Button from '../components/buttons/Button';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../components/content/ItemCard';
-import { BiLoaderCircle } from 'react-icons/bi';
 import SingleAccount from '../components/details/SingleAccount';
 import { COLORS } from '../components/buttons/variables';
 import RecommendSection from '../components/users/RecommendSection';
@@ -150,7 +151,7 @@ const Home: NextPage = () => {
                     <>
                         {isContentLoading ? (
                             <div className="flex flex-row items-center justify-center w-full h-32">
-                                <BiLoaderCircle className="w-12 h-12 animate-spin text-primary" />
+                                <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
                             </div>
                         ) : (
                             <section className="flex flex-col items-center justify-start gap-y-2.5">

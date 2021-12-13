@@ -10,6 +10,7 @@ import Header from '../../../components/Header';
 import ImageHolder from '../../../components/ImageHolder';
 import Profile from '../../../components/profile/Profile';
 import RSS3 from '../../../common/rss3';
+import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
@@ -26,7 +27,7 @@ import Button from '../../../components/buttons/Button';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../../../components/content/ItemCard';
-import { BiLoaderCircle, BiLoaderAlt } from 'react-icons/bi';
+
 import SingleAccount from '../../../components/details/SingleAccount';
 import { COLORS } from '../../../components/buttons/variables';
 import rss3 from '../../../common/rss3';
