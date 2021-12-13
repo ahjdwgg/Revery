@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
             <Head>
+                <title>Revery</title>
                 <link
                     rel="stylesheet"
                     type="text/css"
