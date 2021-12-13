@@ -4,6 +4,7 @@ import RSS3 from './rss3';
 import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
+import { formatter } from './address';
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -232,7 +233,7 @@ function isAsset(field: string | undefined): boolean {
     return false;
 }
 
-async function initContent(timestamp: string = '') {
+async function initContent(timestamp: string = '', following: boolean = false) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
     let haveMore = true;
@@ -240,11 +241,18 @@ async function initContent(timestamp: string = '') {
     const pageOwner = await RSS3.getPageOwner();
 
     const items =
-        (await pageOwner.items?.getListByPersona({
-            persona: pageOwner.address,
-            limit: 35,
-            tsp: timestamp,
-        })) || [];
+        (following
+            ? await pageOwner.items?.getListByPersona({
+                  persona: pageOwner.address,
+                  linkID: 'following',
+                  limit: 35,
+                  tsp: timestamp,
+              })
+            : await pageOwner.items?.getListByPersona({
+                  persona: pageOwner.address,
+                  limit: 35,
+                  tsp: timestamp,
+              })) || [];
 
     haveMore = items.length === 35;
 
@@ -270,19 +278,11 @@ async function initContent(timestamp: string = '') {
 
     const listed: any[] = [];
     items.forEach((item) => {
-        let temp: any;
-
-        const profile = profiles.find((element: any) => {
-            element.persona === item.id.split('-')[0];
-        }) || {
-            avatar: pageOwner.profile?.avatar,
-            name: pageOwner.name,
-        };
-
-        temp = {
+        const profile = profiles.find((element: any) => element.persona === item.id.split('-')[0]);
+        let temp: any = {
             ...item,
-            avatar: profile.avatar[0] || config.undefinedImageAlt,
-            username: profile.name,
+            avatar: profile?.avatar?.[0] || config.undefinedImageAlt,
+            username: profile?.name || formatter(profile?.persona),
         };
 
         if (isAsset(item.target?.field)) {
@@ -298,7 +298,9 @@ async function initContent(timestamp: string = '') {
                         name: asset.detail.grant.title,
                         description: asset.detail.grant.description,
                         image_url: asset.detail.grant.logo,
-                        reference_url: `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`,
+                        reference_url: asset.detail.grant.id
+                            ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
+                            : 'https://gitcoin.co',
                     };
                 } else {
                     // handle NFT and POAP
@@ -323,7 +325,7 @@ async function initContent(timestamp: string = '') {
             listed.push({ ...temp });
         }
     });
-    // console.log(listed);
+
     return {
         listed: listed,
         haveMore: haveMore,

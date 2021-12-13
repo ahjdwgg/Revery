@@ -71,8 +71,7 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                     src={mainUrl}
                     poster={fixedPreviewUrl}
                     controls={isShowingDetails}
-                    autoPlay={isShowingDetails}
-                    playsInline
+                    autoPlay={true}
                     loop
                     muted
                 />
