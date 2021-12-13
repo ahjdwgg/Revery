@@ -172,7 +172,7 @@ const Home: NextPage = () => {
                             <div className="flex flex-row items-center justify-center w-full h-32">
                                 <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
                             </div>
-                        ) : (
+                        ) : content.length ? (
                             <section className="flex flex-col items-center justify-start gap-y-2.5">
                                 {content.map((item, index) => {
                                     if (item.id.includes('auto')) {
@@ -229,6 +229,11 @@ const Home: NextPage = () => {
                                     <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
                                 )}
                             </section>
+                        ) : (
+                            <div className="flex flex-col gap-2 w-full py-32 text-sm text-center">
+                                <p>{'Oops, nothing found from your followings.'}</p>
+                                <p>{'Check out some new friends from recommendations for you :P'}</p>
+                            </div>
                         )}
                     </>
                 </section>
