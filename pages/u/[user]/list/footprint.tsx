@@ -9,6 +9,7 @@ import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
+import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
@@ -21,6 +22,7 @@ const Footprint: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [footprint, setFootprint] = useState<AnyObject>();
     const [listedFootprint, setListedFootprint] = useState<AnyObject[]>([]);
+    const [listedFootprintIsEmpty, setListedFootprintEmpty] = useState<boolean | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -28,6 +30,11 @@ const Footprint: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadFootprints();
         setListedFootprint(orderAsset);
+        if (orderAsset.length > 0) {
+            setListedFootprintEmpty(false);
+        } else {
+            setListedFootprintEmpty(true);
+        }
         setPersona(pageOwner);
     };
 
@@ -68,23 +75,33 @@ const Footprint: NextPage = () => {
                     </h1>
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
-                <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
-                    {listedFootprint.map((asset, index) => (
-                        <FootprintCard
-                            key={index}
-                            imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                            startDate={asset.detail.start_date}
-                            endDate={asset.detail.end_date}
-                            city={asset.detail.country}
-                            country={asset.detail.city}
-                            username={persona?.profile?.name || ''}
-                            activity={asset.detail.name || ''}
-                            clickEvent={() => {
-                                openModal(asset);
-                            }}
-                        />
-                    ))}
-                </section>
+                {!listedFootprint.length && listedFootprintIsEmpty === null ? (
+                    <div className="flex w-full justify-center items-center py-10">
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                    </div>
+                ) : listedFootprintIsEmpty ? (
+                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                        Footprints list is empty.
+                    </div>
+                ) : (
+                    <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                        {listedFootprint.map((asset, index) => (
+                            <FootprintCard
+                                key={index}
+                                imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                startDate={asset.detail.start_date}
+                                endDate={asset.detail.end_date}
+                                city={asset.detail.country}
+                                country={asset.detail.city}
+                                username={persona?.profile?.name || ''}
+                                activity={asset.detail.name || ''}
+                                clickEvent={() => {
+                                    openModal(asset);
+                                }}
+                            />
+                        ))}
+                    </section>
+                )}
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
                 {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color="primary" />}

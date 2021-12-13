@@ -7,6 +7,7 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleNFT from '../../../../components/details/SingleNFT';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
+import { BiLoaderAlt } from 'react-icons/bi';
 import { GeneralAssetWithTags, NFT } from '../../../../common/types';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
@@ -21,6 +22,7 @@ const Nft: NextPage = () => {
     const [modalHidden, setModalHidden] = useState(true);
     const [NFT, setNFT] = useState<AnyObject>();
     const [listedNFT, setlistedNFT] = useState<AnyObject[]>([]);
+    const [listedNFTIsEmpty, setListedNFTIsEmpty] = useState<boolean | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
     const init = async () => {
@@ -28,6 +30,11 @@ const Nft: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         let orderAsset = await loadNFTs();
         setlistedNFT(orderAsset);
+        if (orderAsset.length > 0) {
+            setListedNFTIsEmpty(false);
+        } else {
+            setListedNFTIsEmpty(true);
+        }
         setPersona(pageOwner);
     };
 
@@ -70,29 +77,37 @@ const Nft: NextPage = () => {
                     </h1>
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
-                <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
-                    {listedNFT.map((asset, index) => (
-                        <div
-                            key={index}
-                            className="relative cursor-pointer"
-                            onClick={() => {
-                                openModal(asset);
-                            }}
-                        >
-                            <NFTItem
-                                size={208}
-                                previewUrl={asset.detail.image_preview_url}
-                                detailUrl={asset.detail.animation_url}
-                                isShowingDetails={false}
-                            />
-                            <NFTBadges
-                                location="overlay"
-                                chain={asset.detail.chain.split('.')[0]}
-                                collectionImg={asset.detail.collection_icon}
-                            />
-                        </div>
-                    ))}
-                </section>
+                {!listedNFT.length && listedNFTIsEmpty === null ? (
+                    <div className="flex w-full justify-center items-center py-10">
+                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                    </div>
+                ) : listedNFTIsEmpty ? (
+                    <div className="flex w-full justify-center items-center py-10 text-normal">NFTs list is empty.</div>
+                ) : (
+                    <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
+                        {listedNFT.map((asset, index) => (
+                            <div
+                                key={index}
+                                className="relative cursor-pointer"
+                                onClick={() => {
+                                    openModal(asset);
+                                }}
+                            >
+                                <NFTItem
+                                    size={208}
+                                    previewUrl={asset.detail.image_preview_url}
+                                    detailUrl={asset.detail.animation_url}
+                                    isShowingDetails={false}
+                                />
+                                <NFTBadges
+                                    location="overlay"
+                                    chain={asset.detail.chain.split('.')[0]}
+                                    collectionImg={asset.detail.collection_icon}
+                                />
+                            </div>
+                        ))}
+                    </section>
+                )}
             </div>
 
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
