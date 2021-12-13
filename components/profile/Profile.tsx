@@ -22,6 +22,8 @@ interface ProfileProps {
     children?: ReactNode;
     followers: string[];
     followings: string[];
+    isFollowing: boolean;
+    onFollow: () => void;
     toEditProfile?: () => void;
     toExternalUserSite?: () => void;
     toUserPage: (addrOrName: string) => void;
@@ -37,6 +39,8 @@ const Profile = ({
     children,
     followers,
     followings,
+    isFollowing,
+    onFollow,
     toEditProfile,
     toExternalUserSite,
     toUserPage,
@@ -107,12 +111,19 @@ const Profile = ({
             <div className="flex flex-col items-start justify-start flex-1 gap-y-2">
                 <div className="flex flex-row items-center gap-x-4">
                     <div className="text-2xl font-semibold">{username}</div>
-                    {isOwner && (
+                    {isOwner ? (
                         <Button
                             text={'Edit Profile'}
                             color={COLORS.primary}
                             isOutlined={true}
                             onClick={toEditProfile}
+                        />
+                    ) : (
+                        <Button
+                            text={isFollowing ? 'Unfollow' : 'Follow'}
+                            color={COLORS.primary}
+                            isOutlined={true}
+                            onClick={onFollow}
                         />
                     )}
                 </div>

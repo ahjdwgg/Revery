@@ -278,7 +278,7 @@ async function initContent(timestamp: string = '') {
 
         temp = {
             ...item,
-            avatar: profile.avatar[0] || config.undefinedImageAlt,
+            avatar: profile.avatar ? profile.avatar[0] : config.undefinedImageAlt,
             username: profile.name,
         };
 

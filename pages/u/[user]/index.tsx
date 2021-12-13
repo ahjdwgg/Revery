@@ -29,6 +29,9 @@ import ItemCard from '../../../components/content/ItemCard';
 import { BiLoaderCircle } from 'react-icons/bi';
 import SingleAccount from '../../../components/details/SingleAccount';
 import { COLORS } from '../../../components/buttons/variables';
+import rss3 from '../../../common/rss3';
+import FollowList from '../../../components/users/FollowList';
+import { joinSignature } from '@ethersproject/bytes';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -48,6 +51,7 @@ const ProfilePage: NextPage = () => {
     const [website, setWebsite] = useState<string>('');
     const [followers, setFollowers] = useState<RSS3ID[]>([]);
     const [followings, setFollowings] = useState<RSS3ID[]>([]);
+    const [isFollowing, setIsFollowing] = useState(false);
 
     const [accountItems, setAccountItems] = useState<RSS3Account[]>([]);
     const [nftItems, setNftItems] = useState<AnyObject[]>([]);
@@ -174,6 +178,7 @@ const ProfilePage: NextPage = () => {
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
             setUsername(profile?.name || '');
             setAddress(pageOwner?.address || '');
+            console.log('username, address', username, address);
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setLink(pageOwner.name);
@@ -213,6 +218,62 @@ const ProfilePage: NextPage = () => {
             setAssetCardButtons(defaultAssetCardButtons);
         }
         setIsOwner(latestIsOwner);
+    };
+
+    const onFollow = async () => {
+        const loginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.getPageOwner();
+        const file = await pageOwner.files.get();
+        if (file.signature) {
+            if (isFollowing) {
+                await unfollow();
+                pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
+            } else {
+                await follow();
+                pageOwner.followers.push(loginUser.address);
+            }
+            await loginUser.files.sync();
+        } else {
+            router.push('/');
+        }
+    };
+
+    const checkIsFollowing = async () => {
+        const loginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.getPageOwner();
+        const followList = await loginUser.persona?.links.getList(loginUser.persona.account.address, 'following');
+        if (typeof followList === 'undefined') {
+            setIsFollowing(false);
+            return false;
+        } else if (followList.includes(pageOwner.address)) {
+            setIsFollowing(true);
+            return true;
+        } else {
+            setIsFollowing(false);
+            return false;
+        }
+    };
+
+    const follow = async () => {
+        const loginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.getPageOwner();
+
+        if (!(await checkIsFollowing())) {
+            await loginUser.persona?.links.post('following', pageOwner.address);
+        }
+
+        setIsFollowing(true);
+    };
+
+    const unfollow = async () => {
+        const loginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.getPageOwner();
+
+        if (await checkIsFollowing()) {
+            await loginUser.persona?.links.delete('following', pageOwner.address);
+        }
+
+        setIsFollowing(false);
     };
 
     const toEditProfile = async () => {
@@ -319,6 +380,8 @@ const ProfilePage: NextPage = () => {
                         rns={link}
                         link={website}
                         isOwner={isOwner}
+                        isFollowing={isFollowing}
+                        onFollow={onFollow}
                         toEditProfile={toEditProfile}
                         toExternalUserSite={toExternalUserSite}
                         toUserPage={toUserPage}
