@@ -27,6 +27,7 @@ function Header() {
     const init = async () => {
         if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
             initAccount();
+            setIsLoggedIn(true);
         }
     };
 
@@ -75,19 +76,13 @@ function Header() {
         const profile = RSS3.getLoginUser().profile;
 
         setAvatarURL(profile?.avatar?.[0] || avatarURL);
-        setIsLoggedIn(true);
+
         setIsLoading(null);
     };
 
     const toProfilePage = () => {
         const { name } = RSS3.getLoginUser();
         router.push(`/u/${name}`);
-    };
-
-    const logout = () => {
-        RSS3.disconnect();
-        setIsLoggedIn(false);
-        reloadPage();
     };
 
     const reloadPage = () => {
@@ -129,14 +124,6 @@ function Header() {
                                             text={'Create Now'}
                                             width={'w-32'}
                                             height={'h-8'}
-                                        />
-                                        <Button
-                                            isOutlined={true}
-                                            color={COLORS.primary}
-                                            text={'Logout'}
-                                            width={'w-18'}
-                                            height={'h-8'}
-                                            onClick={logout}
                                         />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />

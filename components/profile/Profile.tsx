@@ -11,7 +11,7 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
 import utils from '../../common/utils';
-
+import { useRouter } from 'next/router';
 interface ProfileProps {
     avatarUrl: string;
     username: string;
@@ -41,11 +41,14 @@ const Profile = ({
     toExternalUserSite,
     toUserPage,
 }: ProfileProps) => {
+    const router = useRouter();
+
     const [modalHidden, setModalHidden] = useState(true);
     const [followType, setFollowType] = useState('');
 
     const [foList, setFoList] = useState<UserItemProps[]>([]);
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoading = useRef<boolean>(false);
 
     const openModal = () => {
@@ -101,6 +104,16 @@ const Profile = ({
         openModal();
     };
 
+    const logout = () => {
+        RSS3.disconnect();
+        setIsLoggedIn(false);
+        reloadPage();
+    };
+
+    const reloadPage = () => {
+        router.reload();
+    };
+
     return (
         <div className="flex flex-row items-start justify-start w-full py-4 gap-x-8">
             <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
@@ -108,12 +121,15 @@ const Profile = ({
                 <div className="flex flex-row items-center gap-x-4">
                     <div className="text-2xl font-semibold">{username}</div>
                     {isOwner && (
-                        <Button
-                            text={'Edit Profile'}
-                            color={COLORS.primary}
-                            isOutlined={true}
-                            onClick={toEditProfile}
-                        />
+                        <div className="flex flex-row gap-2">
+                            <Button
+                                text={'Edit Profile'}
+                                color={COLORS.primary}
+                                isOutlined={true}
+                                onClick={toEditProfile}
+                            />
+                            <Button isOutlined={true} color={COLORS.primary} icon={'logout'} onClick={logout} />
+                        </div>
                     )}
                 </div>
                 <div className="flex flex-row text-sm gap-x-8 text-primary">
