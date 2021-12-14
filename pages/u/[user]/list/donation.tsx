@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DonationCard from '../../../../components/assets/DonationCard';
 import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';
@@ -25,24 +25,31 @@ const Donation: NextPage = () => {
     const [donation, setDonation] = useState<AnyObject | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
+    const briefList = useRef<AnyObject[]>([]);
+    const assetCount = useRef(0);
+    const [isLoadingMore, setLoadingMore] = useState(false);
+
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
+
+        const { donations } = await utils.initAssets();
+        briefList.current = donations;
         let orderAsset = await loadDonations();
         setlistedDonation(orderAsset);
+
         if (orderAsset.length > 0) {
             setListedDonationIsEmpty(false);
         } else {
             setListedDonationIsEmpty(true);
         }
+
         setPersona(pageOwner);
     };
 
     const loadDonations = async () => {
-        // const { listed } = await utils.initAssets('Gitcoin-Donation');
-        // return listed;
-        const { donations } = await utils.initAssets();
-        const detailList = await utils.loadAssets(donations);
+        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
+        assetCount.current += 30;
         return detailList;
     };
 
@@ -78,11 +85,11 @@ const Donation: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedDonation.length && listedDonationIsEmpty === null ? (
-                    <div className="flex w-full justify-center items-center py-10">
+                    <div className="flex items-center justify-center w-full py-10">
                         <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     </div>
                 ) : listedDonationIsEmpty ? (
-                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                    <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona
                             ? persona.profile?.name + "'s Donations list is empty :)"
                             : 'Donations list is empty :)'}
@@ -101,6 +108,33 @@ const Donation: NextPage = () => {
                                 }}
                             />
                         ))}
+                        {assetCount.current < briefList.current.length && (
+                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
+                                {isLoadingMore ? (
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        icon={'loading'}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                    />
+                                ) : (
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        text={'Load more'}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                        onClick={async () => {
+                                            setLoadingMore(true);
+                                            let orderAsset = await loadDonations();
+                                            setlistedDonation([...listedDonation, ...orderAsset]);
+                                            setLoadingMore(false);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        )}
                     </section>
                 )}
             </div>

@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GeneralAssetWithTags, POAPResponse } from '../../../../common/types';
 import FootprintCard from '../../../../components/assets/FootprintCard';
 import Button from '../../../../components/buttons/Button';
@@ -25,22 +25,31 @@ const Footprint: NextPage = () => {
     const [listedFootprintIsEmpty, setListedFootprintEmpty] = useState<boolean | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
+    const briefList = useRef<AnyObject[]>([]);
+    const assetCount = useRef(0);
+    const [isLoadingMore, setLoadingMore] = useState(false);
+
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
+
+        const { footprints } = await utils.initAssets();
+        briefList.current = footprints;
         let orderAsset = await loadFootprints();
         setListedFootprint(orderAsset);
+
         if (orderAsset.length > 0) {
             setListedFootprintEmpty(false);
         } else {
             setListedFootprintEmpty(true);
         }
+
         setPersona(pageOwner);
     };
 
     const loadFootprints = async () => {
-        const { footprints } = await utils.initAssets();
-        const detailList = await utils.loadAssets(footprints);
+        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
+        assetCount.current += 30;
         return detailList;
     };
 
@@ -76,33 +85,62 @@ const Footprint: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedFootprint.length && listedFootprintIsEmpty === null ? (
-                    <div className="flex w-full justify-center items-center py-10">
+                    <div className="flex items-center justify-center w-full py-10">
                         <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     </div>
                 ) : listedFootprintIsEmpty ? (
-                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                    <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona
                             ? persona.profile?.name + "'s Footprints list is empty :)"
                             : 'Footprints list is empty :)'}
                     </div>
                 ) : (
-                    <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
-                        {listedFootprint.map((asset, index) => (
-                            <FootprintCard
-                                key={index}
-                                imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                                startDate={asset.detail.start_date}
-                                endDate={asset.detail.end_date}
-                                city={asset.detail.country}
-                                country={asset.detail.city}
-                                username={persona?.profile?.name || ''}
-                                activity={asset.detail.name || ''}
-                                clickEvent={() => {
-                                    openModal(asset);
-                                }}
-                            />
-                        ))}
-                    </section>
+                    <>
+                        <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                            {listedFootprint.map((asset, index) => (
+                                <FootprintCard
+                                    key={index}
+                                    imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                    startDate={asset.detail.start_date}
+                                    endDate={asset.detail.end_date}
+                                    city={asset.detail.country}
+                                    country={asset.detail.city}
+                                    username={persona?.profile?.name || ''}
+                                    activity={asset.detail.name || ''}
+                                    clickEvent={() => {
+                                        openModal(asset);
+                                    }}
+                                />
+                            ))}
+                            {assetCount.current < briefList.current.length && (
+                                <div className="flex flex-row justify-center w-full py-4 col-span-full">
+                                    {isLoadingMore ? (
+                                        <Button
+                                            isOutlined={false}
+                                            color={COLORS.primary}
+                                            icon={'loading'}
+                                            width={'w-32'}
+                                            height={'h-8'}
+                                        />
+                                    ) : (
+                                        <Button
+                                            isOutlined={false}
+                                            color={COLORS.primary}
+                                            text={'Load more'}
+                                            width={'w-32'}
+                                            height={'h-8'}
+                                            onClick={async () => {
+                                                setLoadingMore(true);
+                                                let orderAsset = await loadFootprints();
+                                                setListedFootprint([...listedFootprint, ...orderAsset]);
+                                                setLoadingMore(false);
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    </>
                 )}
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">

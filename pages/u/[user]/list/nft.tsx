@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NFTBadges from '../../../../components/assets/NFTBadges';
 import NFTItem from '../../../../components/assets/NFTItem';
 import Button from '../../../../components/buttons/Button';
@@ -24,24 +24,32 @@ const Nft: NextPage = () => {
     const [listedNFTIsEmpty, setListedNFTIsEmpty] = useState<boolean | null>(null);
     const [persona, setPersona] = useState<RSS3DetailPersona>();
 
+    const briefList = useRef<AnyObject[]>([]);
+    const assetCount = useRef(0);
+    const [isLoadingMore, setLoadingMore] = useState(false);
+
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
+
+        const { nfts } = await utils.initAssets();
+        briefList.current = nfts;
         let orderAsset = await loadNFTs();
         setlistedNFT(orderAsset);
+
         if (orderAsset.length > 0) {
             setListedNFTIsEmpty(false);
         } else {
             setListedNFTIsEmpty(true);
         }
+
         setPersona(pageOwner);
     };
 
     const loadNFTs = async () => {
-        // const { listed } = await utils.initAssets('NFT');
-        // return listed;
-        const { nfts } = await utils.initAssets();
-        return await utils.loadAssets(nfts);
+        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
+        assetCount.current += 30;
+        return detailList;
     };
 
     useEffect(() => {
@@ -76,11 +84,11 @@ const Nft: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedNFT.length && listedNFTIsEmpty === null ? (
-                    <div className="flex w-full justify-center items-center py-10">
+                    <div className="flex items-center justify-center w-full py-10">
                         <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     </div>
                 ) : listedNFTIsEmpty ? (
-                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                    <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona ? persona.profile?.name + "'s NFTs list is empty :)" : 'NFTs list is empty :)'}
                     </div>
                 ) : (
@@ -106,6 +114,33 @@ const Nft: NextPage = () => {
                                 />
                             </div>
                         ))}
+                        {assetCount.current < briefList.current.length && (
+                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
+                                {isLoadingMore ? (
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        icon={'loading'}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                    />
+                                ) : (
+                                    <Button
+                                        isOutlined={false}
+                                        color={COLORS.primary}
+                                        text={'Load more'}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                        onClick={async () => {
+                                            setLoadingMore(true);
+                                            let orderAsset = await loadNFTs();
+                                            setlistedNFT([...listedNFT, ...orderAsset]);
+                                            setLoadingMore(false);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        )}
                     </section>
                 )}
             </div>
