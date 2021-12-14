@@ -42,7 +42,8 @@ const config = {
     },
     recommendations: {
         endpoint: 'https://node-beta.rss3.dev',
-        limit: 5,
+        groupLimit: 5,
+        userLimit: 10,
     },
 };
 

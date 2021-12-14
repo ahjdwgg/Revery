@@ -318,6 +318,7 @@ async function getRecommendGroupMembers(type: string) {
                 baseURL: config.recommendations.endpoint,
                 params: {
                     type,
+                    limit: config.recommendations.userLimit,
                 },
             })
         ).data;

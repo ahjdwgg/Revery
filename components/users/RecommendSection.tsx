@@ -49,7 +49,7 @@ const RecommendSection = ({
                     </div>
                     <div className="mt-2.5 pt-5">
                         {isLoadingMembers
-                            ? [...Array(config.recommendations.limit)].map((_, id) => <UserCardLoader key={id} />)
+                            ? [...Array(config.recommendations.userLimit)].map((_, id) => <UserCardLoader key={id} />)
                             : members.map((user) => (
                                   <UserCard
                                       key={user.ethAddress}
@@ -65,7 +65,7 @@ const RecommendSection = ({
                 </div>
                 <div className="flex flex-col gap-5">
                     {isLoadingGroups
-                        ? [...Array(config.recommendations.limit)].map((_, id) => <GroupItemLoader key={id} />)
+                        ? [...Array(config.recommendations.groupLimit)].map((_, id) => <GroupItemLoader key={id} />)
                         : groups.map((group, i) => (
                               <GroupItem
                                   key={i}
