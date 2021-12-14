@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { RSS3Account } from '../../../../common/rss3Types';
 import AccountCard from '../../../../components/accounts/AccountCard';
 import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';

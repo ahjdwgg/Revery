@@ -6,7 +6,7 @@ import Button from '../buttons/Button';
 import Modal from '../modal/Modal';
 import FollowList from '../users/FollowList';
 import ImageHolder from '../ImageHolder';
-import { UserItemProps } from '../users/UserCard';
+import { UserItems } from '../users/UserCard';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
@@ -52,7 +52,7 @@ const Profile = ({
     const [modalHidden, setModalHidden] = useState(true);
     const [followType, setFollowType] = useState('');
 
-    const [foList, setFoList] = useState<UserItemProps[]>([]);
+    const [foList, setFoList] = useState<UserItems[]>([]);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoading = useRef<boolean>(false);

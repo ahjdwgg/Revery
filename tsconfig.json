@@ -15,6 +15,7 @@
         "jsx": "preserve",
         "incremental": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "node_modules/rss3/types/*"],
+    "files": ["node_modules/rss3/types/rss3.d.ts", "node_modules/rss3/types/extend.d.ts"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
     "exclude": ["node_modules"]
 }

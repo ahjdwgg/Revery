@@ -1,10 +1,10 @@
 import { GeneralAsset, GeneralAssetWithTags } from './types';
 import config from './config';
 import RSS3 from './rss3';
-import { RSS3Account, RSS3Asset } from './rss3Types';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import { formatter } from './address';
+
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
@@ -64,34 +64,6 @@ const setHiddenTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> =>
     return taggeds;
 };
 
-const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) => {
-    return await Promise.all(
-        (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-            const origType = ag.type;
-            if (config.hideUnlistedAssets) {
-                ag.type = 'Invalid'; // Using as a match mark
-            }
-            for (const airf of assetsInRSS3File) {
-                let asset = RSS3Utils.id.parseAsset(airf);
-                if (
-                    asset.platform === ag.platform &&
-                    asset.identity === ag.identity &&
-                    asset.uniqueID === ag.uniqueID &&
-                    asset.type === origType
-                ) {
-                    // Matched
-                    ag.type = origType; // Recover type
-                    // if (asset.tags) {
-                    //     ag.tags = airf.tags;
-                    // }
-                    break;
-                }
-            }
-            return ag;
-        }),
-    );
-};
-
 interface AssetsList {
     listed: GeneralAssetWithTags[];
     unlisted: GeneralAssetWithTags[];
@@ -141,15 +113,13 @@ async function loadAssets(parsedAssets: AnyObject[]) {
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
-    const assetDetails =
-        assetIDList.length !== 0
-            ? (await pageOwner.assets?.getDetails({
-                  persona: pageOwner.address,
-                  assets: assetIDList,
-                  full: true,
-              })) || []
-            : [];
-    return assetDetails;
+    return assetIDList.length !== 0
+        ? (await pageOwner.assets?.getDetails({
+              persona: pageOwner.address,
+              assets: assetIDList,
+              full: true,
+          })) || []
+        : [];
 }
 
 async function getOrderedAssets() {}
@@ -200,16 +170,12 @@ async function initAccounts() {
 
 function isAsset(field: string | undefined): boolean {
     const condition = ['NFT', 'POAP', 'Gitcoin'];
-    if (field && condition.find((item) => field.includes(item))) {
-        return true;
-    }
-    return false;
+    return !!(field && condition.find((item) => field.includes(item)));
 }
 
 async function initContent(timestamp: string = '', following: boolean = false) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
-    let haveMore = true;
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
@@ -218,21 +184,24 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             ? await pageOwner.items?.getListByPersona({
                   persona: pageOwner.address,
                   linkID: 'following',
-                  limit: 35,
+                  limit: config.contents.limit,
                   tsp: timestamp,
               })
             : await pageOwner.items?.getListByPersona({
                   persona: pageOwner.address,
-                  limit: 35,
+                  limit: config.contents.limit,
                   tsp: timestamp,
               })) || [];
 
-    haveMore = items.length === 35;
+    const haveMore = items.length === config.contents.limit;
 
     profileSet.add(pageOwner.address);
     items.forEach((item) => {
-        if (isAsset(item.target?.field)) {
-            assetSet.add(item.target?.field.substring(7, item.target.field.length));
+        if ('target' in item) {
+            // Is auto item
+            if (isAsset(item.target.field)) {
+                assetSet.add(item.target.field.substring(7, item.target.field.length));
+            }
         }
         profileSet.add(item.id.split('-')[0]);
     });
@@ -258,44 +227,47 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             username: profile?.name || formatter(profile?.persona),
         };
 
-        if (isAsset(item.target?.field)) {
-            const asset = details.find(
-                (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
-            );
+        if ('target' in item) {
+            // Is auto item
+            if (isAsset(item.target.field)) {
+                const asset = details.find(
+                    (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
+                );
 
-            if (asset) {
-                let details;
-                if (item.target?.field.includes('Gitcoin')) {
-                    // handle Gitcoin record
-                    details = {
-                        name: asset.detail.grant.title,
-                        description: asset.detail.grant.description,
-                        image_url: asset.detail.grant.logo,
-                        reference_url: asset.detail.grant.id
-                            ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
-                            : 'https://gitcoin.co',
-                    };
-                } else {
-                    // handle NFT and POAP
-                    details = {
-                        name: asset.detail.name,
-                        description: asset.detail.description,
-                        image_url:
-                            asset.detail.image_preview_url ||
-                            asset.detail.image_url ||
-                            asset.detail.image_thumbnail_url ||
-                            asset.detail.animation_url ||
-                            asset.detail.animation_original_url,
-                        reference_url: asset.detail.event_url,
-                    };
+                if (asset) {
+                    let details;
+                    if (item.target.field.includes('Gitcoin')) {
+                        // handle Gitcoin record
+                        details = {
+                            name: asset.detail.grant.title,
+                            description: asset.detail.grant.description,
+                            image_url: asset.detail.grant.logo,
+                            reference_url: asset.detail.grant.id
+                                ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
+                                : 'https://gitcoin.co',
+                        };
+                    } else {
+                        // handle NFT and POAP
+                        details = {
+                            name: asset.detail.name,
+                            description: asset.detail.description,
+                            image_url:
+                                asset.detail.image_preview_url ||
+                                asset.detail.image_url ||
+                                asset.detail.image_thumbnail_url ||
+                                asset.detail.animation_url ||
+                                asset.detail.animation_original_url,
+                            reference_url: asset.detail.event_url,
+                        };
+                    }
+                    listed.push({
+                        ...temp,
+                        details: details,
+                    });
                 }
-                listed.push({
-                    ...temp,
-                    details: details,
-                });
+            } else {
+                listed.push({ ...temp });
             }
-        } else {
-            listed.push({ ...temp });
         }
     });
 
@@ -330,7 +302,6 @@ const utils = {
     sortByOrderTag,
     setOrderTag,
     setHiddenTag,
-    mergeAssetsTags,
     initAssets,
     loadAssets,
     initAccounts,

@@ -2,12 +2,15 @@ import React from 'react';
 import ImageHolder from '../ImageHolder';
 import LinkButton from '../buttons/LinkButton';
 
-export interface UserItemProps {
+export interface UserItems {
     username: string;
     avatarUrl: string;
     bio: string;
     ethAddress: string;
     rns: string;
+}
+
+interface UserItemProps extends UserItems {
     toUserPage?: (addrOrName: string) => void;
 }
 
@@ -32,7 +35,7 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
             </section>
             <section className="animate-fade-in flex flex-col flex-grow">
                 <div className="flex flex-row items-center gap-1.5">
-                    <span className="font-semibold text-sm">{username}</span>
+                    <span className="flex-1 w-0 truncate max-w-max font-semibold text-sm">{username}</span>
                     <LinkButton key={address} text={address} />
                 </div>
                 <div className="flex flex-row">

@@ -16,8 +16,10 @@ import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../components/content/ItemCard';
 import SingleAccount from '../components/details/SingleAccount';
 import { COLORS } from '../components/buttons/variables';
-import RecommendSection from '../components/users/RecommendSection';
+import RecommendSection, { GroupInfo } from '../components/users/RecommendSection';
 import ContentItemLoader from '../components/loaders/ContentItemLoader';
+import { UserItems } from '../components/users/UserCard';
+import config from '../common/config';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -40,18 +42,10 @@ const Home: NextPage = () => {
         type: 'primary',
     });
 
-    const recommendGroups = [...Array(3)].map((_, gid) => ({
-        name: 'RSS3',
-        intro: 'Want to keep updated on RSS3 news? Follow any of the crew members!',
-        avatarUrl: `https://http.cat/10${gid}`,
-        users: [...Array(5)].map((_, uid) => ({
-            username: `anniiii@${gid}-${uid}`,
-            avatarUrl: `https://http.cat/${gid + 2}0${uid}`,
-            bio: "CXO @ RSS3, Cat's name's Fendi" + content,
-            ethAddress: `0x${gid}${uid}`,
-            rns: 'anniiii',
-        })),
-    }));
+    const [isLoadingRecommendGroups, setIsLoadingRecommendGroups] = useState(true);
+    const [isLoadingRecommendGroupMembers, setIsLoadingRecommendGroupMembers] = useState(true);
+    const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
+    const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -59,12 +53,6 @@ const Home: NextPage = () => {
             setLoggedIn(true);
         }
         const pageOwner = await RSS3.setPageOwner(LoginUser.address);
-        setTimeout(async () => {
-            const { listed, haveMore } = await utils.initContent('', true);
-            setContent(listed);
-            setHaveMoreContent(haveMore);
-            setContentLoading(false);
-        }, 0);
 
         const profile = pageOwner.profile;
         // console.log(pageOwner.assets);
@@ -74,6 +62,15 @@ const Home: NextPage = () => {
             setAddress(pageOwner?.address || '');
             setWebsite(fieldsMatch?.['SITE'] || '');
         }
+
+        setTimeout(async () => {
+            const { listed, haveMore } = await utils.initContent('', true);
+            setContent(listed);
+            setHaveMoreContent(haveMore);
+            setContentLoading(false);
+        }, 0);
+
+        setTimeout(initRecommendationGrops, 0);
     };
 
     const toUserPage = async (addr: string) => {
@@ -152,6 +149,37 @@ const Home: NextPage = () => {
             hidden: true,
             type: 'primary',
         });
+    };
+
+    const initRecommendationGrops = async () => {
+        setIsLoadingRecommendGroups(true);
+        const recommendGroups = await RSS3.getRecommendGroups();
+        if (recommendGroups.length) {
+            setRecommendGroups(recommendGroups);
+            await getRecommendationGroups(recommendGroups[0].key);
+        } // else false
+        setIsLoadingRecommendGroups(false);
+    };
+
+    const getRecommendationGroups = async (type: string) => {
+        setIsLoadingRecommendGroupMembers(true);
+        const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
+        if (recommendGroupMemberIndexes.length) {
+            const recommendGroupMembers = await Promise.all(
+                recommendGroupMemberIndexes.map(async (memberIndex) => {
+                    const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
+                    return {
+                        username: memberIndex.profile?.name || '',
+                        avatarUrl: memberIndex.profile?.avatar?.[0] || config.undefinedImageAlt,
+                        bio: extracted,
+                        ethAddress: memberIndex.id,
+                        rns: await RNS.addr2Name(memberIndex.id),
+                    };
+                }),
+            );
+            setRecommendGroupMembers(recommendGroupMembers);
+        }
+        setIsLoadingRecommendGroupMembers(false);
     };
 
     return (
@@ -235,7 +263,14 @@ const Home: NextPage = () => {
                         </>
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11">
-                        <RecommendSection groups={recommendGroups} toUserPage={toUserPage} />
+                        <RecommendSection
+                            groups={recommendGroups}
+                            members={recommendGroupMembers}
+                            toGroup={getRecommendationGroups}
+                            toUserPage={toUserPage}
+                            isLoadingGroups={isLoadingRecommendGroups}
+                            isLoadingMembers={isLoadingRecommendGroupMembers}
+                        />
                     </section>
                 </div>
             ) : (
