@@ -12,7 +12,6 @@ import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
-import buffer from '../../../../common/buffer';
 import { AnyObject } from 'rss3/types/extend';
 
 const Nft: NextPage = () => {
@@ -61,9 +60,7 @@ const Nft: NextPage = () => {
     const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(asset.id)) {
-            setNFT(asset.detail);
-        }
+        setNFT(asset.detail);
     };
 
     const closeModal = () => {

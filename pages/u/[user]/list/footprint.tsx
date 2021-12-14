@@ -13,7 +13,6 @@ import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
-import buffer from '../../../../common/buffer';
 import { AnyObject } from 'rss3/types/extend';
 
 const Footprint: NextPage = () => {
@@ -62,10 +61,7 @@ const Footprint: NextPage = () => {
     const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(asset.id)) {
-            setFootprint(undefined);
-            setFootprint(asset.detail);
-        }
+        setFootprint(asset.detail);
     };
 
     const closeModal = () => {

@@ -13,7 +13,6 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
-import buffer from '../../../../common/buffer';
 import { AnyObject } from 'rss3/types/extend';
 
 const Donation: NextPage = () => {
@@ -62,10 +61,7 @@ const Donation: NextPage = () => {
     const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
         setModalHidden(false);
-        if (!buffer.checkBuffer(asset.id)) {
-            // setDonation(undefined);
-            setDonation(asset.detail);
-        }
+        setDonation(asset.detail);
     };
 
     const closeModal = () => {
