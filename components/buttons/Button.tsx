@@ -80,7 +80,7 @@ const Button = ({
         fontSize ? 'px-6' : 'px-3'
     } ${width} border ${borderStyle} border-opacity-70 hover:border-opacity-40 rounded`;
 
-    const disabledClassName = `${bgDefaultStyle} ${textStyle} text-opacity-40 ${
+    const disabledClassName = `${bgDefaultStyle} ${textStyle} text-opacity-30 ${
         fontSize ? fontSize : 'text-xs'
     } font-medium py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} rounded bg-opacity-5 cursor-not-allowed`;
 
