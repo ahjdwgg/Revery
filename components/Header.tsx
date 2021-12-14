@@ -109,7 +109,7 @@ function Header() {
             <header className={`fixed w-full z-30 transition duration-300 ease-in-out ${!top && 'bg-white shadow'}`}>
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
-                        <nav className="hidden w-full md:flex md:flex-grow">
+                        <nav className="w-full flex items-center justify-between">
                             <div className="cursor-pointer" onClick={() => router.push(`/`)}>
                                 <Logo />
                             </div>

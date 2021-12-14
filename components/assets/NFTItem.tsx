@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import config from '../../common/config';
-
 interface NFTItemProps {
     size: number;
     previewUrl?: string | null;
@@ -82,7 +81,10 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                     style={containerStyles}
                     src={mainUrl}
                     alt="NFT Image"
-                    onError={() => setMainUrl(config.undefinedImageAlt)}
+                    onError={() => {
+                        setMainUrl(config.undefinedImageAlt);
+                        console.log(mainUrl);
+                    }}
                 />
             )}
         </div>
