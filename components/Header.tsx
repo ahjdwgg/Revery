@@ -81,8 +81,8 @@ function Header() {
     };
 
     const toProfilePage = () => {
-        const { name } = RSS3.getLoginUser();
-        router.push(`/u/${name}`);
+        const { name, address } = RSS3.getLoginUser();
+        router.push(`/u/${name || address}`);
     };
 
     const reloadPage = () => {
