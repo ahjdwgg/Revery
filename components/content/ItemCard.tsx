@@ -4,7 +4,7 @@ import Twitter from '../icons/Twitter';
 import Mirror from '../icons/Mirror';
 import Misskey from '../icons/Misskey';
 import { timeDifferent } from '../../common/timeStamp';
-import { Markdown } from 'react-marked-renderer';
+import Markdown from '../Markdown';
 import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
 import NFTCard from '../assets/NFTCard';
