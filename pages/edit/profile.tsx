@@ -126,6 +126,8 @@ const Profile: NextPage = () => {
             try {
                 await loginUser.profile.patch(profile);
                 await loginUser.files.sync();
+                await RSS3.reloadLoginUser();
+                await RSS3.reloadPageOwner();
                 setIsEdited(false);
                 setIsProfileSaved(true);
             } catch (e) {

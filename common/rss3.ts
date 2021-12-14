@@ -367,6 +367,11 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
+    reloadLoginUser: async () => {
+        await initUser(RSS3LoginUser);
+        dispatchEvent(Events.loginUserReady, RSS3LoginUser);
+        return RSS3LoginUser;
+    },
     setPageOwner: async (addrOrName: string) => {
         let isReloadRequired = false;
         if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
@@ -389,6 +394,11 @@ export default {
         return RSS3PageOwner;
     },
     getPageOwner: () => {
+        return RSS3PageOwner;
+    },
+    reloadPageOwner: async () => {
+        await initUser(RSS3PageOwner);
+        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
     isNowOwner: () => {
