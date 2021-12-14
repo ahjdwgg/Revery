@@ -174,17 +174,8 @@ const ProfilePage: NextPage = () => {
         const aon = (router.query.user as string) || '';
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
-        setTimeout(async () => {
-            const { listed, haveMore } = await utils.initContent();
-            setContent(listed);
-            setHaveMoreContent(haveMore);
-            setContentLoading(false);
-        }, 0);
 
         const profile = pageOwner.profile;
-        if (!checkOwner()) {
-            checkIsFollowing();
-        }
         // console.log(pageOwner.assets);
         if (profile) {
             // Profile
@@ -198,6 +189,7 @@ const ProfilePage: NextPage = () => {
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
             setProfileLoading(false);
+            checkOwner();
             checkIsFollowing();
             // Accounts
             const { listed } = await utils.initAccounts();
@@ -223,6 +215,12 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 setFootprintItems(await loadAssetDetails(allAssets.footprints, 6));
                 setFootprintLoading(false);
+            }, 0);
+            setTimeout(async () => {
+                const { listed, haveMore } = await utils.initContent();
+                setContent(listed);
+                setHaveMoreContent(haveMore);
+                setContentLoading(false);
             }, 0);
         }
     };
