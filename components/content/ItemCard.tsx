@@ -54,9 +54,8 @@ function categorize(field: string) {
     } else if (field.includes('Mirror.XYZ')) {
         return (
             <>
-                <span></span>
+                <span>posted on</span>
                 <div className="flex items-center justify-center w-4 h-4 rounded-full">
-                    {'posted on '}
                     <Mirror />
                 </div>
             </>
