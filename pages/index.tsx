@@ -30,6 +30,7 @@ const Home: NextPage = () => {
     const [address, setAddress] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
 
+    const [isLoggedIn, setLoggedIn] = useState(false);
     const [content, setContent] = useState<any[]>([]);
     const [isContentLoading, setContentLoading] = useState(true);
     const [haveMoreContent, setHaveMoreContent] = useState(true);
@@ -54,7 +55,10 @@ const Home: NextPage = () => {
     }));
 
     const init = async () => {
-        const LoginUser = await RSS3.getLoginUser();
+        const LoginUser = RSS3.getLoginUser();
+        if (LoginUser.persona || (await RSS3.reconnect())) {
+            setLoggedIn(true);
+        }
         const pageOwner = await RSS3.setPageOwner(LoginUser.address);
         setTimeout(async () => {
             const { listed, haveMore } = await utils.initContent('', true);
@@ -154,84 +158,91 @@ const Home: NextPage = () => {
     return (
         <>
             <Header />
-            <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
-                <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
-                    <>
-                        {isContentLoading ? (
-                            <div className="flex flex-row items-center justify-center w-full h-32">
-                                <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
-                            </div>
-                        ) : content.length ? (
-                            <section className="flex flex-col items-center justify-start gap-y-2.5">
-                                {content.map((item, index) => {
-                                    if (item.id.includes('auto')) {
-                                        return (
-                                            <ItemCard
-                                                key={index}
-                                                avatarUrl={item.avatar}
-                                                username={item.username}
-                                                content={item.summary || null}
-                                                asset={item.details}
-                                                timeStamp={new Date(item.date_updated).valueOf()}
-                                                target={item.target}
-                                                toUserProfile={async () =>
-                                                    await router.push(
-                                                        `/u/${await RNS.tryName(item.target.field.split('-')[2])}`,
-                                                    )
-                                                }
-                                                showAssetDetail={() => fetchAssetDetail(item.target.field)}
-                                            />
-                                        );
-                                    } else {
-                                        return (
-                                            <ContentCard
-                                                key={index}
-                                                avatarUrl={item.avatar}
-                                                username={item.username}
-                                                title={item.title}
-                                                content={item.summary}
-                                                timeStamp={new Date(item.date_updated).valueOf()}
-                                            />
-                                        );
-                                    }
-                                })}
-                                {haveMoreContent ? (
-                                    <div className="flex flex-row justify-center w-full py-8">
-                                        {isLoadingMore ? (
-                                            <Button
-                                                isOutlined={false}
-                                                color={COLORS.primary}
-                                                icon={'loading'}
-                                                width={'w-32'}
-                                                height={'h-8'}
-                                            />
-                                        ) : (
-                                            <Button
-                                                isOutlined={false}
-                                                color={COLORS.primary}
-                                                text={'Load more'}
-                                                width={'w-32'}
-                                                height={'h-8'}
-                                                onClick={loadMoreContent}
-                                            />
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
-                                )}
-                            </section>
-                        ) : (
-                            <div className="flex flex-col gap-2 w-full py-32 text-sm text-center">
-                                <p>{'Oops, nothing found from your followings:P'}</p>
-                                <p>{'Check out some new friends from recommendations for you!'}</p>
-                            </div>
-                        )}
-                    </>
-                </section>
-                <section className="flex flex-col gap-4 pb-16 w-4/11">
-                    <RecommendSection groups={recommendGroups} toUserPage={toUserPage} />
-                </section>
-            </div>
+            {isLoggedIn ? (
+                <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
+                    <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
+                        <>
+                            {isContentLoading ? (
+                                <div className="flex flex-row items-center justify-center w-full h-32">
+                                    <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
+                                </div>
+                            ) : content.length ? (
+                                <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                    {content.map((item, index) => {
+                                        if (item.id.includes('auto')) {
+                                            return (
+                                                <ItemCard
+                                                    key={index}
+                                                    avatarUrl={item.avatar}
+                                                    username={item.username}
+                                                    content={item.summary || null}
+                                                    asset={item.details}
+                                                    timeStamp={new Date(item.date_updated).valueOf()}
+                                                    target={item.target}
+                                                    toUserProfile={async () =>
+                                                        await router.push(
+                                                            `/u/${await RNS.tryName(item.target.field.split('-')[2])}`,
+                                                        )
+                                                    }
+                                                    showAssetDetail={() => fetchAssetDetail(item.target.field)}
+                                                />
+                                            );
+                                        } else {
+                                            return (
+                                                <ContentCard
+                                                    key={index}
+                                                    avatarUrl={item.avatar}
+                                                    username={item.username}
+                                                    title={item.title}
+                                                    content={item.summary}
+                                                    timeStamp={new Date(item.date_updated).valueOf()}
+                                                />
+                                            );
+                                        }
+                                    })}
+                                    {haveMoreContent ? (
+                                        <div className="flex flex-row justify-center w-full py-8">
+                                            {isLoadingMore ? (
+                                                <Button
+                                                    isOutlined={false}
+                                                    color={COLORS.primary}
+                                                    icon={'loading'}
+                                                    width={'w-32'}
+                                                    height={'h-8'}
+                                                />
+                                            ) : (
+                                                <Button
+                                                    isOutlined={false}
+                                                    color={COLORS.primary}
+                                                    text={'Load more'}
+                                                    width={'w-32'}
+                                                    height={'h-8'}
+                                                    onClick={loadMoreContent}
+                                                />
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                    )}
+                                </section>
+                            ) : (
+                                <div className="flex flex-col gap-2 w-full py-32 text-sm text-center">
+                                    <p>{'Oops, nothing found from your followings:P'}</p>
+                                    <p>{'Check out some new friends from recommendations for you!'}</p>
+                                </div>
+                            )}
+                        </>
+                    </section>
+                    <section className="flex flex-col gap-4 pb-16 w-4/11">
+                        <RecommendSection groups={recommendGroups} toUserPage={toUserPage} />
+                    </section>
+                </div>
+            ) : (
+                <div className="flex flex-col justify-start max-w-6xl px-2 pt-80 mx-auto gap-y-8 h-full">
+                    <p className="font-semibold text-4xl">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
+                    <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
+                </div>
+            )}
             <Modal
                 hidden={modal.hidden}
                 closeEvent={closeModal}
