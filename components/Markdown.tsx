@@ -6,7 +6,9 @@ interface MarkdownProps {
 }
 
 const Markdown = ({ markdown }: MarkdownProps) => {
-    return <div className="markdown-body" dangerouslySetInnerHTML={{ __html: marked.parse(markdown) }} />;
+    return (
+        <div className="markdown-body" dangerouslySetInnerHTML={{ __html: marked.parse(markdown, { breaks: true }) }} />
+    );
 };
 
 export default Markdown;
