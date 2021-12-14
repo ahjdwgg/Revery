@@ -171,6 +171,14 @@ const Profile: NextPage = () => {
         window.open(`${otherProductRedirectSettings.baseUrl}${otherProductRedirectSettings.route}`, '_blank');
     };
 
+    const toRss3BioUserSite = () => {
+        if (link) {
+            const prefix = link.endsWith('.rss3') ? link.split('.rss3')[0] : link;
+            const url = RSS3.buildProductBaseURL('RSS3Bio', '', prefix);
+            window.open(url, '_blank');
+        }
+    };
+
     const back = () => {
         router.back();
     };
@@ -237,14 +245,7 @@ const Profile: NextPage = () => {
                                 isOutlined={true}
                             />
                             <div className={`${!link && 'hidden'}`}>
-                                {link && (
-                                    <LinkButton
-                                        text={link}
-                                        onClick={handleLinkOnClick}
-                                        color={COLORS.primary}
-                                        link={true}
-                                    />
-                                )}
+                                {link && <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />}
                             </div>
                         </div>
                     </div>

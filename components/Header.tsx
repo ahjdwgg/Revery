@@ -122,6 +122,7 @@ function Header() {
                                             text={'Create Now'}
                                             width={'w-32'}
                                             height={'h-8'}
+                                            isDisabled={true}
                                         />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
                                             <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
