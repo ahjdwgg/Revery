@@ -112,7 +112,6 @@ const Home: NextPage = () => {
         const pageOwner = await RSS3.getPageOwner();
 
         const asset = await pageOwner.assets?.getDetails({
-            persona: pageOwner.address,
             assets: [field.replace('assets-', '')],
             full: true,
         });

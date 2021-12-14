@@ -115,7 +115,6 @@ async function loadAssets(parsedAssets: AnyObject[]) {
     );
     return assetIDList.length !== 0
         ? (await pageOwner.assets?.getDetails({
-              persona: pageOwner.address,
               assets: assetIDList,
               full: true,
           })) || []
@@ -209,7 +208,6 @@ async function initContent(timestamp: string = '', following: boolean = false) {
     const details =
         assetSet.size !== 0
             ? (await pageOwner.assets?.getDetails({
-                  persona: pageOwner.address,
                   assets: Array.from(assetSet),
                   full: true,
               })) || []
