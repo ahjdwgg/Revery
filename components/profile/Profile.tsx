@@ -98,6 +98,15 @@ const Profile = ({
         }, 0);
     };
 
+    const fixRNS = (rns: string) => {
+        if (!rns.includes('.')) {
+            if (!rns.endsWith(config.rns.suffix)) {
+                return rns + config.rns.suffix;
+            }
+        }
+        return rns;
+    };
+
     const openFollowings = () => {
         setFollowType('Followings');
         loadFoList(followings);
@@ -154,7 +163,7 @@ const Profile = ({
                     </span>
                 </div>
                 <div className={`flex flex-row gap-x-2 ${!(rns || link) && 'hidden'}`}>
-                    {rns && <LinkButton text={rns + '.rss3'} color={COLORS.primary} onClick={toRss3BioUserSite} />}
+                    {rns && <LinkButton text={fixRNS(rns)} color={COLORS.primary} onClick={toRss3BioUserSite} />}
                     {link && <LinkButton text={link} color={COLORS.primary} onClick={toExternalUserSite} link={true} />}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>

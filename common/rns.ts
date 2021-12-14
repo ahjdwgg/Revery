@@ -18,7 +18,7 @@ const searchInCache = (aon: string, type: 'address' | 'name') => {
         if (aon.endsWith('.eth')) {
             index = cache.findIndex((record) => record.ensName === aon);
         } else {
-            index = cache.findIndex((record) => record.rnsName === aon + config.rns.suffix);
+            index = cache.findIndex((record) => record.rnsName === aon);
         }
     }
     if (index !== -1) {
@@ -43,9 +43,9 @@ export default {
             cache.push(domainInfo);
         }
         if (isPureRNS) {
-            return domainInfo.rnsName.replace(config.rns.suffix, '') || '';
+            return domainInfo.rnsName || '';
         } else {
-            return domainInfo.rnsName?.replace(config.rns.suffix, '') || domainInfo.ensName || '';
+            return domainInfo.rnsName || domainInfo.ensName || '';
         }
     },
     async name2Addr(name: string) {
