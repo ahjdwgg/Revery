@@ -198,7 +198,7 @@ const ProfilePage: NextPage = () => {
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
             setProfileLoading(false);
-
+            checkIsFollowing();
             // Accounts
             const { listed } = await utils.initAccounts();
             setAccountItems(

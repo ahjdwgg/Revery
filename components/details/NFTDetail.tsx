@@ -2,9 +2,7 @@ import React from 'react';
 import MarketTag from '../tags/MarketTag';
 import ScanTag from '../tags/ScanTag';
 import Trait from './Trait';
-import { NFT } from '../../common/types';
-import style from '../../styles/content.module.css';
-import { Markdown } from 'react-marked-renderer';
+import Markdown from '../Markdown';
 import { AnyObject } from 'rss3/types/extend';
 
 interface NFTDetailProps {

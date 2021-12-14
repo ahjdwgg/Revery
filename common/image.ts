@@ -1,20 +1,29 @@
 export function imgRegSrc(oldStr: string): { newStr: string; srcArr: string[] } {
-    let imgReg = /<img.*?(?:>|\/>)/gi;
-    let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
-    let imgArr = oldStr.match(imgReg) || [];
-    let srcArr: string[] = [];
+    const imgReg = /<img.*?(?:>|\/>)/gi;
+    const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
+    const imgArr = oldStr.match(imgReg) || [];
+    const srcArr: string[] = [];
+    let newStr = oldStr.replaceAll('">,<img', '"><img');
     imgArr.forEach((item) => {
-        let tem = srcReg.exec(item);
-        if (tem) {
-            srcArr.push(tem[1]);
+        if (!item.includes('class="emoji"')) {
+            // Only for non-emoji images
+            // TODO: SPLIT ATTACHMENT FILES!!!
+            let tem = srcReg.exec(item);
+            if (tem) {
+                srcArr.push(tem[1]);
+            }
+            newStr = newStr.replace(item, '');
+        } else {
+            newStr = newStr.replace(
+                item,
+                item.replace('class="emoji"', 'style="display:inline;width:1.6em; height:1.6em;"'),
+            );
         }
     });
 
-    oldStr = oldStr.replaceAll('">,<img', '"><img');
-
     return {
-        newStr: oldStr.replaceAll(imgReg, ''),
-        srcArr: srcArr,
+        newStr,
+        srcArr,
     };
 }
 

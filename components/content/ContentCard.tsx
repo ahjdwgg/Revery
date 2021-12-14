@@ -50,7 +50,7 @@ const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, t
             </div>
             {title && <div className="mt-2 text-base font-semibold">{title}</div>}
             {content && <div className="mt-1 text-base leading-5 whitespace-pre-line select-none">{content}</div>}
-            {images && images?.length > 0 && <EmblaCarousel slides={images} />}
+            {images?.length && <EmblaCarousel slides={images} />}
         </div>
     );
 };
