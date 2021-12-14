@@ -498,7 +498,7 @@ const ProfilePage: NextPage = () => {
                                             <Button
                                                 isOutlined={false}
                                                 color={COLORS.primary}
-                                                icon="circle"
+                                                icon={'loading'}
                                                 width={'w-32'}
                                                 height={'h-8'}
                                             />
