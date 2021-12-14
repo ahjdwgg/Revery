@@ -6,8 +6,6 @@ import Header from '../components/Header';
 import RSS3 from '../common/rss3';
 import RNS from '../common/rns';
 import utils from '../common/utils';
-import { BiLoaderAlt } from 'react-icons/bi';
-
 import Modal, { ModalColorStyle } from '../components/modal/Modal';
 import ModalLoading from '../components/modal/ModalLoading';
 import SingleNFT from '../components/details/SingleNFT';
@@ -19,6 +17,7 @@ import ItemCard from '../components/content/ItemCard';
 import SingleAccount from '../components/details/SingleAccount';
 import { COLORS } from '../components/buttons/variables';
 import RecommendSection from '../components/users/RecommendSection';
+import ContentItemLoader from '../components/loaders/ContentItemLoader';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -163,9 +162,11 @@ const Home: NextPage = () => {
                     <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
                         <>
                             {isContentLoading ? (
-                                <div className="flex flex-row items-center justify-center w-full h-32">
-                                    <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
-                                </div>
+                                <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                    {[...Array(8)].map((_, id) => (
+                                        <ContentItemLoader key={id} />
+                                    ))}
+                                </section>
                             ) : content.length ? (
                                 <section className="flex flex-col items-center justify-start gap-y-2.5">
                                     {content.map((item, index) => {

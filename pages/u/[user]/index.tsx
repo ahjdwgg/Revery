@@ -11,7 +11,6 @@ import ImageHolder from '../../../components/ImageHolder';
 import Profile from '../../../components/profile/Profile';
 import RSS3 from '../../../common/rss3';
 import RNS from '../../../common/rns';
-import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
 import utils from '../../../common/utils';
@@ -465,12 +464,9 @@ const ProfilePage: NextPage = () => {
                     )}
                     <>
                         {isContentLoading ? (
-                            // <div className="flex flex-row items-center justify-center w-full h-32">
-                            //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                            // </div>
                             <section className="flex flex-col items-center justify-start gap-y-2.5">
                                 {[...Array(8)].map((_, id) => (
-                                    <ContentItemLoader />
+                                    <ContentItemLoader key={id} />
                                 ))}
                             </section>
                         ) : content.length ? (
