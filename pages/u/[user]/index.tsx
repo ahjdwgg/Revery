@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { RSS3Account, RSS3ID } from '../../../common/rss3Types';
 import AccountItem from '../../../components/accounts/AccountItem';
 import AssetCard, { AssetCardButtonMode } from '../../../components/assets/AssetCard';
 import FootprintCard from '../../../components/assets/FootprintCard';

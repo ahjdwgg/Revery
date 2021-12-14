@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import UserCard, { UserItemProps } from './UserCard';
+import UserCard, { UserItems } from './UserCard';
 
 interface FollowListProps {
     followType: string;
-    followList: UserItemProps[];
+    followList: UserItems[];
     toUserPage: (addrOrName: string) => void;
 }
 

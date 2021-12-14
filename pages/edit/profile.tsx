@@ -11,7 +11,6 @@ import ImageHolder from '../../components/ImageHolder';
 import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import utils from '../../common/utils';
-import { RSS3Account } from '../../common/rss3Types';
 import Modal, { ModalColorStyle } from '../../components/modal/Modal';
 import { useRouter } from 'next/router';
 import { utils as RSS3Utils } from 'rss3';

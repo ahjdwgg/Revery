@@ -125,3 +125,20 @@ export interface GeneralAsset {
 export interface GeneralAssetWithTags extends GeneralAsset {
     tags?: string[];
 }
+
+export interface RecommendationGroups {
+    key: string;
+    title: string;
+    intro: string;
+    icon: string;
+}
+
+export interface RecommendationGroupsResponse {
+    code: number;
+    data: RecommendationGroups[];
+}
+
+export interface RecommendationUsersResponse {
+    code: number;
+    response: RSS3Index[];
+}

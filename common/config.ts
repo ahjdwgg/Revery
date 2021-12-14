@@ -37,6 +37,13 @@ const config = {
         suffix: '.rss3',
         serviceUrl: 'https://rss3.domains',
     },
+    contents: {
+        limit: 35,
+    },
+    recommendations: {
+        endpoint: 'https://node-beta.rss3.dev',
+        limit: 5,
+    },
 };
 
 export default config;

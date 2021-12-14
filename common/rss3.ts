@@ -2,9 +2,16 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3, { utils as RSS3Utils } from 'rss3';
-import { RSS3Account, RSS3Profile } from './rss3Types';
 import axios from 'axios';
-import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
+import {
+    GitcoinResponse,
+    GeneralAsset,
+    NFTResponse,
+    POAPResponse,
+    RecommendationGroupsResponse,
+    RecommendationGroups,
+    RecommendationUsersResponse,
+} from './types';
 import config from './config';
 import rns from './rns';
 import Events from './events';
@@ -290,6 +297,37 @@ function dispatchEvent(event: string, detail: any) {
     document.dispatchEvent(evt);
 }
 
+async function getRecommendGroups() {
+    try {
+        const res: RecommendationGroupsResponse = (
+            await axios.get('/recommendation/types', {
+                baseURL: config.recommendations.endpoint,
+            })
+        ).data;
+        return res.data;
+    } catch (e) {
+        console.log(e);
+    }
+    return [];
+}
+
+async function getRecommendGroupMembers(type: string) {
+    try {
+        const res: RecommendationUsersResponse = (
+            await axios.get('/recommendation/list', {
+                baseURL: config.recommendations.endpoint,
+                params: {
+                    type,
+                },
+            })
+        ).data;
+        return res.response;
+    } catch (e) {
+        console.log(e);
+    }
+    return [];
+}
+
 export default {
     connect: {
         walletConnect: async () => {
@@ -452,4 +490,7 @@ export default {
         }
         return '';
     },
+
+    getRecommendGroups,
+    getRecommendGroupMembers,
 };
