@@ -321,7 +321,7 @@ async function getRecommendGroupMembers(type: string) {
                 },
             })
         ).data;
-        return res.response;
+        return <RSS3Index[]>res.response.filter((member) => member !== null); // What's wrong with you dude?
     } catch (e) {
         console.log(e);
     }

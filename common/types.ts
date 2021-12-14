@@ -140,5 +140,5 @@ export interface RecommendationGroupsResponse {
 
 export interface RecommendationUsersResponse {
     code: number;
-    response: RSS3Index[];
+    response: (RSS3Index | null)[];
 }

@@ -31,8 +31,10 @@ const RecommendSection = ({
     const [activeGroupId, setActiveGroupId] = useState(0);
 
     const setActiveGroup = (groupId: number) => {
-        toGroup(groups[groupId].key);
-        setActiveGroupId(groupId);
+        if (activeGroupId !== groupId) {
+            toGroup(groups[groupId].key);
+            setActiveGroupId(groupId);
+        }
     };
 
     return (
