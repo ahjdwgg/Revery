@@ -10,6 +10,7 @@ import Header from '../../../components/Header';
 import ImageHolder from '../../../components/ImageHolder';
 import Profile from '../../../components/profile/Profile';
 import RSS3 from '../../../common/rss3';
+import RNS from '../../../common/rns';
 import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../common/config';
 import EVMpAccountItem from '../../../components/accounts/EVMpAccountItem';
@@ -471,7 +472,9 @@ const ProfilePage: NextPage = () => {
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
                                                 toUserProfile={async () =>
-                                                    await router.push(item.target.field.split('-')[2])
+                                                    await router.push(
+                                                        await RNS.tryName(item.target.field.split('-')[2]),
+                                                    )
                                                 }
                                                 showAssetDetail={() => fetchAssetDetail(item.target.field)}
                                             />

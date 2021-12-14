@@ -35,6 +35,7 @@ const config = {
     contentRequestLimit: 5,
     rns: {
         suffix: '.rss3',
+        serviceUrl: 'https://rss3.domains',
     },
 };
 

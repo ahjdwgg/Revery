@@ -1,22 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { RSS3Account, RSS3ID } from '../common/rss3Types';
-import AccountItem from '../components/accounts/AccountItem';
-import AssetCard, { AssetCardButtonMode } from '../components/assets/AssetCard';
-import FootprintCard from '../components/assets/FootprintCard';
 import ContentCard from '../components/content/ContentCard';
 import Header from '../components/Header';
-import ImageHolder from '../components/ImageHolder';
-import Profile from '../components/profile/Profile';
 import RSS3 from '../common/rss3';
-import config from '../common/config';
-import EVMpAccountItem from '../components/accounts/EVMpAccountItem';
+import RNS from '../common/rns';
 import utils from '../common/utils';
-import Events from '../common/events';
 import { BiLoaderAlt } from 'react-icons/bi';
-
-import NFTItem from '../components/assets/NFTItem';
 
 import Modal, { ModalColorStyle } from '../components/modal/Modal';
 import ModalLoading from '../components/modal/ModalLoading';
@@ -24,7 +14,6 @@ import SingleNFT from '../components/details/SingleNFT';
 import SingleDonation from '../components/details/SingleDonation';
 import SingleFootprint from '../components/details/SingleFootprint';
 import Button from '../components/buttons/Button';
-import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../components/content/ItemCard';
 import SingleAccount from '../components/details/SingleAccount';
@@ -186,7 +175,9 @@ const Home: NextPage = () => {
                                                 timeStamp={new Date(item.date_updated).valueOf()}
                                                 target={item.target}
                                                 toUserProfile={async () =>
-                                                    await router.push(`/u/${item.target.field.split('-')[2]}`)
+                                                    await router.push(
+                                                        `/u/${await RNS.tryName(item.target.field.split('-')[2])}`,
+                                                    )
                                                 }
                                                 showAssetDetail={() => fetchAssetDetail(item.target.field)}
                                             />
