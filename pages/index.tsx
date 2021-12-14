@@ -154,7 +154,6 @@ const Home: NextPage = () => {
     const initRecommendationGrops = async () => {
         setIsLoadingRecommendGroups(true);
         const recommendGroups = await RSS3.getRecommendGroups();
-        console.log(recommendGroups);
         if (recommendGroups.length) {
             setRecommendGroups(recommendGroups);
             await getRecommendationGroups(recommendGroups[0].key);
@@ -165,7 +164,6 @@ const Home: NextPage = () => {
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
-        console.log(recommendGroupMemberIndexes);
         if (recommendGroupMemberIndexes.length) {
             const recommendGroupMembers = await Promise.all(
                 recommendGroupMemberIndexes.map(async (memberIndex) => {
