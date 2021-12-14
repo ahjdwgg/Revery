@@ -42,7 +42,7 @@ const FootprintCard = ({
     const location = city || country || 'Metaverse';
 
     return (
-        <div className="flex flex-row justify-start gap-2 p-4 cursor-pointer" onClick={clickEvent}>
+        <div className="flex flex-row justify-start gap-2 cursor-pointer" onClick={clickEvent}>
             <section className="flex flex-row flex-shrink-0 w-max h-max">
                 <ImageHolder imageUrl={imageUrl} isFullRound={true} size={76} />
             </section>

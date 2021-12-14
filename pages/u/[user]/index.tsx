@@ -34,6 +34,10 @@ import { COLORS } from '../../../components/buttons/variables';
 import rss3 from '../../../common/rss3';
 import FollowList from '../../../components/users/FollowList';
 import { joinSignature } from '@ethersproject/bytes';
+import CardItemLoader from '../../../components/loaders/CardItemLoader';
+import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader';
+import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
+import ProfileLoader from '../../../components/loaders/ProfileLoader';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -44,6 +48,8 @@ const ProfilePage: NextPage = () => {
     const router = useRouter();
     const addrOrName = useRef<string>('');
     const [isOwner, setIsOwner] = useState(false);
+
+    const [isProfileLoading, setProfileLoading] = useState(true);
 
     const [link, setLink] = useState<string>('');
     const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
@@ -191,6 +197,7 @@ const ProfilePage: NextPage = () => {
             setLink(pageOwner.name);
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
+            setProfileLoading(false);
 
             // Accounts
             const { listed } = await utils.initAccounts();
@@ -337,6 +344,7 @@ const ProfilePage: NextPage = () => {
 
     useEffect(() => {
         // init();
+        setProfileLoading(true);
         setContentLoading(true);
         setNftLoading(true);
         setDonationLoading(true);
@@ -414,50 +422,59 @@ const ProfilePage: NextPage = () => {
             <Header />
             <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
                 <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
-                    <Profile
-                        avatarUrl={avatarUrl}
-                        username={username}
-                        bio={bio}
-                        followers={followers}
-                        followings={followings}
-                        rns={link}
-                        link={website}
-                        isOwner={isOwner}
-                        isFollowing={isFollowing}
-                        onFollow={onFollow}
-                        toEditProfile={toEditProfile}
-                        toExternalUserSite={toExternalUserSite}
-                        toRss3BioUserSite={toRss3BioUserSite}
-                        toUserPage={toUserPage}
-                    >
-                        {accountItems.map((account, index) => {
-                            let accountInfo = RSS3Utils.id.parseAccount(account.id);
-                            return accountInfo.platform === 'EVM+' ? (
-                                <EVMpAccountItem
-                                    key={index}
-                                    size="sm"
-                                    address={accountInfo.identity}
-                                    onClick={() => {
-                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
-                                    }}
-                                />
-                            ) : (
-                                <AccountItem
-                                    key={index}
-                                    size="sm"
-                                    chain={accountInfo.platform}
-                                    onClick={() => {
-                                        getModalDetail({ detail: { ...accountInfo } }, 'account');
-                                    }}
-                                />
-                            );
-                        })}
-                    </Profile>
+                    {isProfileLoading ? (
+                        <ProfileLoader />
+                    ) : (
+                        <Profile
+                            avatarUrl={avatarUrl}
+                            username={username}
+                            bio={bio}
+                            followers={followers}
+                            followings={followings}
+                            rns={link}
+                            link={website}
+                            isOwner={isOwner}
+                            isFollowing={isFollowing}
+                            onFollow={onFollow}
+                            toEditProfile={toEditProfile}
+                            toExternalUserSite={toExternalUserSite}
+                            toRss3BioUserSite={toRss3BioUserSite}
+                            toUserPage={toUserPage}
+                        >
+                            {accountItems.map((account, index) => {
+                                let accountInfo = RSS3Utils.id.parseAccount(account.id);
+                                return accountInfo.platform === 'EVM+' ? (
+                                    <EVMpAccountItem
+                                        key={index}
+                                        size="sm"
+                                        address={accountInfo.identity}
+                                        onClick={() => {
+                                            getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                        }}
+                                    />
+                                ) : (
+                                    <AccountItem
+                                        key={index}
+                                        size="sm"
+                                        chain={accountInfo.platform}
+                                        onClick={() => {
+                                            getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                        }}
+                                    />
+                                );
+                            })}
+                        </Profile>
+                    )}
                     <>
                         {isContentLoading ? (
-                            <div className="flex flex-row items-center justify-center w-full h-32">
-                                <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                            </div>
+                            // <div className="flex flex-row items-center justify-center w-full h-32">
+                            //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                            // </div>
+                            <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                {[...Array(8)].map((_, id) => (
+                                    <ContentItemLoader />
+                                ))}
+                            </section>
                         ) : content.length ? (
                             <section className="flex flex-col items-center justify-start gap-y-2.5">
                                 {content.map((item, index) => {
@@ -529,9 +546,10 @@ const ProfilePage: NextPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
                             {isNftLoading ? (
-                                <div className="flex flex-row items-center justify-center w-full h-32">
-                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                                </div>
+                                // <div className="flex flex-row items-center justify-center w-full h-32">
+                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                // </div>
+                                <CardItemLoader />
                             ) : (
                                 <div className="grid grid-cols-2 gap-3">
                                     {nftItems.length > 0 ? (
@@ -564,9 +582,10 @@ const ProfilePage: NextPage = () => {
 
                         <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
                             {isDonationLoading ? (
-                                <div className="flex flex-row items-center justify-center w-full h-32">
-                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                                </div>
+                                // <div className="flex flex-row items-center justify-center w-full h-32">
+                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                // </div>
+                                <CardItemLoader />
                             ) : (
                                 <div className="grid grid-cols-2 gap-3">
                                     {donationItems.length > 0 ? (
@@ -592,11 +611,12 @@ const ProfilePage: NextPage = () => {
                     <div>
                         <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
                             {isFootprintLoading ? (
-                                <div className="flex flex-row items-center justify-center w-full h-32">
-                                    <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                                </div>
+                                // <div className="flex flex-row items-center justify-center w-full h-32">
+                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                // </div>
+                                <FootprintItemLoader />
                             ) : (
-                                <div className="flex flex-col w-full">
+                                <div className="flex flex-col w-full gap-4">
                                     {footprintItems.length > 0 ? (
                                         footprintItems.map((asset, i) => (
                                             <FootprintCard
