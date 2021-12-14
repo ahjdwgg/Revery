@@ -14,7 +14,7 @@ import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
-
+import DonationItemLoader from '../../../../components/loaders/DonationItemLoader';
 const Donation: NextPage = () => {
     const router = useRouter();
 
@@ -81,9 +81,14 @@ const Donation: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedDonation.length && listedDonationIsEmpty === null ? (
-                    <div className="flex items-center justify-center w-full py-10">
-                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
-                    </div>
+                    // <div className="flex items-center justify-center w-full py-10">
+                    //     <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
+                    // </div>
+                    <section className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-2">
+                        {[...Array(10)].map((_, id) => (
+                            <DonationItemLoader key={id} />
+                        ))}
+                    </section>
                 ) : listedDonationIsEmpty ? (
                     <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona

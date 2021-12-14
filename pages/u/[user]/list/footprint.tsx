@@ -14,7 +14,7 @@ import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
-
+import FootprintItemLoader from '../../../../components/loaders/FootprintItemLoader';
 const Footprint: NextPage = () => {
     const router = useRouter();
 
@@ -81,14 +81,19 @@ const Footprint: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedFootprint.length && listedFootprintIsEmpty === null ? (
-                    <div className="flex items-center justify-center w-full py-10">
-                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
-                    </div>
+                    // <div className="flex items-center justify-center w-full py-10">
+                    //     <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
+                    // </div>
+                    <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                        {[...Array(10)].map((_, id) => (
+                            <FootprintItemLoader key={id} />
+                        ))}
+                    </section>
                 ) : listedFootprintIsEmpty ? (
                     <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona
-                            ? persona.profile?.name + "'s Footprints list is empty :)"
-                            : 'Footprints list is empty :)'}
+                            ? persona.profile?.name + " hasn't got any footprint :)"
+                            : "You haven't got any footprint :) "}
                     </div>
                 ) : (
                     <>

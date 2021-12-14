@@ -13,6 +13,7 @@ import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
+import NFTItemLoader from '../../../../components/loaders/NFTItemLoader';
 
 const Nft: NextPage = () => {
     const router = useRouter();
@@ -81,9 +82,14 @@ const Nft: NextPage = () => {
                     <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
                 </section>
                 {!listedNFT.length && listedNFTIsEmpty === null ? (
-                    <div className="flex items-center justify-center w-full py-10">
-                        <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
-                    </div>
+                    // <div className="flex items-center justify-center w-full py-10">
+                    //     <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
+                    // </div>
+                    <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
+                        {[...Array(20)].map((_, id) => (
+                            <NFTItemLoader key={id} />
+                        ))}
+                    </section>
                 ) : listedNFTIsEmpty ? (
                     <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona ? persona.profile?.name + "'s NFTs list is empty :)" : 'NFTs list is empty :)'}
