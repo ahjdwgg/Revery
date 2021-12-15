@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import config from './config';
+import { ethers } from 'ethers';
 
 interface RSS3Domains {
     address: string;
@@ -68,10 +69,49 @@ const tryName = async (address: string, isPureRNS?: boolean) => {
     return (await addr2Name(address, isPureRNS)) || address;
 };
 
+// Interact with Ethereum Smart Contract part
+// Metamask required
+
+type CNAME = 'resolver' | 'token';
+
+function isMetamaskEnabled() {
+    return typeof (window as any).ethereum !== 'undefined';
+}
+function getRNSContract(cname: CNAME) {
+    if (config.rns.smartContract.testnet) {
+        return config.rns.smartContract.contractNetworks.ropsten[cname];
+    } else {
+        return config.rns.smartContract.contractNetworks.mainnet[cname];
+    }
+}
+async function callRNSContract<T>(cname: CNAME, method: string, ...args: any): Promise<T> {
+    let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
+    let signer; // TODO
+    provider = new ethers.providers.Web3Provider((window as any).ethereum);
+    signer = provider.getSigner();
+
+    const contract = await new ethers.Contract(
+        getRNSContract(cname),
+        config.rns.smartContract.contract[cname],
+        signer ? signer : provider,
+    );
+    return contract[method](...args);
+}
+
 const RNS = {
     addr2Name,
     name2Addr,
     tryName,
+    isMetamaskEnabled,
+    async registerRNS(name: string) {
+        await (window as any).ethereum?.enable();
+        return callRNSContract<ethers.providers.TransactionResponse>('token', 'register', name);
+    },
+    async balanceOfPASS(addr: string) {
+        await (window as any).ethereum?.enable();
+        const balance = await callRNSContract<ethers.BigNumber>('token', 'balanceOf', addr);
+        return Number(ethers.utils.formatUnits(balance, 18));
+    },
 };
 
 export default RNS;

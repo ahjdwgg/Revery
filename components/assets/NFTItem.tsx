@@ -23,12 +23,13 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
     };
 
     const fixedPreviewUrl = utils.fixURLSchemas(previewUrl || '');
-    const fixedDetailUrl = utils.fixURLSchemas(detailUrl || '');
 
     const [mainUrl, setMainUrl] = useState(
-        isShowingDetails
-            ? fixedDetailUrl || fixedPreviewUrl || config.undefinedImageAlt
-            : fixedPreviewUrl || fixedDetailUrl || config.undefinedImageAlt,
+        utils.fixURLSchemas(
+            isShowingDetails
+                ? detailUrl || previewUrl || config.undefinedImageAlt
+                : previewUrl || detailUrl || config.undefinedImageAlt,
+        ),
     );
     type contentTypes = 'html' | 'model' | 'video' | 'image';
     const getContentType = (url: string): contentTypes => {
