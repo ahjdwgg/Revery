@@ -121,16 +121,19 @@ async function loadAssets(parsedAssets: AnyObject[]) {
         : [];
 }
 
-async function getOrderedAssets() {}
-async function getAssetProfileWaitTillSuccess(address: string, type: string, delay: number = 500) {
-    return new Promise<GeneralAsset[]>(async (resolve, reject) => {
+async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
+    const pageOwner = RSS3.getPageOwner();
+    return new Promise<any[]>(async (resolve, reject) => {
         const tryReq = async () => {
             try {
-                const assetProfileRes = await RSS3.getAssetProfile(address, type);
-                if (assetProfileRes?.status) {
-                    resolve(assetProfileRes?.assets || []);
+                const details = await pageOwner.assets?.getDetails({
+                    assets: Array.from(assetSet),
+                    full: true,
+                });
+                if (details) {
+                    resolve(details);
+                    return true;
                 }
-                return true;
             } catch (e) {
                 reject(e);
             }
@@ -139,7 +142,11 @@ async function getAssetProfileWaitTillSuccess(address: string, type: string, del
 
         if (!(await tryReq())) {
             let iv = setInterval(async () => {
-                if (await tryReq()) {
+                count--;
+                if (count < 0) {
+                    resolve([]);
+                    clearInterval(iv);
+                } else if (await tryReq()) {
                     clearInterval(iv);
                 }
             }, delay);
@@ -205,13 +212,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
         profileSet.add(item.id.split('-')[0]);
     });
 
-    const details =
-        assetSet.size !== 0
-            ? (await pageOwner.assets?.getDetails({
-                  assets: Array.from(assetSet),
-                  full: true,
-              })) || []
-            : [];
+    const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
 
     const profiles =
         profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
