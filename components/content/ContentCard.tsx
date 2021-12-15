@@ -1,5 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
+
 import React from 'react';
-import Image from 'next/image';
 import EmblaCarousel from './EmblaCarousel';
 import Arweave from '../icons/Arweave';
 import Twitter from '../icons/Twitter';
@@ -39,7 +40,7 @@ const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, t
     return (
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-3">
-                <Image src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
+                <img src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
                 <div className="text-base font-semibold">{username}</div>
                 <>
                     <span className="opacity-20">{timeDifferent(timeStamp)}</span>
