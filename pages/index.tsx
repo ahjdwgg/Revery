@@ -21,6 +21,7 @@ import ContentItemLoader from '../components/loaders/ContentItemLoader';
 import { UserItems } from '../components/users/UserCard';
 import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
+import LoadMoreButton from '../components/buttons/LoadMoreButton';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -241,24 +242,13 @@ const Home: NextPage = () => {
                                     })}
                                     {haveMoreContent ? (
                                         <div className="flex flex-row justify-center w-full py-8">
-                                            {isLoadingMore ? (
-                                                <Button
-                                                    isOutlined={false}
-                                                    color={COLORS.primary}
-                                                    icon={'loading'}
-                                                    width={'w-32'}
-                                                    height={'h-8'}
-                                                />
-                                            ) : (
-                                                <Button
-                                                    isOutlined={false}
-                                                    color={COLORS.primary}
-                                                    text={'Load more'}
-                                                    width={'w-32'}
-                                                    height={'h-8'}
-                                                    onClick={loadMoreContent}
-                                                />
-                                            )}
+                                            <LoadMoreButton
+                                                color={COLORS.primary}
+                                                width={'w-32'}
+                                                height={'h-8'}
+                                                isLoading={isLoadingMore}
+                                                onClick={loadMoreContent}
+                                            />
                                         </div>
                                     ) : (
                                         <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>

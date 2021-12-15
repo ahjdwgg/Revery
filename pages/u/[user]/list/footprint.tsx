@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
-import { GeneralAssetWithTags, POAPResponse } from '../../../../common/types';
 import FootprintCard from '../../../../components/assets/FootprintCard';
 import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';
@@ -9,12 +8,13 @@ import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
-import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import FootprintItemLoader from '../../../../components/loaders/FootprintItemLoader';
+import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
+
 const Footprint: NextPage = () => {
     const router = useRouter();
 
@@ -50,6 +50,13 @@ const Footprint: NextPage = () => {
         const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
         assetCount.current += 30;
         return detailList;
+    };
+
+    const loadMoreFootprints = async () => {
+        setLoadingMore(true);
+        let orderAsset = await loadFootprints();
+        setListedFootprint([...listedFootprint, ...orderAsset]);
+        setLoadingMore(false);
     };
 
     useEffect(() => {
@@ -115,29 +122,13 @@ const Footprint: NextPage = () => {
                             ))}
                             {assetCount.current < briefList.current.length && (
                                 <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                    {isLoadingMore ? (
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            icon={'loading'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                        />
-                                    ) : (
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            text={'Load more'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                            onClick={async () => {
-                                                setLoadingMore(true);
-                                                let orderAsset = await loadFootprints();
-                                                setListedFootprint([...listedFootprint, ...orderAsset]);
-                                                setLoadingMore(false);
-                                            }}
-                                        />
-                                    )}
+                                    <LoadMoreButton
+                                        color={COLORS.primary}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                        isLoading={isLoadingMore}
+                                        onClick={loadMoreFootprints}
+                                    />
                                 </div>
                             )}
                         </section>
