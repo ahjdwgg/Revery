@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import config from '../../common/config';
+import utils from '../../common/utils';
 interface NFTItemProps {
     size: number;
     previewUrl?: string | null;
@@ -21,16 +22,8 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
         height: `${size}px`,
     };
 
-    const fixSchemas = (url: string) => {
-        let fixedUrl = url;
-        if (url.startsWith('ipfs://')) {
-            fixedUrl = url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
-        }
-        return fixedUrl;
-    };
-
-    const fixedPreviewUrl = fixSchemas(previewUrl || '');
-    const fixedDetailUrl = fixSchemas(detailUrl || '');
+    const fixedPreviewUrl = utils.fixURLSchemas(previewUrl || '');
+    const fixedDetailUrl = utils.fixURLSchemas(detailUrl || '');
 
     const [mainUrl, setMainUrl] = useState(
         isShowingDetails

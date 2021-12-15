@@ -297,6 +297,14 @@ function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
     };
 }
 
+function fixURLSchemas(url: string) {
+    let fixedUrl = url;
+    if (url.startsWith('ipfs://')) {
+        fixedUrl = url.replace('ipfs://', config.ipfs.download.endpoint);
+    }
+    return fixedUrl;
+}
+
 const utils = {
     sortByOrderTag,
     setOrderTag,
@@ -306,6 +314,7 @@ const utils = {
     initAccounts,
     extractEmbedFields,
     initContent,
+    fixURLSchemas,
 };
 
 export default utils;

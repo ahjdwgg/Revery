@@ -45,6 +45,11 @@ const config = {
         groupLimit: 5,
         userLimit: 10,
     },
+    ipfs: {
+        download: {
+            endpoint: 'https://infura-ipfs.io/ipfs/',
+        },
+    },
 };
 
 export default config;
