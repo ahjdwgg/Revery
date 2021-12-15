@@ -47,7 +47,15 @@ const config = {
     },
     ipfs: {
         download: {
-            endpoint: 'https://infura-ipfs.io/ipfs/',
+            endpoint: 'https://infura-ipfs.io/ipfs',
+        },
+        upload: {
+            endpoint: 'https://api.pinata.cloud',
+            api: {
+                url: '/pinning/pinFileToIPFS',
+                key: '7a1cd1286fddab8cb792',
+                secret: 'eed51e69e8c6ffc04700f83597b46c617f275e9aae3218d9bbe037ea3889ad58',
+            },
         },
     },
 };
