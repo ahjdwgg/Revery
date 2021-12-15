@@ -13,7 +13,7 @@ const FollowList = ({ followType, followList, toUserPage }: FollowListProps) => 
             <div>
                 <span className="text-primary text-md font-semibold">{followType}</span>
             </div>
-            <div className="flex flex-col divide-primary divide-opacity-10 divide-y">
+            <div className="flex flex-col">
                 {followList.map((user, i) => (
                     <UserCard
                         key={i}
