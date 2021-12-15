@@ -47,6 +47,7 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
             onClick={modalClose}
         >
             <div
+                style={{ maxHeight: '60vh' }}
                 className={modalSize.get(size)}
                 onClick={(e) => {
                     e.stopPropagation();
@@ -56,9 +57,7 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
                     className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
                     onClick={modalClose}
                 />
-                <div style={{ maxHeight: '60vh' }} className="overflow-scroll">
-                    {children}
-                </div>
+                {children}
             </div>
         </div>
     );
@@ -73,7 +72,10 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'relative max-w-sm px-2 py-12 mx-auto bg-white shadow'],
-    ['md', 'relative flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow'],
-    ['lg', 'relative w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
+    ['sm', 'relative overflow-scroll max-w-sm px-2 py-12 mx-auto bg-white shadow'],
+    [
+        'md',
+        'relative overflow-scroll flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow',
+    ],
+    ['lg', 'relative overflow-scroll w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
 ]);
