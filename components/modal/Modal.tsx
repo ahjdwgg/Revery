@@ -56,7 +56,9 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
                     className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
                     onClick={modalClose}
                 />
-                {children}
+                <div style={{ maxHeight: '60vh' }} className="overflow-scroll">
+                    {children}
+                </div>
             </div>
         </div>
     );

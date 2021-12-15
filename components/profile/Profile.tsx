@@ -57,6 +57,8 @@ const Profile = ({
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoading = useRef<boolean>(false);
 
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     const openModal = () => {
         document.body.style.overflow = 'hidden';
         isLoading.current = true;
@@ -71,31 +73,27 @@ const Profile = ({
     };
 
     const loadFoList = (addressList: string[]) => {
-        const userList = addressList.map((ethAddress) => ({
-            ethAddress,
-            avatarUrl: config.undefinedImageAlt,
-            username: '',
-            bio: '',
-            rns: '',
-        }));
+        const userList = addressList
+            .map((ethAddress) => ({
+                ethAddress,
+                avatarUrl: config.undefinedImageAlt,
+                username: '',
+                bio: '',
+                rns: '',
+            }))
+            .slice(currentIndex, currentIndex + 10);
         setFoList(userList);
-        setTimeout(async () => {
-            const apiUser = RSS3.getAPIUser().persona as IRSS3;
-            const len = userList.length;
-            for (let i = 0; i < len; i++) {
-                if (isLoading.current) {
-                    const user = userList[i];
-                    const profile = await apiUser.profile.get(user.ethAddress);
-                    const rns = await RNS.addr2Name(user.ethAddress);
-                    const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
-                    user.avatarUrl = profile.avatar?.[0] || config.undefinedImageAlt;
-                    user.username = profile.name || user.username;
-                    user.bio = extracted;
-                    user.rns = rns;
-                    setFoList([...userList]); // Force change address fore reload
-                }
-            }
-        }, 0);
+        const apiUser = RSS3.getAPIUser().persona as IRSS3;
+        userList.forEach(async (user) => {
+            const profile = await apiUser.profile.get(user.ethAddress);
+            const rns = await RNS.addr2Name(user.ethAddress);
+            const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
+            user.avatarUrl = profile.avatar?.[0] || config.undefinedImageAlt;
+            user.username = profile.name || user.username;
+            user.bio = extracted;
+            user.rns = rns;
+            setFoList([...userList]); // Force change address fore reload
+        });
     };
 
     const fixRNS = (rns: string) => {
