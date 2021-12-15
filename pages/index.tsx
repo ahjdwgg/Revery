@@ -20,6 +20,7 @@ import RecommendSection, { GroupInfo } from '../components/users/RecommendSectio
 import ContentItemLoader from '../components/loaders/ContentItemLoader';
 import { UserItems } from '../components/users/UserCard';
 import config from '../common/config';
+import ModalConnect from '../components/modal/ModalConnect';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -41,6 +42,8 @@ const Home: NextPage = () => {
         hidden: true,
         type: 'primary',
     });
+
+    const [isConnectModalClosed, setConnectModalClosed] = useState(true);
 
     const [isLoadingRecommendGroups, setIsLoadingRecommendGroups] = useState(true);
     const [isLoadingRecommendGroupMembers, setIsLoadingRecommendGroupMembers] = useState(true);
@@ -140,6 +143,13 @@ const Home: NextPage = () => {
         } else if (modal.type == 'account') {
             return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
         }
+    };
+
+    const openConnectModal = () => {
+        setConnectModalClosed(false);
+    };
+    const closeConnectModal = () => {
+        setConnectModalClosed(true);
     };
 
     const closeModal = () => {
@@ -276,6 +286,15 @@ const Home: NextPage = () => {
                 <div className="flex flex-col justify-start max-w-6xl px-2 pt-80 mx-auto gap-y-8 h-full">
                     <p className="font-semibold text-4xl">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
                     <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
+                    <Button
+                        isOutlined={false}
+                        color={COLORS.primary}
+                        fontSize={'text-lg'}
+                        text={'Start'}
+                        width={'w-40'}
+                        height={'h-10'}
+                        onClick={openConnectModal}
+                    />
                 </div>
             )}
             <Modal
@@ -287,6 +306,7 @@ const Home: NextPage = () => {
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}
             </Modal>
+            <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} />
         </>
     );
 };

@@ -9,10 +9,15 @@ import RSS3 from '../common/rss3';
 import { useRouter } from 'next/router';
 import config from '../common/config';
 import Logo from './icons/Logo';
+import ModalConnect from '../components/modal/ModalConnect';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
-function Header() {
+interface HeaderProps {
+    triggerModalOpen?: () => void;
+}
+
+const Header = ({ triggerModalOpen }: HeaderProps) => {
     const router = useRouter();
 
     const [top, setTop] = useState(true);
@@ -20,7 +25,7 @@ function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
     const [modalHidden, setModalHidden] = useState(true);
-
+    const [isConnectModalClosed, setConnectModalClosed] = useState(true);
     // default avatar
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
 
@@ -31,6 +36,14 @@ function Header() {
         }
     };
 
+    const openConnectModal = () => {
+        setIsLoading('any');
+        setConnectModalClosed(false);
+    };
+    const closeConnectModal = () => {
+        setIsLoading(null);
+        setConnectModalClosed(true);
+    };
     const openModal = () => {
         setIsLoading('any');
         setModalHidden(false);
@@ -151,6 +164,7 @@ function Header() {
                     </div>
                 </div>
             </header>
+            {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={true} size="sm">
                 <div className="flex flex-col my-8 gap-y-6 mx-14">
                     {isLoading === 'WalletConnect' ? (
@@ -199,6 +213,6 @@ function Header() {
             </Modal>
         </>
     );
-}
+};
 
 export default Header;

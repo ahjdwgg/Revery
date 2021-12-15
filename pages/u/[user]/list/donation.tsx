@@ -92,8 +92,8 @@ const Donation: NextPage = () => {
                 ) : listedDonationIsEmpty ? (
                     <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona
-                            ? persona.profile?.name + "'s Donations list is empty :)"
-                            : 'Donations list is empty :)'}
+                            ? persona.profile?.name + " hasn't made any donation :)"
+                            : "You haven't made any donation :) "}
                     </div>
                 ) : (
                     <section className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-2">

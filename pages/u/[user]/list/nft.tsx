@@ -92,7 +92,7 @@ const Nft: NextPage = () => {
                     </section>
                 ) : listedNFTIsEmpty ? (
                     <div className="flex items-center justify-center w-full py-10 text-normal">
-                        {persona ? persona.profile?.name + "'s NFTs list is empty :)" : 'NFTs list is empty :)'}
+                        {persona ? persona.profile?.name + " hasn't got any NFT :)" : "You haven't got any NFT :) "}
                     </div>
                 ) : (
                     <section className="grid grid-cols-2 gap-4 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center">
