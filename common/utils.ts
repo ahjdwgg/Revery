@@ -1,4 +1,13 @@
-import { GeneralAsset, GeneralAssetWithTags } from './types';
+import {
+    DonationDetailByGrant,
+    GeneralAssetWithTags,
+    GitcoinResponse,
+    ItemDetails,
+    NFT,
+    NFTResponse,
+    POAP,
+    POAPResponse,
+} from './types';
 import config from './config';
 import RSS3 from './rss3';
 import { utils as RSS3Utils } from 'rss3';
@@ -22,51 +31,11 @@ const getTaggedOrder = (tagged: TypesWithTag): number => {
     return -1;
 };
 
-const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
-    if (!tagged.tags) {
-        tagged.tags = [];
-    } else {
-        // const orderPattern = /^pass:order:(-?\d+)$/i;
-        const oldIndex = tagged.tags.findIndex((tag) => orderPattern.test(tag));
-        if (oldIndex !== -1) {
-            tagged.tags.splice(oldIndex, 1);
-        }
-    }
-    if (order) {
-        tagged.tags.push(`${config.tags.prefix}:order:${order}`);
-    } else {
-        tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
-    }
-};
-
 function sortByOrderTag<T extends TypesWithTag>(taggeds: T[]): T[] {
     taggeds.sort((a, b) => {
         return getTaggedOrder(a) - getTaggedOrder(b);
     });
     return taggeds;
-}
-
-const setOrderTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        taggeds.map(async (tagged, index) => {
-            setTaggedOrder(tagged, index);
-        }),
-    );
-    return taggeds;
-};
-
-const setHiddenTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        taggeds.map(async (tagged) => {
-            setTaggedOrder(tagged);
-        }),
-    );
-    return taggeds;
-};
-
-interface AssetsList {
-    listed: GeneralAssetWithTags[];
-    unlisted: GeneralAssetWithTags[];
 }
 
 async function initAssets() {
@@ -123,13 +92,13 @@ async function loadAssets(parsedAssets: AnyObject[]) {
 
 async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
     const pageOwner = RSS3.getPageOwner();
-    return new Promise<any[]>(async (resolve, reject) => {
+    return new Promise<(NFTResponse | GitcoinResponse | POAPResponse)[]>(async (resolve, reject) => {
         const tryReq = async () => {
             try {
-                const details = await pageOwner.assets?.getDetails({
+                const details = (await pageOwner.assets?.getDetails({
                     assets: Array.from(assetSet),
                     full: true,
-                });
+                })) as (NFTResponse | GitcoinResponse | POAPResponse)[];
                 if (details) {
                     resolve(details);
                     return true;
@@ -217,57 +186,69 @@ async function initContent(timestamp: string = '', following: boolean = false) {
     const profiles =
         profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
 
-    const listed: any[] = [];
+    const listed: ItemDetails[] = [];
+
     items.forEach((item) => {
         const profile = profiles.find((element: any) => element.persona === item.id.split('-')[0]);
-        let temp: any = {
-            ...item,
+        let ItemDetails: ItemDetails = {
+            item: item,
             avatar: profile?.avatar?.[0] || config.undefinedImageAlt,
-            username: profile?.name || formatter(profile?.persona),
+            name: profile?.name || formatter(profile?.persona) || '',
         };
 
         if ('target' in item) {
             // Is auto item
             if (isAsset(item.target.field)) {
+                let assetDetails: {
+                    name?: string;
+                    description?: string | null;
+                    image_url?: string | null;
+                } = {
+                    image_url: config.undefinedImageAlt,
+                };
+
                 const asset = details.find(
                     (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
                 );
 
                 if (asset) {
-                    let details;
                     if (item.target.field.includes('Gitcoin')) {
                         // handle Gitcoin record
-                        details = {
-                            name: asset.detail.grant.title,
-                            description: asset.detail.grant.description,
-                            image_url: asset.detail.grant.logo,
-                            reference_url: asset.detail.grant.id
-                                ? `https://gitcoin.co/grants/${asset.detail.grant.id}/${asset.detail.grant.slug}`
-                                : 'https://gitcoin.co',
+                        let DonationDetails = asset.detail as DonationDetailByGrant;
+                        assetDetails = {
+                            name: DonationDetails.grant.title,
+                            description: DonationDetails.grant.description,
+                            image_url: DonationDetails.grant.logo,
+                        };
+                    } else if (item.target.field.includes('NFT')) {
+                        // handle NFT
+                        let NFTDetails = asset.detail as NFT;
+                        assetDetails = {
+                            name: NFTDetails.name,
+                            description: NFTDetails.description,
+                            image_url:
+                                NFTDetails.image_preview_url ||
+                                NFTDetails.image_url ||
+                                NFTDetails.image_thumbnail_url ||
+                                NFTDetails.animation_url ||
+                                NFTDetails.animation_original_url,
                         };
                     } else {
-                        // handle NFT and POAP
-                        details = {
-                            name: asset.detail.name,
-                            description: asset.detail.description,
-                            image_url:
-                                asset.detail.image_preview_url ||
-                                asset.detail.image_url ||
-                                asset.detail.image_thumbnail_url ||
-                                asset.detail.animation_url ||
-                                asset.detail.animation_original_url,
-                            reference_url: asset.detail.event_url,
+                        // handle POAP
+                        let POAPDetails = asset.detail as POAP;
+                        assetDetails = {
+                            name: POAPDetails.name,
+                            description: POAPDetails.description,
+                            image_url: POAPDetails.image_url,
                         };
                     }
-                    listed.push({
-                        ...temp,
-                        details: details,
-                    });
                 }
-            } else {
-                listed.push({ ...temp });
+
+                ItemDetails.details = assetDetails;
             }
         }
+
+        listed.push(ItemDetails);
     });
 
     return {
@@ -307,8 +288,6 @@ function fixURLSchemas(url: string) {
 
 const utils = {
     sortByOrderTag,
-    setOrderTag,
-    setHiddenTag,
     initAssets,
     loadAssets,
     initAccounts,

@@ -355,7 +355,7 @@ const ProfilePage: NextPage = () => {
 
     const loadMoreContent = async () => {
         setLoadingMore(true);
-        const timestamp = [...content].pop()?.date_created || '';
+        const timestamp = [...content].pop()?.item.date_created || '';
         const { listed, haveMore } = await utils.initContent(timestamp);
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
@@ -470,34 +470,30 @@ const ProfilePage: NextPage = () => {
                             </section>
                         ) : content.length ? (
                             <section className="flex flex-col items-center justify-start gap-y-2.5">
-                                {content.map((item, index) => {
-                                    if (item.id.includes('auto')) {
+                                {content.map((element, index) => {
+                                    if (element.item.id.includes('auto')) {
                                         return (
                                             <ItemCard
                                                 key={index}
-                                                avatarUrl={item.avatar}
-                                                username={item.username}
-                                                content={item.summary || null}
-                                                asset={item.details}
-                                                timeStamp={new Date(item.date_updated).valueOf()}
-                                                target={item.target}
-                                                toUserProfile={async () =>
-                                                    await router.push(
-                                                        await RNS.tryName(item.target.field.split('-')[2]),
-                                                    )
-                                                }
-                                                showAssetDetail={() => fetchAssetDetail(item.target.field)}
+                                                avatarUrl={element.avatar}
+                                                username={element.name}
+                                                content={element.item.summary}
+                                                asset={element.details}
+                                                timeStamp={new Date(element.item.date_updated).valueOf()}
+                                                target={element.item.target}
+                                                toUserProfile={() => {}}
+                                                showAssetDetail={() => fetchAssetDetail(element.item.target.field)}
                                             />
                                         );
                                     } else {
                                         return (
                                             <ContentCard
                                                 key={index}
-                                                avatarUrl={item.avatar}
-                                                username={item.username}
-                                                title={item.title}
-                                                content={item.summary}
-                                                timeStamp={new Date(item.date_updated).valueOf()}
+                                                avatarUrl={element.avatar}
+                                                username={element.name}
+                                                title={element.item.title}
+                                                content={element.item.summary}
+                                                timeStamp={new Date(element.item.date_updated).valueOf()}
                                             />
                                         );
                                     }
