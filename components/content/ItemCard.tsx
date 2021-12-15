@@ -156,9 +156,7 @@ const ItemCard = ({
                 <img
                     src={avatarUrl || config.undefinedImageAlt}
                     alt={username}
-                    width={32}
-                    height={32}
-                    className="rounded-full cursor-pointer"
+                    className="flex-shrink-0 w-8 h-8 rounded-full cursor-pointer"
                     onClick={() => {
                         !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
                     }}
