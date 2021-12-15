@@ -1,5 +1,6 @@
 import Button from './Button';
 import React from 'react';
+import { InView } from 'react-intersection-observer';
 
 interface LoadMoreButtonProps {
     color: string;
@@ -10,19 +11,26 @@ interface LoadMoreButtonProps {
 }
 
 const LoadMoreButton = ({ color, width, height, isLoading, onClick }: LoadMoreButtonProps) => {
+    const handleViewChange = (inView: boolean) => {
+        if (inView) {
+            onClick();
+        }
+    };
     return (
         <>
             {isLoading ? (
                 <Button isOutlined={false} color={color} icon={'loading'} width={width} height={height} />
             ) : (
-                <Button
-                    isOutlined={false}
-                    color={color}
-                    text={'Load more'}
-                    width={width}
-                    height={height}
-                    onClick={onClick}
-                />
+                <InView onChange={handleViewChange} triggerOnce={true}>
+                    <Button
+                        isOutlined={false}
+                        color={color}
+                        text={'Load more'}
+                        width={width}
+                        height={height}
+                        onClick={onClick}
+                    />
+                </InView>
             )}
         </>
     );
