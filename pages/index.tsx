@@ -51,9 +51,7 @@ const Home: NextPage = () => {
         const LoginUser = RSS3.getLoginUser();
         if (LoginUser.persona || (await RSS3.reconnect())) {
             setLoggedIn(true);
-        }
 
-        if (isLoggedIn) {
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
 
             const profile = pageOwner.profile;
