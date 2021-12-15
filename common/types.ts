@@ -3,20 +3,19 @@ interface Asset {
 }
 
 export interface NFTResponse {
-    data: NFT;
+    id: string;
+    detail: NFT;
 }
 
 export interface GitcoinResponse {
-    data: {
-        grant: GrantInfo;
-        txs: DonationInfo[];
-    };
+    id: string;
+    detail: DonationDetailByGrant;
 }
 
 export interface NFT extends Asset {
     token_id: string;
     name?: string;
-    chain: 'BSC' | 'Ethereum' | 'Polygon';
+    chain: 'BSC.NFT' | 'Ethereum.NFT' | 'Polygon.NFT';
     description?: string | null;
     image_url?: string | null;
     image_preview_url?: string | null;
@@ -40,6 +39,7 @@ export interface NFT extends Asset {
 }
 
 export interface GrantInfo {
+    id?: number;
     active: boolean;
     title?: string;
     slug?: string;
@@ -72,27 +72,24 @@ export interface DonationDetailByGrant {
 }
 
 export interface POAP {
-    event: {
-        id: number;
-        fancy_id: string;
-        country: string;
-        city: string;
-        description: string;
-        year: number;
-        start_date: string;
-        end_date: string;
-        expiry_date: string;
-        name: string;
-        image_url: string;
-        event_url: string;
-        supply: number;
-    };
-    owner: string;
-    tokenId: string;
+    id: number;
+    fancy_id: string;
+    country: string;
+    city: string;
+    description: string;
+    year: number;
+    start_date: string;
+    end_date: string;
+    expiry_date: string;
+    name: string;
+    image_url: string;
+    event_url: string;
+    supply: number;
 }
 
 export interface POAPResponse {
-    data: POAP;
+    id: string;
+    detail: POAP;
 }
 
 // used in api response
@@ -141,4 +138,15 @@ export interface RecommendationGroupsResponse {
 export interface RecommendationUsersResponse {
     code: number;
     response: (RSS3Index | null)[];
+}
+
+export interface ItemDetails {
+    name: string | undefined;
+    avatar: string;
+    item: RSS3CustomItem | RSS3AutoItem;
+    details?: {
+        name?: string;
+        description?: string | null;
+        image_url?: string | null;
+    };
 }
