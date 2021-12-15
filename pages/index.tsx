@@ -54,26 +54,27 @@ const Home: NextPage = () => {
         const LoginUser = RSS3.getLoginUser();
         if (LoginUser.persona || (await RSS3.reconnect())) {
             setLoggedIn(true);
+
+            const pageOwner = await RSS3.setPageOwner(LoginUser.address);
+
+            const profile = pageOwner.profile;
+            // console.log(pageOwner.assets);
+            if (profile) {
+                // Profile
+                const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+                setAddress(pageOwner?.address || '');
+                setWebsite(fieldsMatch?.['SITE'] || '');
+            }
+
+            setTimeout(async () => {
+                const { listed, haveMore } = await utils.initContent('', true);
+                setContent(listed);
+                setHaveMoreContent(haveMore);
+                setContentLoading(false);
+            }, 0);
+
+            setTimeout(initRecommendationGrops, 0);
         }
-        const pageOwner = await RSS3.setPageOwner(LoginUser.address);
-
-        const profile = pageOwner.profile;
-        // console.log(pageOwner.assets);
-        if (profile) {
-            // Profile
-            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
-            setAddress(pageOwner?.address || '');
-            setWebsite(fieldsMatch?.['SITE'] || '');
-        }
-
-        setTimeout(async () => {
-            const { listed, haveMore } = await utils.initContent('', true);
-            setContent(listed);
-            setHaveMoreContent(haveMore);
-            setContentLoading(false);
-        }, 0);
-
-        setTimeout(initRecommendationGrops, 0);
     };
 
     const toUserPage = async (addr: string) => {
@@ -264,7 +265,7 @@ const Home: NextPage = () => {
                                     )}
                                 </section>
                             ) : (
-                                <div className="flex flex-col gap-2 w-full py-32 text-sm text-center">
+                                <div className="flex flex-col w-full gap-2 py-32 text-sm text-center">
                                     <p>{'Oops, nothing found from your followings:P'}</p>
                                     <p>{'Check out some new friends from recommendations for you!'}</p>
                                 </div>
@@ -283,8 +284,8 @@ const Home: NextPage = () => {
                     </section>
                 </div>
             ) : (
-                <div className="flex flex-col justify-start max-w-6xl px-2 pt-80 mx-auto gap-y-8 h-full">
-                    <p className="font-semibold text-4xl">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
+                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto pt-80 gap-y-8">
+                    <p className="text-4xl font-semibold">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
                     <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
                     <Button
                         isOutlined={false}

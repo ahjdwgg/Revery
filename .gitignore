@@ -36,9 +36,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# Idea
+# IDE
 .idea/
 .vscode/
+
+# Package Manager System Locks
 package-lock.json
 yarn.lock
-yarn.lock
+
+# Sentry
+.sentryclirc

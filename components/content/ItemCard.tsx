@@ -1,4 +1,4 @@
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 import Arweave from '../icons/Arweave';
 import Twitter from '../icons/Twitter';
 import Mirror from '../icons/Mirror';
@@ -153,7 +153,7 @@ const ItemCard = ({
     return (
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-2">
-                <Image
+                <img
                     src={avatarUrl || config.undefinedImageAlt}
                     alt={username}
                     width={32}

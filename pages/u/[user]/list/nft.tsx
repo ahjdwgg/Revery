@@ -106,7 +106,12 @@ const Nft: NextPage = () => {
                             >
                                 <NFTItem
                                     size={208}
-                                    previewUrl={asset.detail.image_preview_url}
+                                    previewUrl={
+                                        asset.detail.image_preview_url ||
+                                        asset.detail.image_url ||
+                                        asset.detail.animation_url ||
+                                        asset.animation_original_url
+                                    }
                                     detailUrl={asset.detail.animation_url}
                                     isShowingDetails={false}
                                 />

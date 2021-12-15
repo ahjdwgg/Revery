@@ -557,7 +557,10 @@ const ProfilePage: NextPage = () => {
                                                 <NFTItem
                                                     key={asset.id}
                                                     previewUrl={
-                                                        asset.detail.image_preview_url || config.undefinedImageAlt
+                                                        asset.detail.image_preview_url ||
+                                                        asset.detail.image_url ||
+                                                        asset.detail.animation_url ||
+                                                        asset.animation_original_url
                                                     }
                                                     isShowingDetails={false}
                                                     size={70}
