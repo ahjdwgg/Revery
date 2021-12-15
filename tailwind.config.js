@@ -44,6 +44,7 @@ module.exports = {
             },
             borderRadius: {
                 DEFAULT: '5px',
+                half: '50%',
             },
             width: {
                 '4/11': '36.36363636%',

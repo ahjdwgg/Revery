@@ -12,16 +12,12 @@ interface ImageProps {
 }
 
 const ImageHolder = ({ imageUrl, title, isFullRound, size, onClick = () => {} }: ImageProps) => {
-    const roundedStyleString = isFullRound ? 'rounded-full' : 'rounded';
+    const roundedStyleString = isFullRound ? 'rounded-half' : 'rounded';
 
     return (
-        <div
-            className={`flex justify-around relative ${roundedStyleString}`}
-            style={{ width: size, height: size }}
-            onClick={onClick}
-        >
+        <div className={`flex justify-around relative`} style={{ width: size, height: size }} onClick={onClick}>
             <img
-                className={`w-full h-full object-cover ${roundedStyleString}`}
+                className={`w-full h-full object-cover transition-all duration-200 ease-in-out ${roundedStyleString}`}
                 src={utils.fixURLSchemas(imageUrl)}
                 alt={title}
             />
