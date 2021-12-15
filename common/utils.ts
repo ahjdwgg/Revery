@@ -123,18 +123,13 @@ async function loadAssets(parsedAssets: AnyObject[]) {
 
 async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
     const pageOwner = RSS3.getPageOwner();
-
     return new Promise<any[]>(async (resolve, reject) => {
         const tryReq = async () => {
-            count--;
             try {
-                const details =
-                    assetSet.size !== 0 && count >= 0
-                        ? await pageOwner.assets?.getDetails({
-                              assets: Array.from(assetSet),
-                              full: true,
-                          })
-                        : [];
+                const details = await pageOwner.assets?.getDetails({
+                    assets: Array.from(assetSet),
+                    full: true,
+                });
                 if (details) {
                     resolve(details);
                     return true;
@@ -147,7 +142,11 @@ async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500,
 
         if (!(await tryReq())) {
             let iv = setInterval(async () => {
-                if (await tryReq()) {
+                count--;
+                if (count < 0) {
+                    resolve([]);
+                    clearInterval(iv);
+                } else if (await tryReq()) {
                     clearInterval(iv);
                 }
             }, delay);
@@ -213,7 +212,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
         profileSet.add(item.id.split('-')[0]);
     });
 
-    const details = await getAssetsTillSuccess(assetSet);
+    const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
 
     const profiles =
         profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
