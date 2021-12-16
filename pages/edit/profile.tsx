@@ -160,7 +160,7 @@ const Profile: NextPage = () => {
             type: 'Account',
             route: '/setup/accounts',
             baseUrl,
-            colorStyle: 'account',
+            colorStyle: 'primary',
         });
         setIsShowingRedirectNotice(true);
     };
