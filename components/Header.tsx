@@ -165,7 +165,7 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                 </div>
             </header>
             {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={true} size="sm">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="sm">
                 <div className="flex flex-col my-8 gap-y-6 mx-14">
                     {isLoading === 'WalletConnect' ? (
                         <Button
