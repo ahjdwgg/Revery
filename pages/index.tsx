@@ -57,6 +57,8 @@ const Home: NextPage = () => {
         if (LoginUser.persona || (await RSS3.reconnect())) {
             setLoggedIn(true);
 
+            setTimeout(initRecommendationGrops, 0);
+
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
 
             const profile = pageOwner.profile;
@@ -74,8 +76,6 @@ const Home: NextPage = () => {
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);
-
-            setTimeout(initRecommendationGrops, 0);
         }
     };
 
