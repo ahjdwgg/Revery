@@ -130,7 +130,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('NFT', '/setup/nfts', 'nft');
+                    toRSS3BioEditAssetNotice('NFT', '/setup/nfts', 'primary');
                 },
             },
             ...defaultAssetCardButtons.NFT,
@@ -139,7 +139,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('Donation', '/setup/gitcoins', 'donation');
+                    toRSS3BioEditAssetNotice('Donation', '/setup/gitcoins', 'primary');
                 },
             },
             ...defaultAssetCardButtons.Donation,
@@ -148,7 +148,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('Footprint', '/setup/footprints', 'footprint');
+                    toRSS3BioEditAssetNotice('Footprint', '/setup/footprints', 'primary');
                 },
             },
             ...defaultAssetCardButtons.Footprint,
