@@ -47,7 +47,7 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
             onClick={modalClose}
         >
             <div
-                style={{ maxHeight: '60vh' }}
+                style={{ maxHeight: '90vh' }}
                 className={modalSize.get(size)}
                 onClick={(e) => {
                     e.stopPropagation();

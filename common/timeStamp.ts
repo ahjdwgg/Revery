@@ -7,7 +7,7 @@ export const timeDifferent = (timeStamp: number): string => {
     const diffMinutes = Math.floor(((diffTime % (1000 * 60 * 60 * 24)) % (1000 * 60 * 60)) / (1000 * 60));
     const diffSeconds = Math.ceil((((diffTime % (1000 * 60 * 60 * 24)) % (1000 * 60 * 60)) % (1000 * 60)) / 1000);
     if (diffMinutes === 0) {
-        return diffSeconds + ' seconds ago';
+        return 'less than a minute ago';
     } else if (diffHours === 0) {
         return diffMinutes + ' minutes ago';
     } else if (diffDays == 0) {
