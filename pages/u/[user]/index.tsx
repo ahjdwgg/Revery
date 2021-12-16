@@ -637,7 +637,6 @@ const ProfilePage: NextPage = () => {
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}
@@ -646,7 +645,6 @@ const ProfilePage: NextPage = () => {
             <Modal
                 theme={'primary'}
                 size={'sm'}
-                isCenter={true}
                 hidden={!isShowingRedirectNotice}
                 closeEvent={() => setIsShowingRedirectNotice(false)}
             >

@@ -34,6 +34,7 @@ module.exports = {
                     text: '#944300',
                     bg: '#fff4eb',
                 },
+                error: '#D75F5F',
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg

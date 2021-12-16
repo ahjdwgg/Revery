@@ -134,7 +134,7 @@ const Donation: NextPage = () => {
                     </section>
                 )}
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="lg">
                 {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>

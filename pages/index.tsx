@@ -294,7 +294,6 @@ const Home: NextPage = () => {
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}

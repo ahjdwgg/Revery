@@ -34,6 +34,7 @@ const config = {
     contents: {
         limit: 35,
     },
+    followListLimitPerPage: 15,
     recommendations: {
         endpoint: 'https://node-beta.rss3.dev',
         groupLimit: 5,

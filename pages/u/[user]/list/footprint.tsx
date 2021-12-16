@@ -139,7 +139,7 @@ const Footprint: NextPage = () => {
                     </>
                 )}
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="lg">
                 {footprint ? <SingleFootprint POAPInfo={footprint} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>
