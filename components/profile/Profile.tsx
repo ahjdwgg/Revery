@@ -62,8 +62,6 @@ const Profile = ({
 
     const [currentIndex, setCurrentIndex] = useState({ followers: 0, followings: 0 });
 
-    const FO_LIST_LIMIT_PER_PAGE = 15;
-
     const openModal = (type: typeof followType) => {
         setFollowType(type);
         document.body.style.overflow = 'hidden';
@@ -83,7 +81,7 @@ const Profile = ({
         const apiUser = RSS3.getAPIUser().persona as IRSS3;
         const userList = (await Promise.all(
             addressList
-                .slice(curI, curI + FO_LIST_LIMIT_PER_PAGE)
+                .slice(curI, curI + config.followListLimitPerPage)
                 .map((ethAddress) => ({
                     ethAddress,
                     avatarUrl: config.undefinedImageAlt,
@@ -114,7 +112,7 @@ const Profile = ({
         if (curI < addressList.length && isLoading.current) {
             setCurrentIndex((v) => ({
                 ...v,
-                [followType]: v[followType] + FO_LIST_LIMIT_PER_PAGE,
+                [followType]: v[followType] + config.followListLimitPerPage,
             }));
         }
     };
