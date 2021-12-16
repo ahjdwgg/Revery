@@ -188,8 +188,14 @@ const ProfilePage: NextPage = () => {
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
             setProfileLoading(false);
-            checkOwner();
-            checkIsFollowing();
+
+            // Login user related
+            if (RSS3.isValidRSS3()) {
+                await RSS3.ensureLoginUser();
+                checkOwner();
+                checkIsFollowing();
+            }
+
             // Accounts
             const { listed } = await utils.initAccounts();
             setAccountItems(

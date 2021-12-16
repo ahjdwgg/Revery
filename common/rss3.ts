@@ -367,6 +367,21 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
+    ensureLoginUser: async () => {
+        return new Promise((resolve, reject) => {
+            if (!isValidRSS3()) {
+                reject(new Error('Not logged in'));
+            } else {
+                if (RSS3LoginUser.isReady) {
+                    resolve(RSS3LoginUser);
+                } else {
+                    document.addEventListener(Events.loginUserReady, () => {
+                        resolve(RSS3LoginUser);
+                    });
+                }
+            }
+        });
+    },
     reloadLoginUser: async () => {
         await initUser(RSS3LoginUser);
         dispatchEvent(Events.loginUserReady, RSS3LoginUser);
@@ -404,6 +419,7 @@ export default {
     isNowOwner: () => {
         return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
+    isValidRSS3,
 
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
         if (assetsProfileCache.has(address + type) && !refresh) {
