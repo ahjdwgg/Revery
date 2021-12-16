@@ -16,7 +16,7 @@ const productsList: {
 
 const config = {
     hubEndpoint: 'https://node-beta.rss3.dev',
-    undefinedImageAlt: 'https://infura-ipfs.io/ipfs/QmRit9xifbV9mNZNvYdo8kRMrJndsaJNQuYG1YKkc1RCGd',
+    undefinedImageAlt: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
     hideUnlistedAssets: false,
     tags: {
         prefix: 'pass',
