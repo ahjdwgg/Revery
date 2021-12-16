@@ -10,9 +10,10 @@ interface ModalProps {
     isCenter: boolean;
     children: ReactNode;
     closeEvent: () => void;
+    onReachBottom?: () => void;
 }
 
-export default function Modal({ theme, hidden, size, isCenter, children, closeEvent }: ModalProps) {
+export default function Modal({ theme, hidden, size, isCenter, children, closeEvent, onReachBottom }: ModalProps) {
     const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
@@ -35,6 +36,16 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
         }
     };
 
+    const handleScroll = (e) => {
+        if (typeof onReachBottom === 'function') {
+            const { scrollHeight, scrollTop, clientHeight } = e.target;
+            const bottom = scrollHeight - scrollTop === clientHeight;
+            if (bottom) {
+                onReachBottom();
+            }
+        }
+    };
+
     useEffect(() => {
         onStateChange();
     }, [hidden]);
@@ -47,11 +58,12 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
             onClick={modalClose}
         >
             <div
-                style={{ maxHeight: '60vh' }}
+                style={{ maxHeight: '90vh', top: '50%', transform: 'translate(0, -50%)' }}
                 className={modalSize.get(size)}
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
+                onScroll={handleScroll}
             >
                 <BiX
                     className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
