@@ -431,6 +431,7 @@ const ProfilePage: NextPage = () => {
                             followings={followings}
                             rns={link}
                             link={website}
+                            isLogin={RSS3.isValidRSS3()}
                             isOwner={isOwner}
                             isFollowing={isFollowing}
                             onFollow={onFollow}

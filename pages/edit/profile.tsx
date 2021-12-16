@@ -17,6 +17,7 @@ import { utils as RSS3Utils } from 'rss3';
 import { stringify } from 'querystring';
 import { AnyObject } from 'rss3/types/extend';
 import IPFS from '../../common/ipfs';
+import ModalRNS from '../../components/modal/ModalRNS';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -56,6 +57,7 @@ const Profile: NextPage = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isShowingDiscardNotice, setIsShowingDiscardNotice] = useState(false);
     const [isProfileSaved, setIsProfileSaved] = useState<boolean>(false);
+    const [modalRNSHidden, setModalRNSHidden] = useState(true);
 
     let inputElement: HTMLInputElement | null = null;
 
@@ -293,8 +295,16 @@ const Profile: NextPage = () => {
                                 onChange={previewNewAvatar}
                                 ref={(input) => (inputElement = input)}
                             />
-                            <div className={`${!link && 'hidden'}`}>
-                                {link && <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />}
+                            <div>
+                                {link ? (
+                                    <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />
+                                ) : (
+                                    <LinkButton
+                                        text={'Claim your RNS'}
+                                        color={COLORS.primary}
+                                        onClick={() => setModalRNSHidden(false)}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -524,6 +534,7 @@ const Profile: NextPage = () => {
                     </div>
                 </div>
             </Modal>
+            <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />
         </div>
     );
 };

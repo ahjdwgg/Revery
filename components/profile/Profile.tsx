@@ -12,12 +12,14 @@ import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
 import utils from '../../common/utils';
 import { useRouter } from 'next/router';
+import ModalRNS from '../modal/ModalRNS';
 interface ProfileProps {
     avatarUrl: string;
     username: string;
     rns?: string;
     link?: string;
     bio: string;
+    isLogin: boolean;
     isOwner: boolean;
     children?: ReactNode;
     followers: string[];
@@ -36,6 +38,7 @@ const Profile = ({
     rns,
     link,
     bio,
+    isLogin,
     isOwner,
     children,
     followers,
@@ -50,6 +53,7 @@ const Profile = ({
     const router = useRouter();
 
     const [modalHidden, setModalHidden] = useState(true);
+    const [modalRNSHidden, setModalRNSHidden] = useState(true);
     const [followType, setFollowType] = useState<'followers' | 'followings'>('followers');
 
     const [foList, setFoList] = useState<{ followers: UserItems[]; followings: UserItems[] }>({
@@ -57,7 +61,6 @@ const Profile = ({
         followings: [],
     });
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoading = useRef<boolean>(false);
 
     const [currentIndex, setCurrentIndex] = useState({ followers: 0, followings: 0 });
@@ -135,7 +138,6 @@ const Profile = ({
     const logout = () => {
         if (confirm('Are you sure you want to logout?')) {
             RSS3.disconnect();
-            setIsLoggedIn(false);
             reloadPage();
         }
     };
@@ -161,12 +163,14 @@ const Profile = ({
                             <Button icon={'logout'} color={COLORS.primary} isOutlined={true} onClick={logout} />
                         </div>
                     ) : (
-                        <Button
-                            text={isFollowing ? 'Unfollow' : 'Follow'}
-                            color={COLORS.primary}
-                            isOutlined={true}
-                            onClick={onFollow}
-                        />
+                        isLogin && (
+                            <Button
+                                text={isFollowing ? 'Unfollow' : 'Follow'}
+                                color={COLORS.primary}
+                                isOutlined={true}
+                                onClick={onFollow}
+                            />
+                        )
                     )}
                 </div>
                 <div className="flex flex-row text-sm gap-x-8 text-primary">
@@ -177,8 +181,18 @@ const Profile = ({
                         <span className="font-bold">{followings.length}</span> followings
                     </span>
                 </div>
-                <div className={`flex flex-row gap-x-2 ${!(rns || link) && 'hidden'}`}>
-                    {rns && <LinkButton text={fixRNS(rns)} color={COLORS.primary} onClick={toRss3BioUserSite} />}
+                <div className={`flex flex-row gap-x-2`}>
+                    {rns ? (
+                        <LinkButton text={fixRNS(rns)} color={COLORS.primary} onClick={toRss3BioUserSite} />
+                    ) : (
+                        isOwner && (
+                            <LinkButton
+                                text={'Claim your RNS'}
+                                color={COLORS.primary}
+                                onClick={() => setModalRNSHidden(false)}
+                            />
+                        )
+                    )}
                     {link && <LinkButton text={link} color={COLORS.primary} onClick={toExternalUserSite} link={true} />}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>
@@ -204,6 +218,7 @@ const Profile = ({
                     }
                 />
             </Modal>
+            <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />
         </div>
     );
 };
