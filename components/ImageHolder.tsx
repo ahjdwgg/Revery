@@ -12,7 +12,7 @@ interface ImageProps {
 }
 
 const ImageHolder = ({ imageUrl, title, isFullRound, size, onClick = () => {} }: ImageProps) => {
-    const roundedStyleString = isFullRound ? 'rounded-half' : 'rounded';
+    const roundedStyleString = isFullRound ? 'rounded-half' : 'rounded-2xl';
 
     return (
         <div className={`flex justify-around relative`} style={{ width: size, height: size }} onClick={onClick}>
