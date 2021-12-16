@@ -12,9 +12,6 @@ interface FollowListProps {
 const FollowList = ({ followType, followList, toUserPage, shouldShowLoader = false }: FollowListProps) => {
     return (
         <div className="flex flex-col p-3 divide-y divide-solid divide-primary divide-opacity-5 gap-3">
-            <div>
-                <span className="text-primary text-md font-semibold capitalize">{followType}</span>
-            </div>
             <div className="flex flex-col">
                 {followList.map((user, i) => (
                     <UserCard

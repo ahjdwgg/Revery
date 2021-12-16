@@ -8,12 +8,22 @@ interface ModalProps {
     hidden: boolean;
     size: 'sm' | 'md' | 'lg';
     isCenter: boolean;
+    title?: ReactNode;
     children: ReactNode;
     closeEvent: () => void;
     onReachBottom?: () => void;
 }
 
-export default function Modal({ theme, hidden, size, isCenter, children, closeEvent, onReachBottom }: ModalProps) {
+export default function Modal({
+    theme,
+    hidden,
+    size,
+    isCenter,
+    title,
+    children,
+    closeEvent,
+    onReachBottom,
+}: ModalProps) {
     const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
@@ -58,15 +68,22 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
             onClick={modalClose}
         >
             <div
-                style={{ maxHeight: '90vh', top: '50%', transform: 'translate(0, -50%)' }}
-                className={modalSize.get(size)}
+                style={{ top: '50%', transform: 'translate(0, -50%)' }}
+                className={`relative ${modalSize.get(size)}`}
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
                 onScroll={handleScroll}
             >
-                <BiX className={`sticky top-0 w-8 h-8 cursor-pointer ${buttonTheme.get(theme)}`} onClick={modalClose} />
-                {children}
+                <div className="py-2 flex items-center">
+                    <BiX className={`w-8 h-8 cursor-pointer ${buttonTheme.get(theme)}`} onClick={modalClose} />
+                    <div>
+                        <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
+                    </div>
+                </div>
+                <div style={{ maxHeight: '85vh' }} className="overflow-scroll">
+                    {children}
+                </div>
             </div>
         </div>
     );
@@ -81,10 +98,7 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'relative overflow-scroll max-w-sm px-2 py-3 mx-auto bg-white shadow'],
-    [
-        'md',
-        'relative overflow-scroll flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow',
-    ],
-    ['lg', 'relative overflow-scroll w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
+    ['sm', 'max-w-sm px-2 py-3 mx-auto bg-white shadow'],
+    ['md', 'flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow'],
+    ['lg', 'w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
 ]);

@@ -191,6 +191,7 @@ const Profile = ({
                 size={'sm'}
                 isCenter={false}
                 onReachBottom={loadMoreFollow}
+                title={followType}
             >
                 <FollowList
                     followType={followType}
