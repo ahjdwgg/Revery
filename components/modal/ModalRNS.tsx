@@ -33,6 +33,11 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
     };
 
     const init = async () => {
+        if (!RSS3.isValidRSS3()) {
+            // Not login, so no need to show
+            return;
+        }
+
         setIsLoading(true);
         setIsDisabled(true);
         setErrorMsg('');
