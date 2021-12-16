@@ -172,7 +172,6 @@ const ProfilePage: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(aon);
 
         const profile = pageOwner.profile;
-        // console.log(pageOwner.assets);
         if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
