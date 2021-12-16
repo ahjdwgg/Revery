@@ -350,7 +350,6 @@ const Profile: NextPage = () => {
             <Modal
                 theme={'primary'}
                 size={'sm'}
-                isCenter={true}
                 hidden={!isShowingRedirectNotice}
                 closeEvent={() => setIsShowingRedirectNotice(false)}
             >
@@ -392,13 +391,7 @@ const Profile: NextPage = () => {
                 </div>
             </Modal>
 
-            <Modal
-                theme={'primary'}
-                size={'md'}
-                isCenter={true}
-                hidden={!isShowingNotice}
-                closeEvent={() => setIsShowingNotice(false)}
-            >
+            <Modal theme={'primary'} size={'md'} hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
@@ -419,13 +412,7 @@ const Profile: NextPage = () => {
                 </div>
             </Modal>
 
-            <Modal
-                theme={'primary'}
-                size={'md'}
-                isCenter={true}
-                hidden={!isProfileSaved}
-                closeEvent={() => setIsShowingNotice(false)}
-            >
+            <Modal theme={'primary'} size={'md'} hidden={!isProfileSaved} closeEvent={() => setIsShowingNotice(false)}>
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Succeed</span>

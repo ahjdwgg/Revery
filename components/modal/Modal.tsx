@@ -7,23 +7,13 @@ interface ModalProps {
     theme: ModalColorStyle;
     hidden: boolean;
     size: 'sm' | 'md' | 'lg';
-    isCenter: boolean;
     title?: ReactNode;
     children: ReactNode;
     closeEvent: () => void;
     onReachBottom?: () => void;
 }
 
-export default function Modal({
-    theme,
-    hidden,
-    size,
-    isCenter,
-    title,
-    children,
-    closeEvent,
-    onReachBottom,
-}: ModalProps) {
+export default function Modal({ theme, hidden, size, title, children, closeEvent, onReachBottom }: ModalProps) {
     const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
@@ -64,12 +54,12 @@ export default function Modal({
         <div
             className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto bg-black bg-opacity-5 animated faster ${
                 isHidden ? 'hidden' : ''
-            } ${animation ? 'fadeIn' : 'fadeOut'} ${isCenter ? 'flex flex-row justify-center items-center' : ''} `}
+            } ${animation ? 'fadeIn' : 'fadeOut'}`}
             onClick={modalClose}
         >
             <div
                 style={{ top: '50%', transform: 'translate(0, -50%)' }}
-                className={`relative ${modalSize.get(size)}`}
+                className={`relative mx-auto bg-white shadow ${modalSize.get(size)}`}
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
@@ -97,7 +87,7 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'max-w-sm px-2 py-3 mx-auto bg-white shadow'],
-    ['md', 'flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow'],
-    ['lg', 'w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
+    ['sm', 'max-w-sm px-2 pb-3 '],
+    ['md', 'flex flex-col items-center justify-around w-full max-w-lg h-96 px-14 pb-14'],
+    ['lg', 'w-full max-w-6xl px-2 pb-12'],
 ]);

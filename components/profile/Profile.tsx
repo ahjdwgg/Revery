@@ -187,7 +187,6 @@ const Profile = ({
                 closeEvent={closeModal}
                 theme={'primary'}
                 size={'sm'}
-                isCenter={false}
                 onReachBottom={loadMoreFollow}
                 title={followType}
             >
