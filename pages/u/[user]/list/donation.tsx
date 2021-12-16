@@ -6,15 +6,15 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleDonation from '../../../../components/details/SingleDonation';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
-import { GeneralAssetWithTags, GitcoinResponse } from '../../../../common/types';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
-import { BiLoaderAlt } from 'react-icons/bi';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import DonationItemLoader from '../../../../components/loaders/DonationItemLoader';
+import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
+
 const Donation: NextPage = () => {
     const router = useRouter();
 
@@ -50,6 +50,13 @@ const Donation: NextPage = () => {
         const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
         assetCount.current += 30;
         return detailList;
+    };
+
+    const loadMoreDonations = async () => {
+        setLoadingMore(true);
+        let orderAsset = await loadDonations();
+        setlistedDonation([...listedDonation, ...orderAsset]);
+        setLoadingMore(false);
     };
 
     useEffect(() => {
@@ -110,31 +117,19 @@ const Donation: NextPage = () => {
                             />
                         ))}
                         {assetCount.current < briefList.current.length && (
-                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                {isLoadingMore ? (
-                                    <Button
-                                        isOutlined={false}
-                                        color={COLORS.primary}
-                                        icon={'loading'}
-                                        width={'w-32'}
-                                        height={'h-8'}
-                                    />
-                                ) : (
-                                    <Button
-                                        isOutlined={false}
-                                        color={COLORS.primary}
-                                        text={'Load more'}
-                                        width={'w-32'}
-                                        height={'h-8'}
-                                        onClick={async () => {
-                                            setLoadingMore(true);
-                                            let orderAsset = await loadDonations();
-                                            setlistedDonation([...listedDonation, ...orderAsset]);
-                                            setLoadingMore(false);
-                                        }}
-                                    />
-                                )}
-                            </div>
+                            <LoadMoreButton
+                                color={COLORS.primary}
+                                width={'w-32'}
+                                height={'h-8'}
+                                isLoading={isLoadingMore}
+                                onClick={loadMoreDonations}
+                            >
+                                <section className="grid w-full grid-cols-1 gap-4 pb-8 md:grid-cols-2 lg:grid-cols-2 col-span-full">
+                                    {[...Array(4)].map((_, id) => (
+                                        <DonationItemLoader key={id} />
+                                    ))}
+                                </section>
+                            </LoadMoreButton>
                         )}
                     </section>
                 )}

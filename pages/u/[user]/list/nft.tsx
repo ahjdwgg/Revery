@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NFTBadges from '../../../../components/assets/NFTBadges';
 import NFTItem from '../../../../components/assets/NFTItem';
 import Button from '../../../../components/buttons/Button';
@@ -7,13 +7,13 @@ import { COLORS } from '../../../../components/buttons/variables';
 import SingleNFT from '../../../../components/details/SingleNFT';
 import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
-import { BiLoaderAlt } from 'react-icons/bi';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import NFTItemLoader from '../../../../components/loaders/NFTItemLoader';
+import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
 
 const Nft: NextPage = () => {
     const router = useRouter();
@@ -50,6 +50,13 @@ const Nft: NextPage = () => {
         const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
         assetCount.current += 30;
         return detailList;
+    };
+
+    const loadMoreNFTs = async () => {
+        setLoadingMore(true);
+        let orderAsset = await loadNFTs();
+        setlistedNFT([...listedNFT, ...orderAsset]);
+        setLoadingMore(false);
     };
 
     useEffect(() => {
@@ -123,31 +130,19 @@ const Nft: NextPage = () => {
                             </div>
                         ))}
                         {assetCount.current < briefList.current.length && (
-                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                {isLoadingMore ? (
-                                    <Button
-                                        isOutlined={false}
-                                        color={COLORS.primary}
-                                        icon={'loading'}
-                                        width={'w-32'}
-                                        height={'h-8'}
-                                    />
-                                ) : (
-                                    <Button
-                                        isOutlined={false}
-                                        color={COLORS.primary}
-                                        text={'Load more'}
-                                        width={'w-32'}
-                                        height={'h-8'}
-                                        onClick={async () => {
-                                            setLoadingMore(true);
-                                            let orderAsset = await loadNFTs();
-                                            setlistedNFT([...listedNFT, ...orderAsset]);
-                                            setLoadingMore(false);
-                                        }}
-                                    />
-                                )}
-                            </div>
+                            <LoadMoreButton
+                                color={COLORS.primary}
+                                width={'w-32'}
+                                height={'h-8'}
+                                isLoading={isLoadingMore}
+                                onClick={loadMoreNFTs}
+                            >
+                                <section className="grid w-full grid-cols-2 gap-4 pb-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center col-span-full">
+                                    {[...Array(5)].map((_, id) => (
+                                        <NFTItemLoader key={id} />
+                                    ))}
+                                </section>
+                            </LoadMoreButton>
                         )}
                     </section>
                 )}

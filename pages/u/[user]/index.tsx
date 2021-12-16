@@ -36,6 +36,7 @@ import CardItemLoader from '../../../components/loaders/CardItemLoader';
 import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader';
 import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
 import ProfileLoader from '../../../components/loaders/ProfileLoader';
+import LoadMoreButton from '../../../components/buttons/LoadMoreButton';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -463,7 +464,7 @@ const ProfilePage: NextPage = () => {
                     )}
                     <>
                         {isContentLoading ? (
-                            <section className="flex flex-col items-center justify-start gap-y-2.5">
+                            <section className="flex flex-col items-center justify-start gap-y-2.5 pb-8">
                                 {[...Array(8)].map((_, id) => (
                                     <ContentItemLoader key={id} />
                                 ))}
@@ -499,28 +500,19 @@ const ProfilePage: NextPage = () => {
                                     }
                                 })}
                                 {haveMoreContent ? (
-                                    <div className="flex flex-row justify-center w-full py-8">
-                                        {isLoadingMore ? (
-                                            <Button
-                                                isOutlined={false}
-                                                color={COLORS.primary}
-                                                icon={'loading'}
-                                                width={'w-32'}
-                                                height={'h-8'}
-                                            />
-                                        ) : (
-                                            <Button
-                                                isOutlined={false}
-                                                color={COLORS.primary}
-                                                text={'Load more'}
-                                                width={'w-32'}
-                                                height={'h-8'}
-                                                onClick={loadMoreContent}
-                                            />
-                                        )}
-                                    </div>
+                                    <LoadMoreButton
+                                        color={COLORS.primary}
+                                        width={'w-32'}
+                                        height={'h-8'}
+                                        isLoading={isLoadingMore}
+                                        onClick={loadMoreContent}
+                                    >
+                                        {[...Array(3)].map((_, id) => (
+                                            <ContentItemLoader key={id} />
+                                        ))}
+                                    </LoadMoreButton>
                                 ) : (
-                                    <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                    <div className="w-full pt-8 text-sm text-center">{"That's all :p"}</div>
                                 )}
                             </section>
                         ) : (

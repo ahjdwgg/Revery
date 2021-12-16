@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
-import { GeneralAssetWithTags, POAPResponse } from '../../../../common/types';
 import FootprintCard from '../../../../components/assets/FootprintCard';
 import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';
@@ -9,12 +8,13 @@ import Header from '../../../../components/Header';
 import Modal from '../../../../components/modal/Modal';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
-import { BiLoaderAlt } from 'react-icons/bi';
 import config from '../../../../common/config';
 import utils from '../../../../common/utils';
 import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import FootprintItemLoader from '../../../../components/loaders/FootprintItemLoader';
+import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
+
 const Footprint: NextPage = () => {
     const router = useRouter();
 
@@ -52,6 +52,13 @@ const Footprint: NextPage = () => {
         return detailList;
     };
 
+    const loadMoreFootprints = async () => {
+        setLoadingMore(true);
+        let orderAsset = await loadFootprints();
+        setListedFootprint([...listedFootprint, ...orderAsset]);
+        setLoadingMore(false);
+    };
+
     useEffect(() => {
         if (router.isReady) {
             init();
@@ -84,7 +91,7 @@ const Footprint: NextPage = () => {
                     // <div className="flex items-center justify-center w-full py-10">
                     //     <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-20'} />
                     // </div>
-                    <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                    <section className="grid items-center justify-start grid-cols-2 py-4 gap-x-4 gap-y-8">
                         {[...Array(10)].map((_, id) => (
                             <FootprintItemLoader key={id} />
                         ))}
@@ -97,7 +104,7 @@ const Footprint: NextPage = () => {
                     </div>
                 ) : (
                     <>
-                        <section className="grid items-center justify-start grid-cols-2 gap-4 py-4">
+                        <section className="grid items-center justify-start grid-cols-2 py-4 gap-x-4 gap-y-8">
                             {listedFootprint.map((asset, index) => (
                                 <FootprintCard
                                     key={index}
@@ -114,31 +121,19 @@ const Footprint: NextPage = () => {
                                 />
                             ))}
                             {assetCount.current < briefList.current.length && (
-                                <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                    {isLoadingMore ? (
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            icon={'loading'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                        />
-                                    ) : (
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            text={'Load more'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                            onClick={async () => {
-                                                setLoadingMore(true);
-                                                let orderAsset = await loadFootprints();
-                                                setListedFootprint([...listedFootprint, ...orderAsset]);
-                                                setLoadingMore(false);
-                                            }}
-                                        />
-                                    )}
-                                </div>
+                                <LoadMoreButton
+                                    color={COLORS.primary}
+                                    width={'w-32'}
+                                    height={'h-8'}
+                                    isLoading={isLoadingMore}
+                                    onClick={loadMoreFootprints}
+                                >
+                                    <section className="grid items-center justify-start w-full grid-cols-2 pb-8 gap-x-4 gap-y-8 col-span-full">
+                                        {[...Array(6)].map((_, id) => (
+                                            <FootprintItemLoader key={id} />
+                                        ))}
+                                    </section>
+                                </LoadMoreButton>
                             )}
                         </section>
                     </>
