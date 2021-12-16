@@ -103,11 +103,12 @@ const toExternalLink = (field: string, payload: string) => {
     if (field.includes('Mirror.XYZ')) {
         window.open(payload);
     } else {
+        const fields = field.split('-');
         const dic: { [key: string]: () => void } = {
             Twitter: () => window.open('https://twitter.com/' + field.split('-')[3] + '/status/' + payload),
-            Misskey: () => window.open('https://nya.one/notes/' + payload),
+            Misskey: () => window.open(`https://${fields[3].split('@')[1]}/notes/` + payload),
         };
-        dic[field.split('-')[2]]?.call('');
+        dic[fields[2]]?.call('');
     }
 };
 
