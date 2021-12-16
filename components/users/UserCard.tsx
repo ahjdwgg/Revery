@@ -32,8 +32,12 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
             onMouseEnter={() => setIsAvatarFullRounded(false)}
             onMouseLeave={() => setIsAvatarFullRounded(true)}
         >
-            <section className="animate-fade-in flex flex-row items-center flex-shrink-0">
-                <ImageHolder imageUrl={avatarUrl} isFullRound={isAvatarFullRounded} size={36} />
+            <section className="animate-fade-in flex flex-row items-center flex-shrink-0 h-10 w-10">
+                <ImageHolder
+                    imageUrl={avatarUrl}
+                    isFullRound={isAvatarFullRounded}
+                    size={isAvatarFullRounded ? 36 : 40}
+                />
             </section>
             <section className="animate-fade-in flex flex-col flex-grow">
                 <div className="flex flex-row items-center gap-1.5">
