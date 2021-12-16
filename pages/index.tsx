@@ -195,10 +195,10 @@ const Home: NextPage = () => {
             }) as UserItems[];
             setIsLoadingRecommendGroupMembers(false);
             setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
-            for (const m of _recommendGroupMembers) {
+            _recommendGroupMembers.forEach(async (m) => {
                 m.rns = await RNS.addr2Name(m.ethAddress);
                 setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
-            }
+            });
         }
         setIsLoadingRecommendGroupMembers(false);
     };
