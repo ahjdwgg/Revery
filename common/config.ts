@@ -16,7 +16,7 @@ const productsList: {
 
 const config = {
     hubEndpoint: 'https://node-beta.rss3.dev',
-    undefinedImageAlt: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    undefinedImageAlt: 'https://infura-ipfs.io/ipfs/QmRit9xifbV9mNZNvYdo8kRMrJndsaJNQuYG1YKkc1RCGd',
     hideUnlistedAssets: false,
     tags: {
         prefix: 'pass',
