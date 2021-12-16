@@ -3,14 +3,15 @@ import FilterTag from './FilterTag';
 
 interface FilterSectionProps {
     tagList: string[];
+    getFilteredContent: (param?: any) => void; // parent callback
 }
 
-const FilterSection = ({ tagList }: FilterSectionProps) => {
+const FilterSection = ({ tagList, getFilteredContent }: FilterSectionProps) => {
     const [isSelected, setSelected] = useState(tagList[0]);
 
     const selectTag = (tag: string) => {
         setSelected(tag);
-        console.log(tag);
+        getFilteredContent(tag);
     };
 
     return (

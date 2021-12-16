@@ -7,6 +7,7 @@ import FootprintIcon from '../icons/FootprintIcon';
 import NFTIcon from '../icons/NFTIcon';
 import Mirror from '../icons/Mirror';
 import Misskey from '../icons/Misskey';
+import Arweave from '../icons/Arweave';
 
 export const FILTER_TAGS = {
     all: 'All',
@@ -16,6 +17,7 @@ export const FILTER_TAGS = {
     mirror: 'Mirror',
     twitter: 'Twitter',
     misskey: 'Misskey',
+    arweave: 'Arweave',
 };
 interface FilterTagProps {
     tag: string;
@@ -60,4 +62,5 @@ const iconMap = new Map([
     [FILTER_TAGS.mirror, <Mirror key={FILTER_TAGS.mirror} />],
     [FILTER_TAGS.misskey, <Misskey key={FILTER_TAGS.misskey} />],
     [FILTER_TAGS.twitter, <Twitter key={FILTER_TAGS.twitter} />],
+    [FILTER_TAGS.arweave, <Arweave key={FILTER_TAGS.arweave} />],
 ]);

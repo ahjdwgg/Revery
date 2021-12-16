@@ -23,6 +23,7 @@ import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
 import FilterSection from '../components/filter/FilterSection';
+import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -52,15 +53,8 @@ const Home: NextPage = () => {
     const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
     const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
 
-    const [filterTagList, setFilterTagList] = useState<string[]>([
-        'All',
-        'NFT',
-        'Donation',
-        'Footprint',
-        'Mirror',
-        'Twitter',
-        'Misskey',
-    ]);
+    const [filterTagList, setFilterTagList] = useState<string[]>(Object.values(FILTER_TAGS));
+    const [filterTag, setFilterTag] = useState('All'); // default: all contents
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -204,6 +198,28 @@ const Home: NextPage = () => {
         setIsLoadingRecommendGroupMembers(false);
     };
 
+    const getFilteredContent = (tag: string) => {
+        setFilterTag(tag);
+    };
+
+    const getItemCardTag = (field: string) => {
+        if (field.includes('Arweave')) {
+            return FILTER_TAGS.arweave;
+        } else if (field.includes('Twitter')) {
+            return FILTER_TAGS.twitter;
+        } else if (field.includes('Mirror.XYZ')) {
+            return FILTER_TAGS.mirror;
+        } else if (field.includes('Misskey')) {
+            return FILTER_TAGS.misskey;
+        } else if (field.includes('NFT')) {
+            return FILTER_TAGS.nft;
+        } else if (field.includes('POAP')) {
+            return FILTER_TAGS.footprint;
+        } else if (field.includes('Gitcoin')) {
+            return FILTER_TAGS.donation;
+        }
+    };
+
     return (
         <>
             <Header />
@@ -221,23 +237,32 @@ const Home: NextPage = () => {
                                 <section className="flex flex-col items-center justify-start gap-y-2.5">
                                     {content.map((element, index) => {
                                         if (element.item.id.includes('auto')) {
-                                            return (
-                                                <ItemCard
-                                                    key={index}
-                                                    avatarUrl={element.avatar}
-                                                    username={element.name}
-                                                    content={element.item.summary}
-                                                    asset={element.details}
-                                                    timeStamp={new Date(element.item.date_updated).valueOf()}
-                                                    target={element.item.target}
-                                                    toUserProfile={async () =>
-                                                        await router.push(
-                                                            `/u/${await RNS.tryName(element.item.id.split('-')[0])}`,
-                                                        )
-                                                    }
-                                                    showAssetDetail={() => fetchAssetDetail(element.item.target.field)}
-                                                />
-                                            );
+                                            if (
+                                                filterTag == FILTER_TAGS.all ||
+                                                filterTag == getItemCardTag(element.item.target.field)
+                                            ) {
+                                                return (
+                                                    <ItemCard
+                                                        key={index}
+                                                        avatarUrl={element.avatar}
+                                                        username={element.name}
+                                                        content={element.item.summary}
+                                                        asset={element.details}
+                                                        timeStamp={new Date(element.item.date_updated).valueOf()}
+                                                        target={element.item.target}
+                                                        toUserProfile={async () =>
+                                                            await router.push(
+                                                                `/u/${await RNS.tryName(
+                                                                    element.item.id.split('-')[0],
+                                                                )}`,
+                                                            )
+                                                        }
+                                                        showAssetDetail={() =>
+                                                            fetchAssetDetail(element.item.target.field)
+                                                        }
+                                                    />
+                                                );
+                                            }
                                         } else {
                                             return (
                                                 <ContentCard
@@ -276,7 +301,7 @@ const Home: NextPage = () => {
                         </>
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11">
-                        <FilterSection tagList={filterTagList} />
+                        <FilterSection tagList={filterTagList} getFilteredContent={getFilteredContent} />
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers}
