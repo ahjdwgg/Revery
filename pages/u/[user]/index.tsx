@@ -307,7 +307,7 @@ const ProfilePage: NextPage = () => {
 
     const toRss3BioUserSite = () => {
         if (link) {
-            const prefix = link.endsWith('.rss3') ? link.split('.rss3')[0] : link;
+            const prefix = link.endsWith(config.rns.suffix) ? link.replace(config.rns.suffix, '') : link;
             const url = RSS3.buildProductBaseURL('RSS3Bio', '', prefix);
             window.open(url, '_blank');
         }
