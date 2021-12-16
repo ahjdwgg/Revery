@@ -491,7 +491,8 @@ export default {
             const p = config.productsList[product];
             if (p.subDomainMode) {
                 if (name) {
-                    return `${p.schema}${name}.${p.baseDomain}`;
+                    const fixedName = name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
+                    return `${p.schema}${fixedName}.${p.baseDomain}`;
                 } else {
                     return `${p.schema}${p.baseDomain}/${address}`;
                 }
