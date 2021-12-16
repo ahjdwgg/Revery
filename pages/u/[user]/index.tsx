@@ -596,36 +596,31 @@ const ProfilePage: NextPage = () => {
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
-                            {isFootprintLoading ? (
-                                // <div className="flex flex-row items-center justify-center w-full h-32">
-                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                                // </div>
-                                <FootprintItemLoader />
-                            ) : (
-                                <div className="flex flex-col w-full gap-4">
-                                    {footprintItems.length > 0 ? (
-                                        footprintItems.map((asset, i) => (
-                                            <FootprintCard
-                                                key={i}
-                                                imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                                                startDate={asset.detail.start_date}
-                                                endDate={asset.detail.end_date}
-                                                city={asset.detail.city}
-                                                country={asset.detail.country}
-                                                username={username}
-                                                activity={asset.detail.name || ''}
-                                                clickEvent={() => {
-                                                    getModalDetail(asset, 'footprint');
-                                                }}
-                                            />
-                                        ))
-                                    ) : (
-                                        <span className="text-base font-semibold line-clamp-1 opacity-20">
-                                            Oops, nothing found :P
-                                        </span>
-                                    )}
-                                </div>
-                            )}
+                            <div className="flex flex-col w-full gap-4">
+                                {isFootprintLoading ? (
+                                    [...Array(3)].map((_, id) => <FootprintItemLoader key={id} />)
+                                ) : footprintItems.length > 0 ? (
+                                    footprintItems.map((asset, i) => (
+                                        <FootprintCard
+                                            key={i}
+                                            imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                            startDate={asset.detail.start_date}
+                                            endDate={asset.detail.end_date}
+                                            city={asset.detail.city}
+                                            country={asset.detail.country}
+                                            username={username}
+                                            activity={asset.detail.name || ''}
+                                            clickEvent={() => {
+                                                getModalDetail(asset, 'footprint');
+                                            }}
+                                        />
+                                    ))
+                                ) : (
+                                    <span className="text-base font-semibold line-clamp-1 opacity-20">
+                                        Oops, nothing found :P
+                                    </span>
+                                )}
+                            </div>
                         </AssetCard>
                     </div>
                 </section>
