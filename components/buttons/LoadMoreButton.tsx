@@ -1,5 +1,5 @@
 import Button from './Button';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { InView } from 'react-intersection-observer';
 
 interface LoadMoreButtonProps {
@@ -7,10 +7,11 @@ interface LoadMoreButtonProps {
     width: string;
     height: string;
     isLoading: boolean;
+    children?: ReactNode;
     onClick: () => void;
 }
 
-const LoadMoreButton = ({ color, width, height, isLoading, onClick }: LoadMoreButtonProps) => {
+const LoadMoreButton = ({ color, width, height, isLoading, children, onClick }: LoadMoreButtonProps) => {
     const handleViewChange = (inView: boolean) => {
         if (inView) {
             onClick();
@@ -19,18 +20,20 @@ const LoadMoreButton = ({ color, width, height, isLoading, onClick }: LoadMoreBu
     return (
         <>
             {isLoading ? (
-                <Button isOutlined={false} color={color} icon={'loading'} width={width} height={height} />
+                <>{children}</>
             ) : (
-                <InView onChange={handleViewChange} triggerOnce={true}>
-                    <Button
-                        isOutlined={false}
-                        color={color}
-                        text={'Load more'}
-                        width={width}
-                        height={height}
-                        onClick={onClick}
-                    />
-                </InView>
+                <div className="flex flex-row justify-center w-full py-8 opacity-0">
+                    <InView onChange={handleViewChange} triggerOnce={true}>
+                        <Button
+                            isOutlined={false}
+                            color={color}
+                            text={'Load more'}
+                            width={width}
+                            height={height}
+                            onClick={onClick}
+                        />
+                    </InView>
+                </div>
             )}
         </>
     );

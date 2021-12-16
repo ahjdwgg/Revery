@@ -130,15 +130,19 @@ const Nft: NextPage = () => {
                             </div>
                         ))}
                         {assetCount.current < briefList.current.length && (
-                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                <LoadMoreButton
-                                    color={COLORS.primary}
-                                    width={'w-32'}
-                                    height={'h-8'}
-                                    isLoading={isLoadingMore}
-                                    onClick={loadMoreNFTs}
-                                />
-                            </div>
+                            <LoadMoreButton
+                                color={COLORS.primary}
+                                width={'w-32'}
+                                height={'h-8'}
+                                isLoading={isLoadingMore}
+                                onClick={loadMoreNFTs}
+                            >
+                                <section className="grid w-full grid-cols-2 gap-4 pb-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center col-span-full">
+                                    {[...Array(5)].map((_, id) => (
+                                        <NFTItemLoader key={id} />
+                                    ))}
+                                </section>
+                            </LoadMoreButton>
                         )}
                     </section>
                 )}

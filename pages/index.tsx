@@ -201,13 +201,13 @@ const Home: NextPage = () => {
                     <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
                         <>
                             {isContentLoading ? (
-                                <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                <section className="flex flex-col items-center justify-start gap-y-2.5 pb-8">
                                     {[...Array(8)].map((_, id) => (
                                         <ContentItemLoader key={id} />
                                     ))}
                                 </section>
                             ) : content.length ? (
-                                <section className="flex flex-col items-center justify-start gap-y-2.5">
+                                <section className="flex flex-col items-center justify-start gap-y-2.5 pb-8">
                                     {content.map((item, index) => {
                                         if (item.id.includes('auto')) {
                                             return (
@@ -241,17 +241,19 @@ const Home: NextPage = () => {
                                         }
                                     })}
                                     {haveMoreContent ? (
-                                        <div className="flex flex-row justify-center w-full py-8">
-                                            <LoadMoreButton
-                                                color={COLORS.primary}
-                                                width={'w-32'}
-                                                height={'h-8'}
-                                                isLoading={isLoadingMore}
-                                                onClick={loadMoreContent}
-                                            />
-                                        </div>
+                                        <LoadMoreButton
+                                            color={COLORS.primary}
+                                            width={'w-32'}
+                                            height={'h-8'}
+                                            isLoading={isLoadingMore}
+                                            onClick={loadMoreContent}
+                                        >
+                                            {[...Array(3)].map((_, id) => (
+                                                <ContentItemLoader key={id} />
+                                            ))}
+                                        </LoadMoreButton>
                                     ) : (
-                                        <div className="w-full py-8 text-sm text-center">{"That's all :p"}</div>
+                                        <div className="w-full pt-8 text-sm text-center">{"That's all :p"}</div>
                                     )}
                                 </section>
                             ) : (

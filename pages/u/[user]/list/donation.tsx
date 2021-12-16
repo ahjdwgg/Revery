@@ -117,15 +117,19 @@ const Donation: NextPage = () => {
                             />
                         ))}
                         {assetCount.current < briefList.current.length && (
-                            <div className="flex flex-row justify-center w-full py-4 col-span-full">
-                                <LoadMoreButton
-                                    color={COLORS.primary}
-                                    width={'w-32'}
-                                    height={'h-8'}
-                                    isLoading={isLoadingMore}
-                                    onClick={loadMoreDonations}
-                                />
-                            </div>
+                            <LoadMoreButton
+                                color={COLORS.primary}
+                                width={'w-32'}
+                                height={'h-8'}
+                                isLoading={isLoadingMore}
+                                onClick={loadMoreDonations}
+                            >
+                                <section className="grid w-full grid-cols-1 gap-4 pb-8 md:grid-cols-2 lg:grid-cols-2 col-span-full">
+                                    {[...Array(4)].map((_, id) => (
+                                        <DonationItemLoader key={id} />
+                                    ))}
+                                </section>
+                            </LoadMoreButton>
                         )}
                     </section>
                 )}
