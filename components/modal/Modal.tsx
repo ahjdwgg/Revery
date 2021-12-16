@@ -73,7 +73,6 @@ export default function Modal({
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
-                onScroll={handleScroll}
             >
                 <div className="py-2 flex items-center">
                     <BiX className={`w-8 h-8 cursor-pointer ${buttonTheme.get(theme)}`} onClick={modalClose} />
@@ -81,7 +80,7 @@ export default function Modal({
                         <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
                     </div>
                 </div>
-                <div style={{ maxHeight: '85vh' }} className="overflow-scroll">
+                <div style={{ maxHeight: '85vh' }} className="overflow-scroll" onScroll={handleScroll}>
                     {children}
                 </div>
             </div>
