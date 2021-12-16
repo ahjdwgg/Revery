@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, UIEvent, useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
 export type ModalColorStyle = 'account' | 'nft' | 'donation' | 'footprint' | 'primary';
@@ -36,9 +36,9 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
         }
     };
 
-    const handleScroll = (e) => {
+    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
         if (typeof onReachBottom === 'function') {
-            const { scrollHeight, scrollTop, clientHeight } = e.target;
+            const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
             const bottom = scrollHeight - scrollTop === clientHeight;
             if (bottom) {
                 onReachBottom();
