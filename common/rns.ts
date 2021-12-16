@@ -77,12 +77,21 @@ type CNAME = 'resolver' | 'token';
 function isMetamaskEnabled() {
     return typeof (window as any).ethereum !== 'undefined';
 }
-function getRNSContract(cname: CNAME) {
-    if (config.rns.smartContract.testnet) {
-        return config.rns.smartContract.contractNetworks.ropsten[cname];
+async function isSpecifyNetwork() {
+    if (isMetamaskEnabled()) {
+        const metamaskEthereum = (window as any).ethereum;
+        // this.rss3 object exists, don't necessarily mean the account is connected
+        await metamaskEthereum.request({
+            method: 'eth_requestAccounts',
+        });
+        const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
+        return config.rns.smartContract.networkID === chain;
     } else {
-        return config.rns.smartContract.contractNetworks.mainnet[cname];
+        return false;
     }
+}
+function getRNSContract(cname: CNAME) {
+    return config.rns.smartContract.contractAddress[cname];
 }
 async function callRNSContract<T>(cname: CNAME, method: string, ...args: any): Promise<T> {
     let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
@@ -103,6 +112,7 @@ const RNS = {
     name2Addr,
     tryName,
     isMetamaskEnabled,
+    isSpecifyNetwork,
     async registerRNS(name: string) {
         await (window as any).ethereum?.enable();
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'register', name);

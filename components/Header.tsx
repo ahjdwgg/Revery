@@ -138,7 +138,11 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                                             isDisabled={true}
                                         />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
-                                            <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
+                                            <ImageHolder
+                                                imageUrl={avatarURL}
+                                                roundedClassName={'rounded-full'}
+                                                size={28}
+                                            />
                                         </div>
                                     </>
                                 ) : isLoading !== null ? (
@@ -165,7 +169,7 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                 </div>
             </header>
             {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={true} size="sm">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="sm">
                 <div className="flex flex-col my-8 gap-y-6 mx-14">
                     {isLoading === 'WalletConnect' ? (
                         <Button

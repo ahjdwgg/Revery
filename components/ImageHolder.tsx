@@ -6,18 +6,16 @@ import utils from '../common/utils';
 interface ImageProps {
     imageUrl: string;
     title?: string;
-    isFullRound: boolean;
+    roundedClassName: string;
     size: number;
     onClick?: () => void;
 }
 
-const ImageHolder = ({ imageUrl, title, isFullRound, size, onClick = () => {} }: ImageProps) => {
-    const roundedStyleString = isFullRound ? 'rounded-half' : 'rounded';
-
+const ImageHolder = ({ imageUrl, title, roundedClassName, size, onClick = () => {} }: ImageProps) => {
     return (
         <div className={`flex justify-around relative`} style={{ width: size, height: size }} onClick={onClick}>
             <img
-                className={`w-full h-full object-cover transition-all duration-200 ease-in-out ${roundedStyleString}`}
+                className={`w-full h-full object-cover transition-all duration-200 ease-in-out ${roundedClassName}`}
                 src={utils.fixURLSchemas(imageUrl)}
                 alt={title}
             />

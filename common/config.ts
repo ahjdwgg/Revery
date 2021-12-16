@@ -16,7 +16,7 @@ const productsList: {
 
 const config = {
     hubEndpoint: 'https://node-beta.rss3.dev',
-    undefinedImageAlt: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    undefinedImageAlt: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
     hideUnlistedAssets: false,
     tags: {
         prefix: 'pass',
@@ -57,16 +57,11 @@ const config = {
         suffix: '.rss3',
         serviceUrl: 'https://rss3.domains',
         smartContract: {
-            testnet: true,
-            contractNetworks: {
-                ropsten: {
-                    resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
-                    token: '0x63CfEB343975116Ec2fc27125609da236D066615',
-                },
-                mainnet: {
-                    resolver: '0x0000000000000000000000000000000000000000',
-                    token: '0x0000000000000000000000000000000000000000',
-                },
+            networkID: '0x3',
+            networkName: 'ropsten',
+            contractAddress: {
+                resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
+                token: '0x63CfEB343975116Ec2fc27125609da236D066615',
             },
             contract: {
                 // rns contract abi

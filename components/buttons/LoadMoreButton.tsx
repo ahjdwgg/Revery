@@ -23,7 +23,11 @@ const LoadMoreButton = ({ color, width, height, isLoading, children, onClick }: 
                 <>{children}</>
             ) : (
                 <div className="flex flex-row justify-center w-full py-8 opacity-0">
-                    <InView onChange={handleViewChange} triggerOnce={true}>
+                    <InView
+                        onChange={handleViewChange}
+                        triggerOnce={true}
+                        rootMargin="1500px 0px" // load beforehand for better user experience
+                    >
                         <Button
                             isOutlined={false}
                             color={color}
