@@ -582,7 +582,7 @@ const ProfilePage: NextPage = () => {
                                             <div key={i} className="flex cursor-pointer">
                                                 <ImageHolder
                                                     imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
-                                                    isFullRound={false}
+                                                    roundedClassName={'rounded'}
                                                     size={70}
                                                     onClick={() => {
                                                         getModalDetail(asset, 'donation');

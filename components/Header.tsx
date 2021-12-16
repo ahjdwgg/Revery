@@ -138,7 +138,11 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                                             isDisabled={true}
                                         />
                                         <div className="cursor-pointer" onClick={toProfilePage}>
-                                            <ImageHolder imageUrl={avatarURL} isFullRound={true} size={28} />
+                                            <ImageHolder
+                                                imageUrl={avatarURL}
+                                                roundedClassName={'rounded-full'}
+                                                size={28}
+                                            />
                                         </div>
                                     </>
                                 ) : isLoading !== null ? (

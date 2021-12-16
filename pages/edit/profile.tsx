@@ -236,7 +236,12 @@ const Profile: NextPage = () => {
                 <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Profile</h1>
                 <section className="flex flex-col items-center w-full pt-10">
                     <div className="flex flex-row items-end justify-start w-4/5 pb-5 pl-14 gap-x-3">
-                        <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
+                        <ImageHolder
+                            imageUrl={avatarUrl}
+                            title={username}
+                            roundedClassName={'rounded-full'}
+                            size={100}
+                        />
                         <div className="flex flex-col gap-y-5">
                             <Button
                                 text={'Change Avatar'}

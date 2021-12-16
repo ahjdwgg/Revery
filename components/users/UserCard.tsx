@@ -35,7 +35,7 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
             <section className="animate-fade-in flex flex-row items-center flex-shrink-0 h-10 w-10">
                 <ImageHolder
                     imageUrl={avatarUrl}
-                    isFullRound={isAvatarFullRounded}
+                    roundedClassName={isAvatarFullRounded ? 'rounded-half' : 'rounded-2xl'}
                     size={isAvatarFullRounded ? 36 : 40}
                 />
             </section>

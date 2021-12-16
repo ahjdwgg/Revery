@@ -44,7 +44,7 @@ const FootprintCard = ({
     return (
         <div className="flex flex-row justify-start gap-2 cursor-pointer" onClick={clickEvent}>
             <section className="flex flex-row flex-shrink-0 w-max h-max">
-                <ImageHolder imageUrl={imageUrl} isFullRound={true} size={76} />
+                <ImageHolder imageUrl={imageUrl} roundedClassName={'rounded-full'} size={76} />
             </section>
             <section className="flex flex-col justify-around flex-1 text-sm leading-normal text-body-text">
                 <div className="flex flex-row items-center gap-2">

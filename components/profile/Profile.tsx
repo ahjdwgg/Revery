@@ -144,7 +144,7 @@ const Profile = ({
 
     return (
         <div className="flex flex-row items-start justify-start w-full py-4 gap-x-8">
-            <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
+            <ImageHolder imageUrl={avatarUrl} title={username} roundedClassName={'rounded-full'} size={100} />
             <div className="flex flex-col items-start justify-start flex-1 gap-y-2">
                 <div className="flex flex-row items-center gap-x-4">
                     <div className="text-2xl font-semibold">{username}</div>

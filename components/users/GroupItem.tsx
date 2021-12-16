@@ -24,7 +24,7 @@ const GroupItem = ({ title, icon, isSelected, onClick }: GroupItemProps) => {
                     isSelected ? 'border-primary' : isHovered ? 'border-primary border-opacity-40' : ''
                 }`}
             >
-                <ImageHolder imageUrl={icon || config.undefinedImageAlt} isFullRound={true} size={52} />
+                <ImageHolder imageUrl={icon || config.undefinedImageAlt} roundedClassName={'rounded-full'} size={52} />
             </div>
             <div className={'mt-1'}>
                 <p className={`text-xs ${isSelected ? 'opacity-100' : 'opacity-20'}`}>{title}</p>
