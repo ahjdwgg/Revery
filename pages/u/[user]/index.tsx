@@ -29,9 +29,6 @@ import ItemCard from '../../../components/content/ItemCard';
 
 import SingleAccount from '../../../components/details/SingleAccount';
 import { COLORS } from '../../../components/buttons/variables';
-import rss3 from '../../../common/rss3';
-import FollowList from '../../../components/users/FollowList';
-import { joinSignature } from '@ethersproject/bytes';
 import CardItemLoader from '../../../components/loaders/CardItemLoader';
 import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader';
 import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
