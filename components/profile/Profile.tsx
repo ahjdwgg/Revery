@@ -133,9 +133,11 @@ const Profile = ({
     };
 
     const logout = () => {
-        RSS3.disconnect();
-        setIsLoggedIn(false);
-        reloadPage();
+        if (confirm('Are you sure you want to logout?')) {
+            RSS3.disconnect();
+            setIsLoggedIn(false);
+            reloadPage();
+        }
     };
 
     const reloadPage = () => {
