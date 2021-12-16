@@ -49,7 +49,8 @@ const Home: NextPage = () => {
     const [isLoadingRecommendGroups, setIsLoadingRecommendGroups] = useState(true);
     const [isLoadingRecommendGroupMembers, setIsLoadingRecommendGroupMembers] = useState(true);
     const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
-    const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
+    const [recommendGroupMembers, setRecommendGroupMembers] = useState<Record<string, UserItems[]>>({});
+    const [currentRecommendGroupType, setCurrentRecommendGroupType] = useState<string>('');
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -167,28 +168,37 @@ const Home: NextPage = () => {
         const recommendGroups = await RSS3.getRecommendGroups();
         if (recommendGroups.length) {
             setRecommendGroups(recommendGroups);
-            await getRecommendationGroups(recommendGroups[0].key);
+            setIsLoadingRecommendGroups(false);
+            setCurrentRecommendGroupType(recommendGroups[0].key);
         } // else false
-        setIsLoadingRecommendGroups(false);
     };
+
+    useEffect(() => {
+        if (currentRecommendGroupType) {
+            getRecommendationGroups(currentRecommendGroupType);
+        }
+    }, [currentRecommendGroupType]);
 
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
         if (recommendGroupMemberIndexes.length) {
-            const recommendGroupMembers = await Promise.all(
-                recommendGroupMemberIndexes.map(async (memberIndex) => {
-                    const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
-                    return {
-                        username: memberIndex.profile?.name || '',
-                        avatarUrl: memberIndex.profile?.avatar?.[0] || config.undefinedImageAlt,
-                        bio: extracted,
-                        ethAddress: memberIndex.id,
-                        rns: await RNS.addr2Name(memberIndex.id),
-                    };
-                }),
-            );
-            setRecommendGroupMembers(recommendGroupMembers);
+            let _recommendGroupMembers = recommendGroupMemberIndexes.map((memberIndex) => {
+                const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
+                return {
+                    username: memberIndex.profile?.name || '',
+                    avatarUrl: memberIndex.profile?.avatar?.[0] || config.undefinedImageAlt,
+                    bio: extracted,
+                    ethAddress: memberIndex.id,
+                    rns: '',
+                };
+            }) as UserItems[];
+            setIsLoadingRecommendGroupMembers(false);
+            setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
+            for (const m of _recommendGroupMembers) {
+                m.rns = await RNS.addr2Name(m.ethAddress);
+                setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
+            }
         }
         setIsLoadingRecommendGroupMembers(false);
     };
@@ -267,8 +277,10 @@ const Home: NextPage = () => {
                     <section className="flex flex-col gap-4 pb-16 w-4/11">
                         <RecommendSection
                             groups={recommendGroups}
-                            members={recommendGroupMembers}
-                            toGroup={getRecommendationGroups}
+                            members={recommendGroupMembers[currentRecommendGroupType] ?? []}
+                            toGroup={(type) => {
+                                setCurrentRecommendGroupType(type);
+                            }}
                             toUserPage={toUserPage}
                             isLoadingGroups={isLoadingRecommendGroups}
                             isLoadingMembers={isLoadingRecommendGroupMembers}
