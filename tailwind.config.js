@@ -34,6 +34,9 @@ module.exports = {
                     text: '#944300',
                     bg: '#fff4eb',
                 },
+                filter: {
+                    DEFAULT: '#F2F2F2',
+                },
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg

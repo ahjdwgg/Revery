@@ -22,6 +22,7 @@ import { UserItems } from '../components/users/UserCard';
 import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
+import FilterSection from '../components/filter/FilterSection';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -50,6 +51,16 @@ const Home: NextPage = () => {
     const [isLoadingRecommendGroupMembers, setIsLoadingRecommendGroupMembers] = useState(true);
     const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
     const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
+
+    const [filterTagList, setFilterTagList] = useState<string[]>([
+        'All',
+        'NFT',
+        'Donation',
+        'Footprint',
+        'Mirror',
+        'Twitter',
+        'Misskey',
+    ]);
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -265,6 +276,7 @@ const Home: NextPage = () => {
                         </>
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11">
+                        <FilterSection tagList={filterTagList} />
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers}
