@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import React from 'react';
+import utils from '../common/utils';
 
 interface ImageProps {
     imageUrl: string;
@@ -19,7 +20,11 @@ const ImageHolder = ({ imageUrl, title, isFullRound, size, onClick = () => {} }:
             style={{ width: size, height: size }}
             onClick={onClick}
         >
-            <img className={`w-full h-full object-cover ${roundedStyleString}`} src={imageUrl} alt={title} />
+            <img
+                className={`w-full h-full object-cover ${roundedStyleString}`}
+                src={utils.fixURLSchemas(imageUrl)}
+                alt={title}
+            />
         </div>
     );
 };

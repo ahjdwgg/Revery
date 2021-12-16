@@ -111,18 +111,6 @@ const toExternalLink = (field: string, payload: string) => {
     }
 };
 
-const toExternalProfile = (field: string, payload: string) => {
-    if (field.includes('Mirror.XYZ')) {
-        window.open(payload.split('.mirror.xyz')[0] + '.mirror.xyz');
-    } else {
-        const dic: { [key: string]: () => void } = {
-            Twitter: () => window.open('https://twitter.com/' + field.split('-')[3]),
-            Misskey: () => window.open('https://nya.one/@' + field.split('-')[3].split('@')[0]),
-        };
-        dic[field.split('-')[2]]?.call('');
-    }
-};
-
 const ItemCard = ({
     avatarUrl,
     username,
@@ -154,19 +142,14 @@ const ItemCard = ({
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-2">
                 <img
-                    src={avatarUrl || config.undefinedImageAlt}
+                    src={avatarUrl}
                     alt={username}
                     className="flex-shrink-0 w-8 h-8 rounded-full cursor-pointer"
                     onClick={() => {
-                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
+                        toUserProfile();
                     }}
                 />
-                <div
-                    className="flex flex-row items-center gap-2 cursor-pointer"
-                    onClick={() => {
-                        !asset ? toExternalProfile(target.field, target.action.payload) : toUserProfile();
-                    }}
-                >
+                <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => toUserProfile()}>
                     <span className="text-base font-semibold">{username}</span>
                     {asset && <span>{getTopic(target.field, target.action.type)}</span>}
                     {iconSVG && <>{iconSVG}</>}

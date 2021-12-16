@@ -44,8 +44,15 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
             className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto py-16 bg-black bg-opacity-5 animated faster ${
                 isHidden ? 'hidden' : ''
             } ${animation ? 'fadeIn' : 'fadeOut'} ${isCenter ? 'flex flex-row justify-center items-center' : ''} `}
+            onClick={modalClose}
         >
-            <div className={modalSize.get(size)}>
+            <div
+                style={{ maxHeight: '60vh' }}
+                className={modalSize.get(size)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
+            >
                 <BiX
                     className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
                     onClick={modalClose}
@@ -65,7 +72,10 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'relative max-w-sm px-2 py-12 mx-auto bg-white shadow'],
-    ['md', 'relative flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow'],
-    ['lg', 'relative w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
+    ['sm', 'relative overflow-scroll max-w-sm px-2 py-12 mx-auto bg-white shadow'],
+    [
+        'md',
+        'relative overflow-scroll flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow',
+    ],
+    ['lg', 'relative overflow-scroll w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
 ]);
