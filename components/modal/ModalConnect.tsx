@@ -70,7 +70,7 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
 
     return (
         <Modal hidden={hidden} closeEvent={closeEvent} theme={'primary'} size="sm">
-            <div className="flex flex-col my-8 gap-y-6 mx-14">
+            <div className="flex flex-col my-8 gap-y-6 mx-14 overflow-y-hidden">
                 {isLoading === 'WalletConnect' ? (
                     <Button isOutlined={false} color={COLORS.primary} icon={'loading'} width={'w-60'} height={'h-14'} />
                 ) : (
