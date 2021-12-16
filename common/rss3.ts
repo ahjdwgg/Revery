@@ -375,7 +375,7 @@ export default {
                 if (RSS3LoginUser.isReady) {
                     resolve(RSS3LoginUser);
                 } else {
-                    document.addEventListener(Events.connect, () => {
+                    addEventListener(Events.connect, () => {
                         resolve(RSS3LoginUser);
                     });
                 }
