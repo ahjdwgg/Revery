@@ -120,8 +120,10 @@ const Profile = ({
         }
     };
 
+    const shouldShowLoader = foList[followType].length < (followType === 'followers' ? followers : followings).length;
+
     useEffect(() => {
-        if (!modalHidden) {
+        if (!modalHidden && shouldShowLoader) {
             loadFoList(followType === 'followers' ? followers : followings);
         }
     }, [modalHidden, currentIndex.followers, currentIndex.followings]);
@@ -213,9 +215,7 @@ const Profile = ({
                         closeModal();
                         toUserPage(aon);
                     }}
-                    shouldShowLoader={
-                        foList[followType].length !== (followType === 'followers' ? followers : followings).length
-                    }
+                    shouldShowLoader={shouldShowLoader}
                 />
             </Modal>
             <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />
