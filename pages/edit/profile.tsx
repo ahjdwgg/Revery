@@ -16,6 +16,8 @@ import { useRouter } from 'next/router';
 import { utils as RSS3Utils } from 'rss3';
 import { stringify } from 'querystring';
 import { AnyObject } from 'rss3/types/extend';
+import IPFS from '../../common/ipfs';
+import ModalRNS from '../../components/modal/ModalRNS';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -24,6 +26,7 @@ const Profile: NextPage = () => {
     const loginUser = RSS3.getLoginUser();
 
     const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
+    const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
     const [link, setLink] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
@@ -52,7 +55,11 @@ const Profile: NextPage = () => {
 
     const [isEdited, setIsEdited] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isShowingDiscardNotice, setIsShowingDiscardNotice] = useState(false);
     const [isProfileSaved, setIsProfileSaved] = useState<boolean>(false);
+    const [modalRNSHidden, setModalRNSHidden] = useState(true);
+
+    let inputElement: HTMLInputElement | null = null;
 
     const showNotice = (notice: string, cb?: () => void) => {
         setNotice(notice);
@@ -64,7 +71,9 @@ const Profile: NextPage = () => {
     };
 
     const handleChangeAvatar = () => {
-        showNotice('You can edit your Avatar at rss3.bio');
+        if (inputElement) {
+            inputElement.click();
+        }
     };
 
     const handleLinkOnClick = () => {
@@ -87,6 +96,27 @@ const Profile: NextPage = () => {
         setIsEdited(true);
     };
 
+    const previewNewAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setNewAvatarFile(file);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setAvatarUrl(reader.result as string);
+            };
+            setIsEdited(true);
+        }
+    };
+
+    const uploadNewAvatar = async () => {
+        if (newAvatarFile) {
+            return await IPFS.upload(newAvatarFile);
+        } else {
+            return avatarUrl;
+        }
+    };
+
     const handleChangeAccountItems = () => {
         console.log(accountItems);
     };
@@ -100,7 +130,14 @@ const Profile: NextPage = () => {
     };
 
     const handleDiscard = () => {
-        setIsEdited(false);
+        if (isEdited) {
+            setIsShowingDiscardNotice(true);
+        } else {
+            confirmDiscard();
+        }
+    };
+
+    const confirmDiscard = () => {
         back();
     };
 
@@ -108,10 +145,12 @@ const Profile: NextPage = () => {
         setIsLoading(true);
         if (isEdited) {
             const profile = {
-                avatar: [avatarUrl],
+                avatar: [await uploadNewAvatar()],
                 name: username,
                 bio: bio + (website ? `<SITE#${website}>` : ''),
             };
+
+            console.log(profile);
 
             const loginUser = RSS3.getLoginUser().persona as IRSS3;
             if (profile.name.length > config.fieldMaxLength) {
@@ -160,7 +199,7 @@ const Profile: NextPage = () => {
             type: 'Account',
             route: '/setup/accounts',
             baseUrl,
-            colorStyle: 'account',
+            colorStyle: 'primary',
         });
         setIsShowingRedirectNotice(true);
     };
@@ -236,7 +275,12 @@ const Profile: NextPage = () => {
                 <h1 className="mt-4 text-lg font-bold text-left text-primary">Edit Profile</h1>
                 <section className="flex flex-col items-center w-full pt-10">
                     <div className="flex flex-row items-end justify-start w-4/5 pb-5 pl-14 gap-x-3">
-                        <ImageHolder imageUrl={avatarUrl} title={username} isFullRound={true} size={100} />
+                        <ImageHolder
+                            imageUrl={avatarUrl}
+                            title={username}
+                            roundedClassName={'rounded-full'}
+                            size={100}
+                        />
                         <div className="flex flex-col gap-y-5">
                             <Button
                                 text={'Change Avatar'}
@@ -244,8 +288,23 @@ const Profile: NextPage = () => {
                                 color={COLORS.primary}
                                 isOutlined={true}
                             />
-                            <div className={`${!link && 'hidden'}`}>
-                                {link && <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />}
+                            <input
+                                type={'file'}
+                                className={'hidden'}
+                                accept={'image/*'}
+                                onChange={previewNewAvatar}
+                                ref={(input) => (inputElement = input)}
+                            />
+                            <div>
+                                {link ? (
+                                    <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />
+                                ) : (
+                                    <LinkButton
+                                        text={'Claim your RNS'}
+                                        color={COLORS.primary}
+                                        onClick={() => setModalRNSHidden(false)}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -350,7 +409,6 @@ const Profile: NextPage = () => {
             <Modal
                 theme={'primary'}
                 size={'sm'}
-                isCenter={true}
                 hidden={!isShowingRedirectNotice}
                 closeEvent={() => setIsShowingRedirectNotice(false)}
             >
@@ -392,19 +450,15 @@ const Profile: NextPage = () => {
                 </div>
             </Modal>
 
-            <Modal
-                theme={'primary'}
-                size={'md'}
-                isCenter={true}
-                hidden={!isShowingNotice}
-                closeEvent={() => setIsShowingNotice(false)}
-            >
+            <Modal theme={'primary'} size={'sm'} hidden={!isShowingNotice} closeEvent={() => setIsShowingNotice(false)}>
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Oops</span>
                     </div>
 
-                    <div className="flex justify-center">{notice}</div>
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12">{notice}</div>
+                    </div>
 
                     <div className="flex justify-center gap-x-3">
                         <Button
@@ -421,17 +475,52 @@ const Profile: NextPage = () => {
 
             <Modal
                 theme={'primary'}
-                size={'md'}
-                isCenter={true}
-                hidden={!isProfileSaved}
-                closeEvent={() => setIsShowingNotice(false)}
+                size={'sm'}
+                hidden={!isShowingDiscardNotice}
+                closeEvent={() => setIsShowingDiscardNotice(false)}
             >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className="mx-2 text-primary">Warning</span>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12 text-center">
+                            Are you sure to discard? <br />
+                            Everything changed will be lost.
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center gap-x-3">
+                        <Button
+                            isOutlined={true}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Cancel'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={() => setIsShowingDiscardNotice(false)}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Discard'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={confirmDiscard}
+                        />
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal theme={'primary'} size={'sm'} hidden={!isProfileSaved} closeEvent={() => setIsShowingNotice(false)}>
                 <div className="flex flex-col justify-between w-full h-full">
                     <div className="flex justify-center flex-start">
                         <span className="mx-2 text-primary">Succeed</span>
                     </div>
 
-                    <div className="flex justify-center">Profile saved successfully.</div>
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12">Profile saved successfully.</div>
+                    </div>
 
                     <div className="flex justify-center">
                         <Button
@@ -445,6 +534,7 @@ const Profile: NextPage = () => {
                     </div>
                 </div>
             </Modal>
+            <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />
         </div>
     );
 };

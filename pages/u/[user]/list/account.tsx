@@ -93,7 +93,6 @@ const Account: NextPage = () => {
             <Modal
                 hidden={modal.hidden}
                 theme={'primary'}
-                isCenter={true}
                 size="md"
                 closeEvent={() => {
                     document.body.style.overflow = '';

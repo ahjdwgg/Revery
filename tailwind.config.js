@@ -37,6 +37,7 @@ module.exports = {
                 filter: {
                     DEFAULT: '#F2F2F2',
                 },
+                error: '#D75F5F',
             },
             opacity: {
                 5: '.05', //link button bg; disabled save button bg
@@ -47,6 +48,7 @@ module.exports = {
             },
             borderRadius: {
                 DEFAULT: '5px',
+                half: '50%',
             },
             width: {
                 '4/11': '36.36363636%',

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, UIEvent, useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
 export type ModalColorStyle = 'account' | 'nft' | 'donation' | 'footprint' | 'primary';
@@ -7,12 +7,13 @@ interface ModalProps {
     theme: ModalColorStyle;
     hidden: boolean;
     size: 'sm' | 'md' | 'lg';
-    isCenter: boolean;
+    title?: ReactNode;
     children: ReactNode;
     closeEvent: () => void;
+    onReachBottom?: () => void;
 }
 
-export default function Modal({ theme, hidden, size, isCenter, children, closeEvent }: ModalProps) {
+export default function Modal({ theme, hidden, size, title, children, closeEvent, onReachBottom }: ModalProps) {
     const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
@@ -35,29 +36,43 @@ export default function Modal({ theme, hidden, size, isCenter, children, closeEv
         }
     };
 
+    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+        if (typeof onReachBottom === 'function') {
+            const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+            const bottom = scrollHeight - scrollTop === clientHeight;
+            if (bottom) {
+                onReachBottom();
+            }
+        }
+    };
+
     useEffect(() => {
         onStateChange();
     }, [hidden]);
 
     return (
         <div
-            className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto py-16 bg-black bg-opacity-5 animated faster ${
+            className={`fixed top-0 left-0 z-50 w-full h-screen overflow-y-auto bg-black bg-opacity-5 animated faster ${
                 isHidden ? 'hidden' : ''
-            } ${animation ? 'fadeIn' : 'fadeOut'} ${isCenter ? 'flex flex-row justify-center items-center' : ''} `}
+            } ${animation ? 'fadeIn' : 'fadeOut'}`}
             onClick={modalClose}
         >
             <div
-                style={{ maxHeight: '60vh' }}
-                className={modalSize.get(size)}
+                style={{ top: '50%', transform: 'translate(0, -50%)' }}
+                className={`relative mx-auto bg-white shadow ${modalSize.get(size)}`}
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
             >
-                <BiX
-                    className={`absolute w-8 h-8 cursor-pointer top-2 left-2 ${buttonTheme.get(theme)}`}
-                    onClick={modalClose}
-                />
-                {children}
+                <div className="py-2 flex items-center">
+                    <BiX className={`w-8 h-8 cursor-pointer ${buttonTheme.get(theme)}`} onClick={modalClose} />
+                    <div>
+                        <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
+                    </div>
+                </div>
+                <div style={{ maxHeight: '85vh' }} className="overflow-scroll" onScroll={handleScroll}>
+                    {children}
+                </div>
             </div>
         </div>
     );
@@ -72,10 +87,7 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'relative overflow-scroll max-w-sm px-2 py-12 mx-auto bg-white shadow'],
-    [
-        'md',
-        'relative overflow-scroll flex flex-col items-center justify-around w-full max-w-lg bg-white h-96 p-14 shadow',
-    ],
-    ['lg', 'relative overflow-scroll w-full max-w-6xl px-2 py-12 mx-auto bg-white shadow'],
+    ['sm', 'max-w-sm px-2 pb-3 '],
+    ['md', 'flex flex-col items-center justify-around w-full max-w-lg h-96 px-14 pb-14'],
+    ['lg', 'w-full max-w-6xl px-2 pb-12'],
 ]);

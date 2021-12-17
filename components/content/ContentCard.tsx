@@ -7,6 +7,7 @@ import Twitter from '../icons/Twitter';
 import Mirror from '../icons/Mirror';
 import Misskey from '../icons/Misskey';
 import { timeDifferent } from '../../common/timeStamp';
+import ImageHolder from '../ImageHolder';
 
 interface ContentProps {
     avatarUrl: string;
@@ -16,9 +17,10 @@ interface ContentProps {
     images?: string[];
     timeStamp: number;
     type?: string;
+    toUserProfile?: () => void;
 }
 
-const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, type }: ContentProps) => {
+const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, type, toUserProfile }: ContentProps) => {
     let iconSVG = null;
 
     if (type) {
@@ -40,7 +42,13 @@ const ContentCard = ({ avatarUrl, username, title, content, images, timeStamp, t
     return (
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-3">
-                <img src={avatarUrl} alt={username} width={32} height={32} className="rounded-full" />
+                <ImageHolder
+                    imageUrl={avatarUrl}
+                    title={username}
+                    roundedClassName={'rounded-full'}
+                    size={32}
+                    onClick={toUserProfile}
+                />
                 <div className="text-base font-semibold">{username}</div>
                 <>
                     <span className="opacity-20">{timeDifferent(timeStamp)}</span>

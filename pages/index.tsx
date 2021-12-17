@@ -51,7 +51,8 @@ const Home: NextPage = () => {
     const [isLoadingRecommendGroups, setIsLoadingRecommendGroups] = useState(true);
     const [isLoadingRecommendGroupMembers, setIsLoadingRecommendGroupMembers] = useState(true);
     const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
-    const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
+    const [recommendGroupMembers, setRecommendGroupMembers] = useState<Record<string, UserItems[]>>({});
+    const [currentRecommendGroupType, setCurrentRecommendGroupType] = useState<string>('');
 
     const [filterTagList, setFilterTagList] = useState<string[]>(Object.values(FILTER_TAGS));
     const [filterTag, setFilterTag] = useState('All'); // default: all contents
@@ -60,6 +61,8 @@ const Home: NextPage = () => {
         const LoginUser = RSS3.getLoginUser();
         if (LoginUser.persona || (await RSS3.reconnect())) {
             setLoggedIn(true);
+
+            setTimeout(initRecommendationGrops, 0);
 
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
 
@@ -78,8 +81,6 @@ const Home: NextPage = () => {
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);
-
-            setTimeout(initRecommendationGrops, 0);
         }
     };
 
@@ -172,28 +173,37 @@ const Home: NextPage = () => {
         const recommendGroups = await RSS3.getRecommendGroups();
         if (recommendGroups.length) {
             setRecommendGroups(recommendGroups);
-            await getRecommendationGroups(recommendGroups[0].key);
+            setIsLoadingRecommendGroups(false);
+            setCurrentRecommendGroupType(recommendGroups[0].key);
         } // else false
-        setIsLoadingRecommendGroups(false);
     };
+
+    useEffect(() => {
+        if (currentRecommendGroupType) {
+            getRecommendationGroups(currentRecommendGroupType);
+        }
+    }, [currentRecommendGroupType]);
 
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
         if (recommendGroupMemberIndexes.length) {
-            const recommendGroupMembers = await Promise.all(
-                recommendGroupMemberIndexes.map(async (memberIndex) => {
-                    const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
-                    return {
-                        username: memberIndex.profile?.name || '',
-                        avatarUrl: memberIndex.profile?.avatar?.[0] || config.undefinedImageAlt,
-                        bio: extracted,
-                        ethAddress: memberIndex.id,
-                        rns: await RNS.addr2Name(memberIndex.id),
-                    };
-                }),
-            );
-            setRecommendGroupMembers(recommendGroupMembers);
+            let _recommendGroupMembers = recommendGroupMemberIndexes.map((memberIndex) => {
+                const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
+                return {
+                    username: memberIndex.profile?.name || '',
+                    avatarUrl: memberIndex.profile?.avatar?.[0] || config.undefinedImageAlt,
+                    bio: extracted,
+                    ethAddress: memberIndex.id,
+                    rns: '',
+                };
+            }) as UserItems[];
+            setIsLoadingRecommendGroupMembers(false);
+            setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
+            _recommendGroupMembers.forEach(async (m) => {
+                m.rns = await RNS.addr2Name(m.ethAddress);
+                setRecommendGroupMembers((v) => ({ ...v, [type]: _recommendGroupMembers }));
+            });
         }
         setIsLoadingRecommendGroupMembers(false);
     };
@@ -304,8 +314,10 @@ const Home: NextPage = () => {
                         <FilterSection tagList={filterTagList} getFilteredContent={getFilteredContent} />
                         <RecommendSection
                             groups={recommendGroups}
-                            members={recommendGroupMembers}
-                            toGroup={getRecommendationGroups}
+                            members={recommendGroupMembers[currentRecommendGroupType] ?? []}
+                            toGroup={(type) => {
+                                setCurrentRecommendGroupType(type);
+                            }}
                             toUserPage={toUserPage}
                             isLoadingGroups={isLoadingRecommendGroups}
                             isLoadingMembers={isLoadingRecommendGroupMembers}
@@ -331,7 +343,6 @@ const Home: NextPage = () => {
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}

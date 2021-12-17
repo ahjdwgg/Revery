@@ -29,9 +29,6 @@ import ItemCard from '../../../components/content/ItemCard';
 
 import SingleAccount from '../../../components/details/SingleAccount';
 import { COLORS } from '../../../components/buttons/variables';
-import rss3 from '../../../common/rss3';
-import FollowList from '../../../components/users/FollowList';
-import { joinSignature } from '@ethersproject/bytes';
 import CardItemLoader from '../../../components/loaders/CardItemLoader';
 import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader';
 import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
@@ -130,7 +127,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('NFT', '/setup/nfts', 'nft');
+                    toRSS3BioEditAssetNotice('NFT', '/setup/nfts', 'primary');
                 },
             },
             ...defaultAssetCardButtons.NFT,
@@ -139,7 +136,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('Donation', '/setup/gitcoins', 'donation');
+                    toRSS3BioEditAssetNotice('Donation', '/setup/gitcoins', 'primary');
                 },
             },
             ...defaultAssetCardButtons.Donation,
@@ -148,7 +145,7 @@ const ProfilePage: NextPage = () => {
             {
                 ...editButtonCommon,
                 onClick: () => {
-                    toRSS3BioEditAssetNotice('Footprint', '/setup/footprints', 'footprint');
+                    toRSS3BioEditAssetNotice('Footprint', '/setup/footprints', 'primary');
                 },
             },
             ...defaultAssetCardButtons.Footprint,
@@ -175,7 +172,6 @@ const ProfilePage: NextPage = () => {
         const pageOwner = await RSS3.setPageOwner(aon);
 
         const profile = pageOwner.profile;
-        // console.log(pageOwner.assets);
         if (profile) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -188,8 +184,14 @@ const ProfilePage: NextPage = () => {
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
             setProfileLoading(false);
-            checkOwner();
-            checkIsFollowing();
+
+            // Login user related
+            if (RSS3.isValidRSS3()) {
+                await RSS3.ensureLoginUser();
+                checkOwner();
+                checkIsFollowing();
+            }
+
             // Accounts
             const { listed } = await utils.initAccounts();
             setAccountItems(
@@ -307,8 +309,7 @@ const ProfilePage: NextPage = () => {
 
     const toRss3BioUserSite = () => {
         if (link) {
-            const prefix = link.endsWith('.rss3') ? link.split('.rss3')[0] : link;
-            const url = RSS3.buildProductBaseURL('RSS3Bio', '', prefix);
+            const url = RSS3.buildProductBaseURL('RSS3Bio', address, link);
             window.open(url, '_blank');
         }
     };
@@ -430,6 +431,7 @@ const ProfilePage: NextPage = () => {
                             followings={followings}
                             rns={link}
                             link={website}
+                            isLogin={RSS3.isValidRSS3()}
                             isOwner={isOwner}
                             isFollowing={isFollowing}
                             onFollow={onFollow}
@@ -577,7 +579,7 @@ const ProfilePage: NextPage = () => {
                                             <div key={i} className="flex cursor-pointer">
                                                 <ImageHolder
                                                     imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
-                                                    isFullRound={false}
+                                                    roundedClassName={'rounded'}
                                                     size={70}
                                                     onClick={() => {
                                                         getModalDetail(asset, 'donation');
@@ -594,36 +596,31 @@ const ProfilePage: NextPage = () => {
                     </div>
                     <div>
                         <AssetCard title="Footprints" color="primary" headerButtons={assetCardButtons.Footprint}>
-                            {isFootprintLoading ? (
-                                // <div className="flex flex-row items-center justify-center w-full h-32">
-                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
-                                // </div>
-                                <FootprintItemLoader />
-                            ) : (
-                                <div className="flex flex-col w-full gap-4">
-                                    {footprintItems.length > 0 ? (
-                                        footprintItems.map((asset, i) => (
-                                            <FootprintCard
-                                                key={i}
-                                                imageUrl={asset.detail.image_url || config.undefinedImageAlt}
-                                                startDate={asset.detail.start_date}
-                                                endDate={asset.detail.end_date}
-                                                city={asset.detail.city}
-                                                country={asset.detail.country}
-                                                username={username}
-                                                activity={asset.detail.name || ''}
-                                                clickEvent={() => {
-                                                    getModalDetail(asset, 'footprint');
-                                                }}
-                                            />
-                                        ))
-                                    ) : (
-                                        <span className="text-base font-semibold line-clamp-1 opacity-20">
-                                            Oops, nothing found :P
-                                        </span>
-                                    )}
-                                </div>
-                            )}
+                            <div className="flex flex-col w-full gap-4">
+                                {isFootprintLoading ? (
+                                    [...Array(3)].map((_, id) => <FootprintItemLoader key={id} />)
+                                ) : footprintItems.length > 0 ? (
+                                    footprintItems.map((asset, i) => (
+                                        <FootprintCard
+                                            key={i}
+                                            imageUrl={asset.detail.image_url || config.undefinedImageAlt}
+                                            startDate={asset.detail.start_date}
+                                            endDate={asset.detail.end_date}
+                                            city={asset.detail.city}
+                                            country={asset.detail.country}
+                                            username={username}
+                                            activity={asset.detail.name || ''}
+                                            clickEvent={() => {
+                                                getModalDetail(asset, 'footprint');
+                                            }}
+                                        />
+                                    ))
+                                ) : (
+                                    <span className="text-base font-semibold line-clamp-1 opacity-20">
+                                        Oops, nothing found :P
+                                    </span>
+                                )}
+                            </div>
                         </AssetCard>
                     </div>
                 </section>
@@ -632,7 +629,6 @@ const ProfilePage: NextPage = () => {
                 hidden={modal.hidden}
                 closeEvent={closeModal}
                 theme={'primary'}
-                isCenter={modal.type === 'account'}
                 size={modal.type === 'account' ? 'md' : 'lg'}
             >
                 {modal.details ? getModalDisplay() : <ModalLoading color={'primary'} />}
@@ -641,7 +637,6 @@ const ProfilePage: NextPage = () => {
             <Modal
                 theme={'primary'}
                 size={'sm'}
-                isCenter={true}
                 hidden={!isShowingRedirectNotice}
                 closeEvent={() => setIsShowingRedirectNotice(false)}
             >
