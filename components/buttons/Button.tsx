@@ -4,7 +4,7 @@ import { BiExpandAlt, BiPlus, BiMinus, BiCheck, BiLoaderAlt, BiLoaderCircle, BiL
 import { ReactNode } from 'react';
 
 interface ButtonInterface {
-    color: string;
+    color?: string;
     text?: string;
     fontSize?: string;
     icon?: string;
@@ -15,6 +15,7 @@ interface ButtonInterface {
     height?: string;
     onClick?: (param?: any) => void;
     children?: ReactNode;
+    className?: string;
 }
 /**
  * This Button component supports 4 different kinds of buttons:
@@ -48,6 +49,7 @@ const Button = ({
     width,
     height,
     onClick,
+    className,
 }: ButtonInterface) => {
     let bgDefaultStyle = '';
     let bgAltStyle = '';
@@ -84,34 +86,34 @@ const Button = ({
         fontSize ? fontSize : 'text-xs'
     } font-medium py-sm ${fontSize ? 'px-6' : 'px-3'} ${width} rounded bg-opacity-5 cursor-not-allowed`;
 
-    let className = defaultClassName;
+    let buttonClassName = defaultClassName;
 
     if (isDisabled) {
-        className = disabledClassName;
+        buttonClassName = disabledClassName;
     } else if (isOutlined) {
-        className = outlinedClassName;
+        buttonClassName = outlinedClassName;
     }
 
     if (isFullRound) {
-        className = className.replace('rounded', 'rounded-full');
+        buttonClassName = buttonClassName.replace('rounded', 'rounded-full');
     }
 
     let iconSVG = null;
 
     if (typeof icon !== 'undefined') {
         if (typeof height === 'undefined') {
-            className += ' h-6';
+            buttonClassName += ' h-6';
         }
         if (typeof width === 'undefined') {
-            className += ' w-6';
+            buttonClassName += ' w-6';
         }
-        className = className.replace('py-sm px-3', 'p-0.5');
+        buttonClassName = buttonClassName.replace('py-sm px-3', 'p-0.5');
         iconSVG = iconSVGMap.get(icon);
     }
 
     return (
         <div className="flex items-center">
-            <button onClick={onClick} className={className}>
+            <button onClick={onClick} className={className ? className : buttonClassName}>
                 {text} {iconSVG} {children}
             </button>
         </div>

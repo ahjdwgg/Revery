@@ -34,6 +34,9 @@ module.exports = {
                     text: '#944300',
                     bg: '#fff4eb',
                 },
+                filter: {
+                    DEFAULT: '#F2F2F2',
+                },
                 error: '#D75F5F',
             },
             opacity: {
