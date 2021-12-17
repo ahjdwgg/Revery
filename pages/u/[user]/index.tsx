@@ -192,6 +192,13 @@ const ProfilePage: NextPage = () => {
                 checkIsFollowing();
             }
 
+            setTimeout(async () => {
+                const { listed, haveMore } = await utils.initContent();
+                setContent(listed);
+                setHaveMoreContent(haveMore);
+                setContentLoading(false);
+            }, 0);
+
             // Accounts
             const { listed } = await utils.initAccounts();
             setAccountItems(
@@ -216,12 +223,6 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 setFootprintItems(await loadAssetDetails(allAssets.footprints, 6));
                 setFootprintLoading(false);
-            }, 0);
-            setTimeout(async () => {
-                const { listed, haveMore } = await utils.initContent();
-                setContent(listed);
-                setHaveMoreContent(haveMore);
-                setContentLoading(false);
             }, 0);
         }
     };
