@@ -300,7 +300,7 @@ const Profile: NextPage = () => {
                                     <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />
                                 ) : (
                                     <LinkButton
-                                        text={'Claim your RNS'}
+                                        text={'Claim Your RNS'}
                                         color={COLORS.primary}
                                         onClick={() => setModalRNSHidden(false)}
                                     />

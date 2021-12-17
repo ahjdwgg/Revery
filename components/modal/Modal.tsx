@@ -70,7 +70,7 @@ export default function Modal({ theme, hidden, size, title, children, closeEvent
                         <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
                     </div>
                 </div>
-                <div style={{ maxHeight: '85vh' }} className="overflow-scroll" onScroll={handleScroll}>
+                <div style={{ maxHeight: '85vh' }} className="overflow-auto" onScroll={handleScroll}>
                     {children}
                 </div>
             </div>
@@ -87,7 +87,7 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'max-w-sm px-2 pb-3 '],
-    ['md', 'flex flex-col items-center justify-around w-full max-w-lg h-96 px-14 pb-14'],
+    ['sm', 'max-w-sm px-2 pb-3'],
+    ['md', 'flex flex-col items-center justify-around w-full max-w-lg px-14 pb-6'],
     ['lg', 'w-full max-w-6xl px-2 pb-12'],
 ]);

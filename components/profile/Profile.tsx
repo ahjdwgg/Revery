@@ -187,7 +187,7 @@ const Profile = ({
                     ) : (
                         isOwner && (
                             <LinkButton
-                                text={'Claim your RNS'}
+                                text={'Claim Your RNS'}
                                 color={COLORS.primary}
                                 onClick={() => setModalRNSHidden(false)}
                             />

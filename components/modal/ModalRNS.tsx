@@ -42,10 +42,10 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
         setIsDisabled(true);
         setErrorMsg('');
 
-        const rns = await RNS.addr2Name(loginUser.address, true);
-        if (rns) {
+        const rnsWithSuffix = await RNS.addr2Name(loginUser.address, true);
+        if (rnsWithSuffix) {
             // Verify if already have RNS
-            setRns(rns);
+            setRns(rns.replace(config.rns.suffix, ''));
         } else if (!RNS.isMetamaskEnabled()) {
             // Verify if metamask is enabled
             setErrorMsg('You need MetaMask extension to sign');
@@ -84,15 +84,15 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
         if (rns.length < 5 || rns.length >= 15) {
             setErrorMsg('An RNS must have at least 5 characters and no more than 15');
         } else if (!/^[a-z0-9\-_]+$/.test(rns)) {
-            setErrorMsg('An RNS should only contain lower case letters, numbers, minus and underlines.');
+            setErrorMsg('An RNS should only contain lower case letters, numbers, minus and underlines');
         } else if (rns.startsWith('0x')) {
-            setErrorMsg('An RNS should not start with "0x".');
+            setErrorMsg('An RNS should not start with "0x"');
         } else if (!(await isPassEnough())) {
             // Check $PASS balance
             setErrorMsg('Sorry, but you need 1 $PASS to register an RNS');
         } else if (parseInt(await RNS.name2Addr(rns + config.rns.suffix)) !== 0) {
             // Already taken
-            setErrorMsg('Sorry, but this RNS has already been taken.');
+            setErrorMsg('Sorry, but this RNS has already been taken');
         } else {
             // Final-test passed
             setIsShowingConfirm(true);
@@ -130,15 +130,13 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
     return (
         <>
             <Modal hidden={hidden} closeEvent={closeAll} theme={'primary'} size="md" title={'Claim Your RNS'}>
-                <div className="flex flex-col my-8 gap-y-6 mx-14">
-                    <div className="text-base text-error h-5">
-                        {errorMsg && (
-                            <div className="flex flex-row gap-2.5 justify-start items-center">
-                                <BiErrorCircle />
-                                <span className="text-primary">{errorMsg}</span>
-                            </div>
-                        )}
-                    </div>
+                <div className="flex flex-col my-4 gap-y-6 mx-2">
+                    {errorMsg && (
+                        <div className="flex flex-row gap-2.5 justify-start items-center text-sm text-error">
+                            <BiErrorCircle />
+                            <span className="text-error">{errorMsg}</span>
+                        </div>
+                    )}
 
                     <Input
                         placeholder={'Input Your RNS'}
@@ -148,7 +146,7 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
                         isDisabled={isDisabled}
                         onChange={handleSetRNS}
                     />
-                    <div className="text-base flex flex-row gap-2.5 justify-start items-center">
+                    <div className="text-sm flex flex-row gap-2.5 justify-start items-center">
                         <BiInfoCircle className="opacity-20" />
                         <span className="text-primary">An RNS is a unique domain to access your RSS3 service</span>
                     </div>
@@ -159,31 +157,18 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
                             color={COLORS.primary}
                             text={'Refresh'}
                             fontSize={'text-base'}
-                            width={'w-24'}
-                            height={'h-8'}
                             onClick={handleRefresh}
                         />
-                        {isLoading ? (
-                            <Button
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                icon={'loading'}
-                                fontSize={'text-base'}
-                                width={'w-24'}
-                                height={'h-8'}
-                            />
-                        ) : (
-                            <Button
-                                isDisabled={isDisabled}
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                text={'Check'}
-                                fontSize={'text-base'}
-                                width={'w-24'}
-                                height={'h-8'}
-                                onClick={handleCheck}
-                            />
-                        )}
+                        <Button
+                            isDisabled={isLoading || isDisabled}
+                            isOutlined={false}
+                            color={COLORS.primary}
+                            text={isLoading ? 'Checking' : 'Check'}
+                            fontSize={'text-base'}
+                            onClick={() => {
+                                !isDisabled && handleCheck();
+                            }}
+                        />
                     </div>
                 </div>
             </Modal>
@@ -210,30 +195,19 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
                             color={COLORS.primary}
                             text={'Cancel'}
                             fontSize={'text-base'}
-                            width={'w-24'}
-                            height={'h-8'}
                             onClick={handleCancel}
                         />
-                        {isLoading ? (
-                            <Button
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                icon={'loading'}
-                                fontSize={'text-base'}
-                                width={'w-24'}
-                                height={'h-8'}
-                            />
-                        ) : (
-                            <Button
-                                isOutlined={false}
-                                color={COLORS.primary}
-                                text={'Confirm'}
-                                fontSize={'text-base'}
-                                width={'w-24'}
-                                height={'h-8'}
-                                onClick={handleConfirm}
-                            />
-                        )}
+
+                        <Button
+                            isDisabled={isLoading}
+                            isOutlined={false}
+                            color={COLORS.primary}
+                            text={isLoading ? 'Confirming' : 'Confirm'}
+                            fontSize={'text-base'}
+                            onClick={() => {
+                                !isLoading && handleConfirm();
+                            }}
+                        />
                     </div>
                 </div>
             </Modal>
