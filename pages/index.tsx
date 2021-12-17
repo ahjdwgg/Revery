@@ -310,7 +310,7 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <section className="flex flex-col gap-4 pb-16 w-4/11">
+                    <section className="flex flex-col gap-4 pb-16 w-4/11 sticky top-16 self-start">
                         <FilterSection tagList={filterTagList} getFilteredContent={getFilteredContent} />
                         <RecommendSection
                             groups={recommendGroups}
