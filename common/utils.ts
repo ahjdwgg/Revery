@@ -181,10 +181,10 @@ async function initContent(timestamp: string = '', following: boolean = false) {
         profileSet.add(item.id.split('-')[0]);
     });
 
-    const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
-
-    const profiles =
-        profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
+    const [details, profiles] = await Promise.all([
+        assetSet.size !== 0 ? getAssetsTillSuccess(assetSet) : [],
+        profileSet.size !== 0 ? apiUser.persona?.profile.getList(Array.from(profileSet))?.then((res) => res || []) : [],
+    ]);
 
     const listed: ItemDetails[] = [];
 
