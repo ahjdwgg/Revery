@@ -183,7 +183,9 @@ async function initContent(timestamp: string = '', following: boolean = false) {
 
     const [details, profiles] = await Promise.all([
         assetSet.size !== 0 ? getAssetsTillSuccess(assetSet) : [],
-        profileSet.size !== 0 ? apiUser.persona?.profile.getList(Array.from(profileSet))?.then((res) => res || []) : [],
+        profileSet.size !== 0
+            ? apiUser.persona?.profile.getList(Array.from(profileSet))?.then((res) => res || []) || []
+            : [],
     ]);
 
     const listed: ItemDetails[] = [];
