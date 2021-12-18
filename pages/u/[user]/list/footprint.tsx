@@ -47,8 +47,10 @@ const Footprint: NextPage = () => {
     };
 
     const loadFootprints = async () => {
-        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
-        assetCount.current += 30;
+        const detailList = await utils.loadAssets(
+            briefList.current.slice(assetCount.current, assetCount.current + config.splitPageLimits.assets),
+        );
+        assetCount.current += config.splitPageLimits.assets;
         return detailList;
     };
 

@@ -84,7 +84,7 @@ const Profile = ({
         const apiUser = RSS3.getAPIUser().persona as IRSS3;
         const userList = (await Promise.all(
             addressList
-                .slice(curI, curI + config.followListLimitPerPage)
+                .slice(curI, curI + config.splitPageLimits.follows)
                 .map((ethAddress) => ({
                     ethAddress,
                     avatarUrl: config.undefinedImageAlt,
@@ -115,7 +115,7 @@ const Profile = ({
         if (curI < addressList.length && isLoading.current) {
             setCurrentIndex((v) => ({
                 ...v,
-                [followType]: v[followType] + config.followListLimitPerPage,
+                [followType]: v[followType] + config.splitPageLimits.follows,
             }));
         }
     };
