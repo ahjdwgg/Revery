@@ -55,9 +55,12 @@ const Home: NextPage = () => {
     const [currentRecommendGroupType, setCurrentRecommendGroupType] = useState<string>('');
 
     const filterTagList: string[] = Object.values(FILTER_TAGS);
+    const initFilterTagActiveMap = new Map(filterTagList.map((tag) => [tag, true]));
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(
-        new Map(filterTagList.map((tag) => [tag, true])),
+        utils.objToStrMap(JSON.parse(utils.getStorage('filterTagActiveMap'))) || initFilterTagActiveMap,
     );
+    const serialisedFilterTagMap = JSON.stringify(utils.strMapToObj(filterTagActiveMap));
+    utils.setStorage('filterTagActiveMap', serialisedFilterTagMap);
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -212,7 +215,6 @@ const Home: NextPage = () => {
 
     const getFilteredContent = (updatedFilterTagActiveMap: Map<string, boolean>) => {
         setFilterTagActiveMap(updatedFilterTagActiveMap);
-        console.log('outside: ', filterTagActiveMap);
         setContentLoading(true);
         updateFilteredContent();
     };

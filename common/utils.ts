@@ -330,6 +330,56 @@ function fixURLSchemas(url: string) {
     return fixedUrl;
 }
 
+function setStorage(key: string, value: string) {
+    if (typeof window !== 'undefined') {
+        if (value) {
+            localStorage.setItem(key, value);
+        } else {
+            localStorage.removeItem(key);
+        }
+    }
+}
+
+function getStorage(key: string): string {
+    return typeof window !== 'undefined' ? localStorage.getItem(key) || '{}' : '{}';
+}
+
+function replacer(key: any, value: any) {
+    if (value instanceof Map) {
+        return {
+            dataType: 'Map',
+            value: Array.from(value.entries()),
+        };
+    } else {
+        return value;
+    }
+}
+
+function reviver(key: any, value: any) {
+    if (typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+            return new Map(value.value);
+        }
+    }
+    return value;
+}
+
+function strMapToObj(strMap: any) {
+    let obj = Object.create(null);
+    for (let [k, v] of strMap) {
+        obj[k] = v;
+    }
+    return obj;
+}
+
+function objToStrMap(obj: any) {
+    let strMap = new Map();
+    for (let k of Object.keys(obj)) {
+        strMap.set(k, obj[k]);
+    }
+    return strMap;
+}
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -338,6 +388,12 @@ const utils = {
     extractEmbedFields,
     initContent,
     fixURLSchemas,
+    setStorage,
+    getStorage,
+    replacer,
+    reviver,
+    strMapToObj,
+    objToStrMap,
 };
 
 export default utils;
