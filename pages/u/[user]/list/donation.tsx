@@ -47,8 +47,10 @@ const Donation: NextPage = () => {
     };
 
     const loadDonations = async () => {
-        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
-        assetCount.current += 30;
+        const detailList = await utils.loadAssets(
+            briefList.current.slice(assetCount.current, assetCount.current + config.splitPageLimits.assets),
+        );
+        assetCount.current += config.splitPageLimits.assets;
         return detailList;
     };
 
@@ -134,7 +136,7 @@ const Donation: NextPage = () => {
                     </section>
                 )}
             </div>
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="lg">
                 {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>

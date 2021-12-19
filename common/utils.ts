@@ -173,7 +173,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
                     return await pageOwner.items?.getListByPersona({
                         persona: pageOwner.address,
                         linkID: 'following',
-                        limit: config.contents.limit,
+                        limit: config.splitPageLimits.contents,
                         tsp: timestamp,
                         fieldLike: filterTagSQLMap.get(tag.key),
                     });
@@ -183,7 +183,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
                             return await pageOwner.items?.getListByPersona({
                                 persona: pageOwner.address,
                                 linkID: 'following',
-                                limit: config.contents.limit,
+                                limit: config.splitPageLimits.contents,
                                 tsp: timestamp,
                                 fieldLike: tag,
                             });
@@ -205,12 +205,12 @@ async function initContent(timestamp: string = '', following: boolean = false, f
         items =
             (await pageOwner.items?.getListByPersona({
                 persona: pageOwner.address,
-                limit: config.contents.limit,
+                limit: config.splitPageLimits.contents,
                 tsp: timestamp,
             })) || [];
     }
 
-    const haveMore = items.length === config.contents.limit;
+    const haveMore = items.length === config.splitPageLimits.contents;
 
     profileSet.add(pageOwner.address);
     items.forEach((item: any) => {
@@ -223,10 +223,12 @@ async function initContent(timestamp: string = '', following: boolean = false, f
         profileSet.add(item.id.split('-')[0]);
     });
 
-    const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
-
-    const profiles =
-        profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
+    const [details, profiles] = await Promise.all([
+        assetSet.size !== 0 ? getAssetsTillSuccess(assetSet) : [],
+        profileSet.size !== 0
+            ? apiUser.persona?.profile.getList(Array.from(profileSet))?.then((res) => res || []) || []
+            : [],
+    ]);
 
     const listed: ItemDetails[] = [];
 

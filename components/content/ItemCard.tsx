@@ -12,6 +12,8 @@ import { imgRegSrc, mdImgRegSrc } from '../../common/image';
 import NFTIcon from '../icons/NFTIcon';
 import FootprintIcon from '../icons/FootprintIcon';
 import GitcoinIcon from '../icons/GitcoinIcon';
+import ImageHolder from '../ImageHolder';
+import React from 'react';
 
 interface ItemCardProps {
     avatarUrl: string;
@@ -103,11 +105,12 @@ const toExternalLink = (field: string, payload: string) => {
     if (field.includes('Mirror.XYZ')) {
         window.open(payload);
     } else {
+        const fields = field.split('-');
         const dic: { [key: string]: () => void } = {
             Twitter: () => window.open('https://twitter.com/' + field.split('-')[3] + '/status/' + payload),
-            Misskey: () => window.open('https://nya.one/notes/' + payload),
+            Misskey: () => window.open(`https://${fields[3].split('@')[1]}/notes/` + payload),
         };
-        dic[field.split('-')[2]]?.call('');
+        dic[fields[2]]?.call('');
     }
 };
 
@@ -141,13 +144,12 @@ const ItemCard = ({
     return (
         <div className="flex flex-col justify-start w-full py-2.5">
             <div className="flex flex-row items-center gap-x-2">
-                <img
-                    src={avatarUrl}
-                    alt={username}
-                    className="flex-shrink-0 w-8 h-8 rounded-full cursor-pointer"
-                    onClick={() => {
-                        toUserProfile();
-                    }}
+                <ImageHolder
+                    imageUrl={avatarUrl}
+                    title={username}
+                    roundedClassName={'rounded-full'}
+                    size={32}
+                    onClick={toUserProfile}
                 />
                 <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => toUserProfile()}>
                     <span className="text-base font-semibold">{username}</span>

@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import NFTItemLoader from '../../../../components/loaders/NFTItemLoader';
 import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
+import config from '../../../../common/config';
 
 const Nft: NextPage = () => {
     const router = useRouter();
@@ -47,8 +48,10 @@ const Nft: NextPage = () => {
     };
 
     const loadNFTs = async () => {
-        const detailList = await utils.loadAssets(briefList.current.slice(assetCount.current, assetCount.current + 30));
-        assetCount.current += 30;
+        const detailList = await utils.loadAssets(
+            briefList.current.slice(assetCount.current, assetCount.current + config.splitPageLimits.assets),
+        );
+        assetCount.current += config.splitPageLimits.assets;
         return detailList;
     };
 
@@ -148,7 +151,7 @@ const Nft: NextPage = () => {
                 )}
             </div>
 
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} isCenter={false} size="lg">
+            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="lg">
                 {NFT ? <SingleNFT NFT={NFT} /> : <ModalLoading color={'primary'} />}
             </Modal>
         </>
