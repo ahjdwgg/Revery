@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import GitcoinIcon from '../icons/GitcoinIcon';
 import FootprintIcon from '../icons/FootprintIcon';
 import NFTIcon from '../icons/NFTIcon';
+import ContentIcon from '../icons/Content';
 
 export const FILTER_TAGS = {
     nft: 'NFT',
@@ -47,4 +48,5 @@ const iconMap = new Map([
     [FILTER_TAGS.donation, <GitcoinIcon key={FILTER_TAGS.donation} />],
     [FILTER_TAGS.footprint, <FootprintIcon key={FILTER_TAGS.footprint} />],
     [FILTER_TAGS.nft, <NFTIcon key={FILTER_TAGS.nft} />],
+    [FILTER_TAGS.content, <ContentIcon key={FILTER_TAGS.content} />],
 ]);
