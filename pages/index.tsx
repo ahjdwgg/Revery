@@ -22,7 +22,7 @@ import { UserItems } from '../components/users/UserCard';
 import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
-import FilterSection from '../components/filter/FilterSection';
+import FilterSection, { mapToArray } from '../components/filter/FilterSection';
 import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 interface ModalDetail {
     hidden: boolean;
@@ -53,8 +53,10 @@ const Home: NextPage = () => {
     const [recommendGroups, setRecommendGroups] = useState<GroupInfo[]>([]);
     const [recommendGroupMembers, setRecommendGroupMembers] = useState<UserItems[]>([]);
 
-    const [filterTagList, setFilterTagList] = useState<string[]>(Object.values(FILTER_TAGS));
-    const [filterTag, setFilterTag] = useState('All'); // default: all contents
+    const filterTagList: string[] = Object.values(FILTER_TAGS);
+    const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(
+        new Map(filterTagList.map((tag) => [tag, true])),
+    );
 
     const init = async () => {
         const LoginUser = RSS3.getLoginUser();
@@ -64,7 +66,7 @@ const Home: NextPage = () => {
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
 
             const profile = pageOwner.profile;
-            // console.log(pageOwner.assets);
+
             if (profile) {
                 // Profile
                 const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -73,7 +75,7 @@ const Home: NextPage = () => {
             }
 
             setTimeout(async () => {
-                const { listed, haveMore } = await utils.initContent('', true);
+                const { listed, haveMore } = await utils.initContent('', true, mapToArray(filterTagActiveMap));
                 setContent(listed);
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
@@ -103,7 +105,7 @@ const Home: NextPage = () => {
     const loadMoreContent = async () => {
         setIsLoadingMore(true);
         const timestamp = [...content].pop()?.item.date_created || '';
-        const { listed, haveMore } = await utils.initContent(timestamp, true);
+        const { listed, haveMore } = await utils.initContent(timestamp, true, mapToArray(filterTagActiveMap));
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
         setIsLoadingMore(false);
@@ -198,26 +200,19 @@ const Home: NextPage = () => {
         setIsLoadingRecommendGroupMembers(false);
     };
 
-    const getFilteredContent = (tag: string) => {
-        setFilterTag(tag);
+    const getFilteredContent = (updatedFilterTagActiveMap: Map<string, boolean>) => {
+        setFilterTagActiveMap(updatedFilterTagActiveMap);
+        console.log('outside: ', filterTagActiveMap);
+        setContentLoading(true);
+        updateFilteredContent();
     };
 
-    const getItemCardTag = (field: string) => {
-        if (field.includes('Arweave')) {
-            return FILTER_TAGS.arweave;
-        } else if (field.includes('Twitter')) {
-            return FILTER_TAGS.twitter;
-        } else if (field.includes('Mirror.XYZ')) {
-            return FILTER_TAGS.mirror;
-        } else if (field.includes('Misskey')) {
-            return FILTER_TAGS.misskey;
-        } else if (field.includes('NFT')) {
-            return FILTER_TAGS.nft;
-        } else if (field.includes('POAP')) {
-            return FILTER_TAGS.footprint;
-        } else if (field.includes('Gitcoin')) {
-            return FILTER_TAGS.donation;
-        }
+    const updateFilteredContent = async () => {
+        // request based on filter tags
+        const { listed, haveMore } = await utils.initContent('', true, mapToArray(filterTagActiveMap));
+        setContent(listed);
+        setHaveMoreContent(haveMore);
+        setContentLoading(false);
     };
 
     return (
@@ -237,32 +232,23 @@ const Home: NextPage = () => {
                                 <section className="flex flex-col items-center justify-start gap-y-2.5">
                                     {content.map((element, index) => {
                                         if (element.item.id.includes('auto')) {
-                                            if (
-                                                filterTag == FILTER_TAGS.all ||
-                                                filterTag == getItemCardTag(element.item.target.field)
-                                            ) {
-                                                return (
-                                                    <ItemCard
-                                                        key={index}
-                                                        avatarUrl={element.avatar}
-                                                        username={element.name}
-                                                        content={element.item.summary}
-                                                        asset={element.details}
-                                                        timeStamp={new Date(element.item.date_updated).valueOf()}
-                                                        target={element.item.target}
-                                                        toUserProfile={async () =>
-                                                            await router.push(
-                                                                `/u/${await RNS.tryName(
-                                                                    element.item.id.split('-')[0],
-                                                                )}`,
-                                                            )
-                                                        }
-                                                        showAssetDetail={() =>
-                                                            fetchAssetDetail(element.item.target.field)
-                                                        }
-                                                    />
-                                                );
-                                            }
+                                            return (
+                                                <ItemCard
+                                                    key={index}
+                                                    avatarUrl={element.avatar}
+                                                    username={element.name}
+                                                    content={element.item.summary}
+                                                    asset={element.details}
+                                                    timeStamp={new Date(element.item.date_updated).valueOf()}
+                                                    target={element.item.target}
+                                                    toUserProfile={async () =>
+                                                        await router.push(
+                                                            `/u/${await RNS.tryName(element.item.id.split('-')[0])}`,
+                                                        )
+                                                    }
+                                                    showAssetDetail={() => fetchAssetDetail(element.item.target.field)}
+                                                />
+                                            );
                                         } else {
                                             return (
                                                 <ContentCard
@@ -301,7 +287,11 @@ const Home: NextPage = () => {
                         </>
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11">
-                        <FilterSection tagList={filterTagList} getFilteredContent={getFilteredContent} />
+                        <FilterSection
+                            tagList={filterTagList}
+                            getFilteredContent={getFilteredContent}
+                            filterTagActiveMap={filterTagActiveMap}
+                        />
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers}
