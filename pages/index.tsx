@@ -33,7 +33,6 @@ interface ModalDetail {
 const Home: NextPage = () => {
     const router = useRouter();
     const [address, setAddress] = useState<string>('');
-    const [website, setWebsite] = useState<string>('');
 
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [content, setContent] = useState<any[]>([]);
@@ -55,16 +54,11 @@ const Home: NextPage = () => {
     const [currentRecommendGroupType, setCurrentRecommendGroupType] = useState<string>('');
 
     const filterTagList: string[] = Object.values(FILTER_TAGS);
-    const initFilterTagActiveMap = new Map(filterTagList.map((tag) => [tag, true]));
-    const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(
-        utils.objToStrMap(JSON.parse(utils.getStorage('filterTagActiveMap'))) || initFilterTagActiveMap,
-    );
-    const serialisedFilterTagMap = JSON.stringify(utils.strMapToObj(filterTagActiveMap));
-    utils.setStorage('filterTagActiveMap', serialisedFilterTagMap);
+    const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
     const init = async () => {
-        const LoginUser = RSS3.getLoginUser();
-        if (LoginUser.persona || (await RSS3.reconnect())) {
+        if (await RSS3.ensureLoginUser()) {
+            const LoginUser = RSS3.getLoginUser();
             setLoggedIn(true);
 
             setTimeout(initRecommendationGrops, 0);
@@ -75,16 +69,19 @@ const Home: NextPage = () => {
 
             if (profile) {
                 // Profile
-                const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
                 setAddress(pageOwner?.address || '');
-                setWebsite(fieldsMatch?.['SITE'] || '');
             }
 
             setTimeout(async () => {
-                const { listed, haveMore } = await utils.initContent('', true, mapToArray(filterTagActiveMap));
-                setContent(listed);
-                setHaveMoreContent(haveMore);
-                setContentLoading(false);
+                const localStoreFilterTagActiveMap = utils.objToStrMap(
+                    JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
+                );
+                for (const tag of filterTagList) {
+                    if (!localStoreFilterTagActiveMap.has(tag)) {
+                        localStoreFilterTagActiveMap.set(tag, true);
+                    }
+                }
+                await getFilteredContent(localStoreFilterTagActiveMap);
             }, 0);
         }
     };
@@ -99,7 +96,7 @@ const Home: NextPage = () => {
         if (router.isReady) {
             init();
         }
-    }, [router.query.user]);
+    }, [router.isReady]);
 
     useEffect(() => {
         // init();
@@ -213,15 +210,16 @@ const Home: NextPage = () => {
         setIsLoadingRecommendGroupMembers(false);
     };
 
-    const getFilteredContent = (updatedFilterTagActiveMap: Map<string, boolean>) => {
+    const getFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
         setFilterTagActiveMap(updatedFilterTagActiveMap);
         setContentLoading(true);
-        updateFilteredContent();
+        utils.setStorage('filterTagActiveMap', JSON.stringify(utils.strMapToObj(updatedFilterTagActiveMap)));
+        await updateFilteredContent(updatedFilterTagActiveMap);
     };
 
-    const updateFilteredContent = async () => {
+    const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
         // request based on filter tags
-        const { listed, haveMore } = await utils.initContent('', true, mapToArray(filterTagActiveMap));
+        const { listed, haveMore } = await utils.initContent('', true, mapToArray(updatedFilterTagActiveMap));
         setContent(listed);
         setHaveMoreContent(haveMore);
         setContentLoading(false);
@@ -300,7 +298,6 @@ const Home: NextPage = () => {
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11 sticky top-16 self-start">
                         <FilterSection
-                            tagList={filterTagList}
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />

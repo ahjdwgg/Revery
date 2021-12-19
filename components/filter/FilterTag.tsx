@@ -20,13 +20,18 @@ interface FilterTagProps {
 }
 
 const FilterTag = ({ tag, isActive, onClick }: FilterTagProps) => {
+    const iconMap = new Map([
+        [FILTER_TAGS.donation, <GitcoinIcon key={FILTER_TAGS.donation} />],
+        [FILTER_TAGS.footprint, <FootprintIcon key={FILTER_TAGS.footprint} />],
+        [FILTER_TAGS.nft, <NFTIcon key={FILTER_TAGS.nft} />],
+        [FILTER_TAGS.content, <ContentIcon key={FILTER_TAGS.content} />],
+    ]);
+
     const style = isActive
         ? 'border-primary border-opacity-70 text-primary text-opacity-70'
         : 'border-black border-opacity-10 text-black text-opacity-70';
 
-    let iconSVG = null;
-
-    iconSVG = iconMap.get(tag);
+    const iconSVG = iconMap.get(tag);
 
     return (
         <div className="animate-fade-in-up">
@@ -43,10 +48,3 @@ const FilterTag = ({ tag, isActive, onClick }: FilterTagProps) => {
 };
 
 export default FilterTag;
-
-const iconMap = new Map([
-    [FILTER_TAGS.donation, <GitcoinIcon key={FILTER_TAGS.donation} />],
-    [FILTER_TAGS.footprint, <FootprintIcon key={FILTER_TAGS.footprint} />],
-    [FILTER_TAGS.nft, <NFTIcon key={FILTER_TAGS.nft} />],
-    [FILTER_TAGS.content, <ContentIcon key={FILTER_TAGS.content} />],
-]);

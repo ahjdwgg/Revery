@@ -331,17 +331,15 @@ function fixURLSchemas(url: string) {
 }
 
 function setStorage(key: string, value: string) {
-    if (typeof window !== 'undefined') {
-        if (value) {
-            localStorage.setItem(key, value);
-        } else {
-            localStorage.removeItem(key);
-        }
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
     }
 }
 
-function getStorage(key: string): string {
-    return typeof window !== 'undefined' ? localStorage.getItem(key) || '{}' : '{}';
+function getStorage(key: string): string | null {
+    return localStorage.getItem(key);
 }
 
 function replacer(key: any, value: any) {
