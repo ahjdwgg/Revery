@@ -1,41 +1,31 @@
 import React from 'react';
 import Button from '../buttons/Button';
 import { ReactNode } from 'react';
-import Twitter from '../icons/Twitter';
 import GitcoinIcon from '../icons/GitcoinIcon';
 import FootprintIcon from '../icons/FootprintIcon';
 import NFTIcon from '../icons/NFTIcon';
-import Mirror from '../icons/Mirror';
-import Misskey from '../icons/Misskey';
-import Arweave from '../icons/Arweave';
 
 export const FILTER_TAGS = {
-    all: 'All',
     nft: 'NFT',
     donation: 'Donation',
     footprint: 'Footprint',
-    mirror: 'Mirror',
-    twitter: 'Twitter',
-    misskey: 'Misskey',
-    arweave: 'Arweave',
+    content: 'Content',
 };
 interface FilterTagProps {
     tag: string;
-    isSelected: boolean;
+    isActive: boolean;
     onClick?: (param?: any) => void;
     children?: ReactNode;
 }
 
-const FilterTag = ({ tag, isSelected, onClick }: FilterTagProps) => {
-    const style = isSelected
+const FilterTag = ({ tag, isActive, onClick }: FilterTagProps) => {
+    const style = isActive
         ? 'border-primary border-opacity-70 text-primary text-opacity-70'
         : 'border-black border-opacity-10 text-black text-opacity-70';
 
     let iconSVG = null;
 
-    if (tag != FILTER_TAGS.all) {
-        iconSVG = iconMap.get(tag);
-    }
+    iconSVG = iconMap.get(tag);
 
     return (
         <div className="animate-fade-in-up">
@@ -45,9 +35,7 @@ const FilterTag = ({ tag, isSelected, onClick }: FilterTagProps) => {
                 onClick={onClick}
             >
                 {tag}
-                {tag !== FILTER_TAGS.all && (
-                    <div className={'flex items-center justify-center w-3 h-3 rounded-full'}>{iconSVG}</div>
-                )}
+                <div className={'flex items-center justify-center w-3 h-3 rounded-full'}>{iconSVG}</div>
             </Button>
         </div>
     );
@@ -59,8 +47,4 @@ const iconMap = new Map([
     [FILTER_TAGS.donation, <GitcoinIcon key={FILTER_TAGS.donation} />],
     [FILTER_TAGS.footprint, <FootprintIcon key={FILTER_TAGS.footprint} />],
     [FILTER_TAGS.nft, <NFTIcon key={FILTER_TAGS.nft} />],
-    [FILTER_TAGS.mirror, <Mirror key={FILTER_TAGS.mirror} />],
-    [FILTER_TAGS.misskey, <Misskey key={FILTER_TAGS.misskey} />],
-    [FILTER_TAGS.twitter, <Twitter key={FILTER_TAGS.twitter} />],
-    [FILTER_TAGS.arweave, <Arweave key={FILTER_TAGS.arweave} />],
 ]);
