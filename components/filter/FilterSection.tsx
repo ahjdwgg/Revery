@@ -3,15 +3,22 @@ import FilterTag from './FilterTag';
 
 interface FilterSectionProps {
     tagList: string[];
+    filterTagActiveMap: Map<string, boolean>;
     getFilteredContent: (param?: any) => void; // parent callback
 }
 
-const FilterSection = ({ tagList, getFilteredContent }: FilterSectionProps) => {
-    const [isSelected, setSelected] = useState(tagList[0]);
+export const mapToArray = (map: Map<any, any>) => {
+    const array = Array.from(map, ([key, value]) => ({ key, value }));
+    return array;
+};
+
+const FilterSection = ({ tagList, filterTagActiveMap, getFilteredContent }: FilterSectionProps) => {
+    const [activeMapArray, setActiveMapArray] = useState(mapToArray(filterTagActiveMap));
 
     const selectTag = (tag: string) => {
-        setSelected(tag);
-        getFilteredContent(tag);
+        filterTagActiveMap.set(tag, !filterTagActiveMap.get(tag));
+        getFilteredContent(filterTagActiveMap);
+        setActiveMapArray(mapToArray(filterTagActiveMap));
     };
 
     return (
@@ -20,9 +27,16 @@ const FilterSection = ({ tagList, getFilteredContent }: FilterSectionProps) => {
                 <span className="text-primary text-md font-semibold">+ Filter</span>
             </div>
             <div className="flex flex-wrap w-full gap-2 py-3">
-                {tagList.map((tag) => (
-                    <FilterTag key={tag} tag={tag} isSelected={isSelected === tag} onClick={() => selectTag(tag)} />
-                ))}
+                {activeMapArray.map((item) => {
+                    return (
+                        <FilterTag
+                            key={item.key}
+                            tag={item.key}
+                            isActive={item.value}
+                            onClick={() => selectTag(item.key)}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
