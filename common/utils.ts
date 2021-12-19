@@ -9,10 +9,11 @@ import {
     POAPResponse,
 } from './types';
 import config from './config';
-import RSS3 from './rss3';
+import RSS3, { RSS3DetailPersona } from './rss3';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import { formatter } from './address';
+import { FILTER_TAGS } from '../components/filter/FilterTag';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -148,30 +149,71 @@ function isAsset(field: string | undefined): boolean {
     return !!(field && condition.find((item) => field.includes(item)));
 }
 
-async function initContent(timestamp: string = '', following: boolean = false) {
+const filterTagSQLMap = new Map([
+    [FILTER_TAGS.nft, '%NFT%'],
+    [FILTER_TAGS.donation, '%Gitcoin.Donation%'],
+    [FILTER_TAGS.footprint, '%POAP%'],
+]);
+
+const contentFilterTagSQLList = ['%Twitter%', '%Mirror.XYZ%', '%Misskey%', '%Arweave%'];
+
+async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
-    const items =
-        (following
-            ? await pageOwner.items?.getListByPersona({
-                  persona: pageOwner.address,
-                  linkID: 'following',
-                  limit: config.splitPageLimits.contents,
-                  tsp: timestamp,
-              })
-            : await pageOwner.items?.getListByPersona({
-                  persona: pageOwner.address,
-                  limit: config.splitPageLimits.contents,
-                  tsp: timestamp,
-              })) || [];
+    let filteredContent: any = [];
+    let items: any = [];
+
+    if (filters && following) {
+        filteredContent = await Promise.all(
+            filters.map(async (tag) => {
+                if (tag.value && tag.key != FILTER_TAGS.content) {
+                    return await pageOwner.items?.getListByPersona({
+                        persona: pageOwner.address,
+                        linkID: 'following',
+                        limit: config.splitPageLimits.contents,
+                        tsp: timestamp,
+                        fieldLike: filterTagSQLMap.get(tag.key),
+                    });
+                } else if (tag.value && tag.key == FILTER_TAGS.content) {
+                    return Promise.all(
+                        contentFilterTagSQLList.map(async (tag) => {
+                            return await pageOwner.items?.getListByPersona({
+                                persona: pageOwner.address,
+                                linkID: 'following',
+                                limit: config.splitPageLimits.contents,
+                                tsp: timestamp,
+                                fieldLike: tag,
+                            });
+                        }),
+                    ).then((value) => {
+                        let content: any[] = [];
+                        return content.concat(...value);
+                    });
+                }
+            }),
+        ).then((value) => {
+            return value;
+        });
+        items = []
+            .concat(...filteredContent.filter((item: any) => item))
+            .sort((a: any, b: any) => new Date(b.date_updated).valueOf() - new Date(a.date_updated).valueOf())
+            .slice(0, 35);
+    } else if (!following) {
+        items =
+            (await pageOwner.items?.getListByPersona({
+                persona: pageOwner.address,
+                limit: config.splitPageLimits.contents,
+                tsp: timestamp,
+            })) || [];
+    }
 
     const haveMore = items.length === config.splitPageLimits.contents;
 
     profileSet.add(pageOwner.address);
-    items.forEach((item) => {
+    items.forEach((item: any) => {
         if ('target' in item) {
             // Is auto item
             if (isAsset(item.target.field)) {
@@ -190,7 +232,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
 
     const listed: ItemDetails[] = [];
 
-    items.forEach((item) => {
+    items.forEach((item: any) => {
         const profile = profiles.find((element: any) => element.persona === item.id.split('-')[0]);
         let ItemDetails: ItemDetails = {
             item: item,
@@ -288,6 +330,54 @@ function fixURLSchemas(url: string) {
     return fixedUrl;
 }
 
+function setStorage(key: string, value: string) {
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+
+function getStorage(key: string): string | null {
+    return localStorage.getItem(key);
+}
+
+function replacer(key: any, value: any) {
+    if (value instanceof Map) {
+        return {
+            dataType: 'Map',
+            value: Array.from(value.entries()),
+        };
+    } else {
+        return value;
+    }
+}
+
+function reviver(key: any, value: any) {
+    if (typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+            return new Map(value.value);
+        }
+    }
+    return value;
+}
+
+function strMapToObj(strMap: any) {
+    let obj = Object.create(null);
+    for (let [k, v] of strMap) {
+        obj[k] = v;
+    }
+    return obj;
+}
+
+function objToStrMap(obj: any) {
+    let strMap = new Map();
+    for (let k of Object.keys(obj)) {
+        strMap.set(k, obj[k]);
+    }
+    return strMap;
+}
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -296,6 +386,12 @@ const utils = {
     extractEmbedFields,
     initContent,
     fixURLSchemas,
+    setStorage,
+    getStorage,
+    replacer,
+    reviver,
+    strMapToObj,
+    objToStrMap,
 };
 
 export default utils;

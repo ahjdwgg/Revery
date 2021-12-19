@@ -22,7 +22,7 @@ import { UserItems } from '../components/users/UserCard';
 import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
-import FilterSection from '../components/filter/FilterSection';
+import FilterSection, { mapToArray } from '../components/filter/FilterSection';
 import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 interface ModalDetail {
     hidden: boolean;
@@ -33,7 +33,6 @@ interface ModalDetail {
 const Home: NextPage = () => {
     const router = useRouter();
     const [address, setAddress] = useState<string>('');
-    const [website, setWebsite] = useState<string>('');
 
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [content, setContent] = useState<any[]>([]);
@@ -54,12 +53,12 @@ const Home: NextPage = () => {
     const [recommendGroupMembers, setRecommendGroupMembers] = useState<Record<string, UserItems[]>>({});
     const [currentRecommendGroupType, setCurrentRecommendGroupType] = useState<string>('');
 
-    const [filterTagList, setFilterTagList] = useState<string[]>(Object.values(FILTER_TAGS));
-    const [filterTag, setFilterTag] = useState('All'); // default: all contents
+    const filterTagList: string[] = Object.values(FILTER_TAGS);
+    const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
     const init = async () => {
-        const LoginUser = RSS3.getLoginUser();
-        if (LoginUser.persona || (await RSS3.reconnect())) {
+        if (await RSS3.ensureLoginUser()) {
+            const LoginUser = RSS3.getLoginUser();
             setLoggedIn(true);
 
             setTimeout(initRecommendationGrops, 0);
@@ -67,19 +66,22 @@ const Home: NextPage = () => {
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
 
             const profile = pageOwner.profile;
-            // console.log(pageOwner.assets);
+
             if (profile) {
                 // Profile
-                const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
                 setAddress(pageOwner?.address || '');
-                setWebsite(fieldsMatch?.['SITE'] || '');
             }
 
             setTimeout(async () => {
-                const { listed, haveMore } = await utils.initContent('', true);
-                setContent(listed);
-                setHaveMoreContent(haveMore);
-                setContentLoading(false);
+                const localStoreFilterTagActiveMap = utils.objToStrMap(
+                    JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
+                );
+                for (const tag of filterTagList) {
+                    if (!localStoreFilterTagActiveMap.has(tag)) {
+                        localStoreFilterTagActiveMap.set(tag, true);
+                    }
+                }
+                await getFilteredContent(localStoreFilterTagActiveMap);
             }, 0);
         }
     };
@@ -94,7 +96,7 @@ const Home: NextPage = () => {
         if (router.isReady) {
             init();
         }
-    }, [router.query.user]);
+    }, [router.isReady]);
 
     useEffect(() => {
         // init();
@@ -104,7 +106,7 @@ const Home: NextPage = () => {
     const loadMoreContent = async () => {
         setIsLoadingMore(true);
         const timestamp = [...content].pop()?.item.date_created || '';
-        const { listed, haveMore } = await utils.initContent(timestamp, true);
+        const { listed, haveMore } = await utils.initContent(timestamp, true, mapToArray(filterTagActiveMap));
         setContent([...content, ...listed]);
         setHaveMoreContent(haveMore);
         setIsLoadingMore(false);
@@ -208,26 +210,19 @@ const Home: NextPage = () => {
         setIsLoadingRecommendGroupMembers(false);
     };
 
-    const getFilteredContent = (tag: string) => {
-        setFilterTag(tag);
+    const getFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
+        setFilterTagActiveMap(updatedFilterTagActiveMap);
+        setContentLoading(true);
+        utils.setStorage('filterTagActiveMap', JSON.stringify(utils.strMapToObj(updatedFilterTagActiveMap)));
+        await updateFilteredContent(updatedFilterTagActiveMap);
     };
 
-    const getItemCardTag = (field: string) => {
-        if (field.includes('Arweave')) {
-            return FILTER_TAGS.arweave;
-        } else if (field.includes('Twitter')) {
-            return FILTER_TAGS.twitter;
-        } else if (field.includes('Mirror.XYZ')) {
-            return FILTER_TAGS.mirror;
-        } else if (field.includes('Misskey')) {
-            return FILTER_TAGS.misskey;
-        } else if (field.includes('NFT')) {
-            return FILTER_TAGS.nft;
-        } else if (field.includes('POAP')) {
-            return FILTER_TAGS.footprint;
-        } else if (field.includes('Gitcoin')) {
-            return FILTER_TAGS.donation;
-        }
+    const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
+        // request based on filter tags
+        const { listed, haveMore } = await utils.initContent('', true, mapToArray(updatedFilterTagActiveMap));
+        setContent(listed);
+        setHaveMoreContent(haveMore);
+        setContentLoading(false);
     };
 
     return (
@@ -247,32 +242,23 @@ const Home: NextPage = () => {
                                 <section className="flex flex-col items-center justify-start gap-y-2.5">
                                     {content.map((element, index) => {
                                         if (element.item.id.includes('auto')) {
-                                            if (
-                                                filterTag == FILTER_TAGS.all ||
-                                                filterTag == getItemCardTag(element.item.target.field)
-                                            ) {
-                                                return (
-                                                    <ItemCard
-                                                        key={index}
-                                                        avatarUrl={element.avatar}
-                                                        username={element.name}
-                                                        content={element.item.summary}
-                                                        asset={element.details}
-                                                        timeStamp={new Date(element.item.date_updated).valueOf()}
-                                                        target={element.item.target}
-                                                        toUserProfile={async () =>
-                                                            await router.push(
-                                                                `/u/${await RNS.tryName(
-                                                                    element.item.id.split('-')[0],
-                                                                )}`,
-                                                            )
-                                                        }
-                                                        showAssetDetail={() =>
-                                                            fetchAssetDetail(element.item.target.field)
-                                                        }
-                                                    />
-                                                );
-                                            }
+                                            return (
+                                                <ItemCard
+                                                    key={index}
+                                                    avatarUrl={element.avatar}
+                                                    username={element.name}
+                                                    content={element.item.summary}
+                                                    asset={element.details}
+                                                    timeStamp={new Date(element.item.date_updated).valueOf()}
+                                                    target={element.item.target}
+                                                    toUserProfile={async () =>
+                                                        await router.push(
+                                                            `/u/${await RNS.tryName(element.item.id.split('-')[0])}`,
+                                                        )
+                                                    }
+                                                    showAssetDetail={() => fetchAssetDetail(element.item.target.field)}
+                                                />
+                                            );
                                         } else {
                                             return (
                                                 <ContentCard
@@ -311,7 +297,10 @@ const Home: NextPage = () => {
                         </>
                     </section>
                     <section className="flex flex-col gap-4 pb-16 w-4/11 sticky top-16 self-start">
-                        <FilterSection tagList={filterTagList} getFilteredContent={getFilteredContent} />
+                        <FilterSection
+                            getFilteredContent={getFilteredContent}
+                            filterTagActiveMap={filterTagActiveMap}
+                        />
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers[currentRecommendGroupType] ?? []}
