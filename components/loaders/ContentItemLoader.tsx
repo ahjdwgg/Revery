@@ -4,8 +4,7 @@ export default function ContentItemLoader() {
     return (
         <ContentLoader
             speed={2}
-            width={702}
-            height={148}
+            className="w-full h-36"
             viewBox="0 0 702 148"
             backgroundColor="#f3f3f3"
             foregroundColor="#ecebeb"

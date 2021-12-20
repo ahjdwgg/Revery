@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 * {
-    font-family: 'Open Sans', serif;
+    font-family: 'Open Sans';
     scrollbar-width: thin;
     -webkit-user-select: none;
     -moz-user-select: none;

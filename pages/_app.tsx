@@ -23,6 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     type="text/css"
                     href="https://fonts.googleapis.com/css?family=Open+Sans:400,500,600,700"
                 />
+                <meta name="viewport" content="width=768, initial-scale=1.0" />
             </Head>
             <Component {...pageProps} />
         </>

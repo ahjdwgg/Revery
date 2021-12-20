@@ -153,9 +153,9 @@ const ItemCard = ({
                 />
                 <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => toUserProfile()}>
                     <span className="text-base font-semibold">{username}</span>
-                    {asset && <span>{getTopic(target.field, target.action.type)}</span>}
+                    {asset && <span className="flex-shrink-0">{getTopic(target.field, target.action.type)}</span>}
                     {iconSVG && <>{iconSVG}</>}
-                    <span className="opacity-20">{timeDifferent(timeStamp)}</span>
+                    <span className="opacity-20 truncate">{timeDifferent(timeStamp)}</span>
                 </div>
             </div>
             {!asset ? (
