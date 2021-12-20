@@ -150,3 +150,9 @@ export interface ItemDetails {
         image_url?: string | null;
     };
 }
+
+export interface CustomField_PassAssets {
+    id: string;
+    hide?: boolean;
+    order?: number;
+}

@@ -1,4 +1,5 @@
 import {
+    CustomField_PassAssets,
     DonationDetailByGrant,
     GeneralAssetWithTags,
     GitcoinResponse,
@@ -9,7 +10,7 @@ import {
     POAPResponse,
 } from './types';
 import config from './config';
-import RSS3, { RSS3DetailPersona } from './rss3';
+import RSS3 from './rss3';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import { formatter } from './address';
@@ -41,12 +42,13 @@ function sortByOrderTag<T extends TypesWithTag>(taggeds: T[]): T[] {
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
+    const apiUser = RSS3.getAPIUser();
 
-    let assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
+    let assetList = await apiUser.persona.assets.auto.getList(pageOwner.address);
 
-    let taggedList = <{ id: string; hide?: boolean; order?: number }[]>[];
-    const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
-    taggedList = passTags ? passTags : [];
+    // @ts-ignore // WHATS YOUR PROBLEM!!!!!!!
+    const passTags = pageOwner.file?.['_pass']?.assets;
+    const taggedList: CustomField_PassAssets[] = passTags || [];
 
     const hiddenList = taggedList
         .filter((asset: any) => asset.hasOwnProperty('hide'))
@@ -78,13 +80,13 @@ async function initAssets() {
 }
 
 async function loadAssets(parsedAssets: AnyObject[]) {
-    const pageOwner = RSS3.getPageOwner();
+    const apiUser = RSS3.getAPIUser();
 
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
     return assetIDList.length !== 0
-        ? (await pageOwner.assets?.getDetails({
+        ? (await apiUser.persona.assets.getDetails({
               assets: assetIDList,
               full: true,
           })) || []
@@ -92,11 +94,11 @@ async function loadAssets(parsedAssets: AnyObject[]) {
 }
 
 async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
-    const pageOwner = RSS3.getPageOwner();
+    const apiUser = RSS3.getAPIUser();
     return new Promise<(NFTResponse | GitcoinResponse | POAPResponse)[]>(async (resolve, reject) => {
         const tryReq = async () => {
             try {
-                const details = (await pageOwner.assets?.getDetails({
+                const details = (await apiUser.persona.assets.getDetails({
                     assets: Array.from(assetSet),
                     full: true,
                 })) as (NFTResponse | GitcoinResponse | POAPResponse)[];
@@ -191,7 +193,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
     if (filters && following) {
         if (fieldLikeParam != '') {
             items =
-                (await pageOwner.items?.getListByPersona({
+                (await apiUser.persona.items.getListByPersona({
                     persona: pageOwner.address,
                     linkID: 'following',
                     limit: config.splitPageLimits.contents,
@@ -201,7 +203,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
         }
     } else if (!following) {
         items =
-            (await pageOwner.items?.getListByPersona({
+            (await apiUser.persona.items.getListByPersona({
                 persona: pageOwner.address,
                 limit: config.splitPageLimits.contents,
                 tsp: timestamp,

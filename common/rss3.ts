@@ -1,60 +1,52 @@
 /* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import RSS3, { utils as RSS3Utils } from 'rss3';
+import RSS3 from 'rss3';
 import axios from 'axios';
-import {
-    GitcoinResponse,
-    GeneralAsset,
-    NFTResponse,
-    POAPResponse,
-    RecommendationGroupsResponse,
-    RecommendationGroups,
-    RecommendationUsersResponse,
-} from './types';
+import AsyncLock from 'async-lock';
+import { RecommendationGroupsResponse, RecommendationUsersResponse } from './types';
 import config from './config';
 import rns from './rns';
 import Events from './events';
-import Items from 'rss3/dist/items/index';
-import Assets from 'rss3/dist/assets/index';
-export const EMPTY_RSS3_DP: RSS3DetailPersona = {
-    files: null,
-    persona: null,
-    address: '',
-    name: '',
-    profile: null,
-    followers: [],
-    followings: [],
-    items: null,
-    assets: null,
-    isReady: false,
-};
-
-let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
-let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
-let assetsProfileCache: Map<string, IAssetProfile> = new Map();
-let walletConnectProvider: WalletConnectProvider;
-let ethersProvider: ethers.providers.Web3Provider | null;
-
-export type IRSS3 = RSS3;
-
-export interface IAssetProfile {
-    assets: GeneralAsset[];
-    status?: boolean;
-}
 
 export interface RSS3DetailPersona {
-    files: any;
-    persona: RSS3 | null;
+    file: RSS3Index | null;
     address: string;
     name: string;
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
-    items: Items | null;
-    assets: Assets | null;
     isReady: boolean;
 }
+
+export interface RSS3SDKPersona {
+    persona: RSS3;
+}
+
+export const EMPTY_RSS3_DP: RSS3DetailPersona = {
+    file: null,
+    address: '',
+    name: '',
+    profile: null,
+    followers: [],
+    followings: [],
+    isReady: false,
+};
+
+const RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+let RSS3LoginUser: RSS3FullPersona = Object.create(EMPTY_RSS3_DP);
+const RSS3APIUser: RSS3SDKPersona = {
+    persona: new RSS3({
+        endpoint: config.hubEndpoint,
+    }),
+};
+let walletConnectProvider: WalletConnectProvider;
+let ethersProvider: ethers.providers.Web3Provider | null;
+const lock = new AsyncLock();
+
+export type IRSS3 = RSS3;
+
+export type RSS3FullPersona = RSS3SDKPersona & RSS3DetailPersona;
 
 function setStorage(key: string, value: string) {
     if (value) {
@@ -238,40 +230,37 @@ async function reconnect() {
     return true;
 }
 
-async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
+async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync: boolean = false) {
+    const RSS3APIPersona = apiPersona();
     user.isReady = false;
-    if (user.persona) {
-        if (!user.address) {
+    await lock.acquire('InitializingUser', async () => {
+        if ('persona' in user && !user.address) {
+            // Fix address
             user.address = user.persona.account.address;
         }
-        user.persona.files.set(await user.persona.files.get(user.address));
-        if (!skipSignSync) {
-            await user.persona.files.sync();
+        if (user.name && !user.address) {
+            user.address = await rns.name2Addr(user.name);
         }
-    }
-    if (user.name && !user.address) {
-        user.address = await rns.name2Addr(user.name);
-    }
-    if (user.address && !user.name) {
-        user.name = await rns.addr2Name(user.address);
-    }
-    const RSS3APIPersona = apiPersona();
-    user.profile = await RSS3APIPersona.profile.get(user.address);
-    user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
-    user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
-    user.items = await RSS3APIPersona.items;
-    user.assets = await RSS3APIPersona.assets;
-    user.files = await RSS3APIPersona.files;
-    user.isReady = true;
+        if (user.address && !user.name) {
+            user.name = await rns.addr2Name(user.address);
+        }
+        user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
+        if ('persona' in user) {
+            // Sync persona
+            user.persona.files.set(user.file);
+            if (!skipSignSync) {
+                await user.persona.files.sync();
+            }
+        }
+        user.profile = user.file.profile || {};
+        user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
+        user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+        user.isReady = true;
+    });
 }
 
 function apiPersona(): RSS3 {
-    return (
-        RSS3LoginUser.persona ||
-        new RSS3({
-            endpoint: config.hubEndpoint,
-        })
-    );
+    return RSS3APIUser.persona;
 }
 
 function isValidRSS3() {
@@ -359,10 +348,10 @@ export default {
         dispatchEvent(Events.connect, RSS3LoginUser);
         return res;
     },
-    getAPIUser: (): RSS3DetailPersona => {
-        const user = Object.create(EMPTY_RSS3_DP);
-        user.persona = apiPersona();
-        return user;
+    getAPIUser: (): RSS3SDKPersona => {
+        return {
+            persona: apiPersona(),
+        };
     },
     getLoginUser: () => {
         return RSS3LoginUser;
@@ -383,7 +372,8 @@ export default {
         });
     },
     reloadLoginUser: async () => {
-        await initUser(RSS3LoginUser);
+        RSS3LoginUser.file = (await apiPersona().files.get(RSS3LoginUser.address, true)) as RSS3Index;
+        RSS3LoginUser.profile = RSS3LoginUser.file.profile || {};
         dispatchEvent(Events.connect, RSS3LoginUser);
         return RSS3LoginUser;
     },
@@ -412,7 +402,8 @@ export default {
         return RSS3PageOwner;
     },
     reloadPageOwner: async () => {
-        await initUser(RSS3PageOwner);
+        RSS3PageOwner.file = (await apiPersona().files.get(RSS3PageOwner.address, true)) as RSS3Index;
+        RSS3PageOwner.profile = RSS3PageOwner.file.profile || {};
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
@@ -420,88 +411,6 @@ export default {
         return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
     isValidRSS3,
-
-    getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
-        if (assetsProfileCache.has(address + type) && !refresh) {
-            return <IAssetProfile>assetsProfileCache.get(address + type);
-        } else {
-            let data: IAssetProfile | null = null;
-            try {
-                const autoAssets = (await RSS3PageOwner.assets?.auto.getList(address))?.map((asset) =>
-                    RSS3Utils.id.parseAsset(asset),
-                );
-                data = <IAssetProfile>{ assets: autoAssets, status: autoAssets };
-                assetsProfileCache.set(address + type, data);
-            } catch (error) {
-                data = null;
-            }
-            return data;
-        }
-    },
-    getNFTDetails: async (address: string, platform: string, identity: string, id: string, type: string) => {
-        let data: NFTResponse | null = null;
-        try {
-            const res = await axios.get(`/assets/details`, {
-                baseURL: config.hubEndpoint,
-                params: {
-                    personaID: address,
-                    platform: 'EVM+',
-                    id,
-                    identity,
-                    type,
-                },
-            });
-            if (res && res.data) {
-                data = <NFTResponse>res.data;
-            }
-        } catch (error) {
-            data = null;
-        }
-        return data;
-    },
-    getGitcoinDonation: async (address: string, platform: string, identity: string, id: string) => {
-        let data: GitcoinResponse | null = null;
-        try {
-            const res = await axios.get(`/assets/details`, {
-                baseURL: config.hubEndpoint,
-                params: {
-                    personaID: address,
-                    platform: 'EVM+',
-                    id: id,
-                    identity: identity,
-                    type: 'Gitcoin-Donation',
-                },
-            });
-            if (res && res.data) {
-                data = <GitcoinResponse>res.data;
-            }
-        } catch (error) {
-            data = null;
-        }
-        return data;
-    },
-    getFootprintDetail: async (address: string, platform: string, identity: string, id: string) => {
-        let data: POAPResponse | null = null;
-        try {
-            const res = await axios.get(`/assets/details`, {
-                baseURL: config.hubEndpoint,
-                params: {
-                    personaID: address,
-                    platform: 'EVM+',
-                    id: id,
-                    identity: identity,
-                    type: 'xDai-POAP',
-                },
-            });
-            if (res && res.data) {
-                data = <POAPResponse>res.data;
-            }
-        } catch (error) {
-            data = null;
-        }
-        return data;
-    },
-
     buildProductBaseURL: (product: string, address: string, name?: string) => {
         if (product in config.productsList) {
             const p = config.productsList[product];
