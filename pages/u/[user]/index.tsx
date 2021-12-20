@@ -241,14 +241,15 @@ const ProfilePage: NextPage = () => {
     const onFollow = async () => {
         const loginUser = await RSS3.getLoginUser();
         const pageOwner = await RSS3.getPageOwner();
-        const file = await pageOwner.files.get();
-        if (file.signature) {
+
+        const file = pageOwner.file;
+        if (file?.signature) {
             if (checkIsFollowing()) {
                 await unfollow();
             } else {
                 await follow();
             }
-            await loginUser.files.sync();
+            await loginUser.persona.files.sync();
         } else {
             // Not registered user
         }
@@ -375,9 +376,9 @@ const ProfilePage: NextPage = () => {
             'BSC.NFT': 'nft',
         };
 
-        const pageOwner = await RSS3.getPageOwner();
+        const apiUser = await RSS3.getAPIUser();
 
-        const asset = await pageOwner.assets?.getDetails({
+        const asset = await apiUser.persona.assets.getDetails({
             assets: [field.replace('assets-', '')],
             full: true,
         });

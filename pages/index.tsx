@@ -122,9 +122,9 @@ const Home: NextPage = () => {
             'BSC.NFT': 'nft',
         };
 
-        const pageOwner = await RSS3.getPageOwner();
+        const apiUser = await RSS3.getAPIUser();
 
-        const asset = await pageOwner.assets?.getDetails({
+        const asset = await apiUser.persona.assets.getDetails({
             assets: [field.replace('assets-', '')],
             full: true,
         });
