@@ -142,7 +142,7 @@ const ItemCard = ({
     }
 
     return (
-        <div className="flex flex-col justify-start w-full py-2.5">
+        <div className="flex flex-col justify-start w-full py-2.5 bg-white hover:bg-primary-bg transition-all duration-100 ease-in-out">
             <div className="flex flex-row items-center gap-x-2">
                 <ImageHolder
                     imageUrl={avatarUrl}

@@ -23,7 +23,9 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
 
     return (
         <div
-            className={`flex flex-row gap-2 justify-start p-2 bg-transparent ${toUserPage ? 'cursor-pointer' : ''}`}
+            className={`flex flex-row gap-2 justify-start p-2 bg-transparent ${
+                toUserPage ? 'cursor-pointer' : ''
+            } bg-white hover:bg-primary-bg transition-all duration-100 ease-in-out`}
             onClick={() => {
                 if (toUserPage) {
                     toUserPage(rns || ethAddress);
