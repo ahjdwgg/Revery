@@ -38,7 +38,7 @@ const config = {
     recommendations: {
         endpoint: 'https://node-beta.rss3.dev',
         groupLimit: 5,
-        userLimit: 10,
+        userLimit: 8,
     },
     ipfs: {
         download: {
