@@ -11,7 +11,7 @@ interface SingleAccountProps {
 
 export default function SingleAccount({ chain, address }: SingleAccountProps) {
     return (
-        <>
+        <div className="flex items-center flex-col gap-6 cursor-pointer">
             {chain !== 'EVM+' ? (
                 <AccountItem chain={chain} size="lg" />
             ) : (
@@ -29,6 +29,6 @@ export default function SingleAccount({ chain, address }: SingleAccountProps) {
                 />
                 <Button isOutlined={false} color={COLORS.primary} icon={'external'} />
             </div>
-        </>
+        </div>
     );
 }

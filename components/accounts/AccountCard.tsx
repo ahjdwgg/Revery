@@ -14,13 +14,13 @@ interface AccountCardProps {
 
 const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: AccountCardProps) => {
     return (
-        <section className="grid items-center grid-cols-3 cursor-pointer" onClick={clickEvent}>
+        <section className="grid items-center grid-cols-3 cursor-pointer gap-6" onClick={clickEvent}>
             {chain !== 'EVM+' ? (
                 <AccountItem size={size} chain={chain} outline="account" />
             ) : (
                 <EVMpAccountItem size={size} address={address} outline="account" />
             )}
-            <span className="text-lg font-bold text-left">{formatter(address)}</span>
+            <div className="text-lg font-bold text-left">{formatter(address)}</div>
             <div className="flex flex-row items-center gap-x-2">
                 <Button
                     isOutlined={true}

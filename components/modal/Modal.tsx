@@ -64,7 +64,7 @@ export default function Modal({ theme, hidden, size, title, children, closeEvent
                     e.stopPropagation();
                 }}
             >
-                <div className="py-2 flex items-center">
+                <div className="py-2 px-2 flex items-center justify-start w-full">
                     <BiX className={`w-8 h-8 cursor-pointer ${buttonTheme.get(theme)}`} onClick={modalClose} />
                     <div>
                         <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
@@ -87,7 +87,7 @@ export const buttonTheme = new Map([
 ]);
 
 export const modalSize = new Map([
-    ['sm', 'max-w-sm px-2 pb-3'],
-    ['md', 'flex flex-col items-center justify-around w-full max-w-lg px-14 pb-6'],
+    ['sm', 'max-w-sm pb-8'],
+    ['md', 'flex flex-col items-center justify-around w-full max-w-lg pb-6'],
     ['lg', 'w-full max-w-6xl px-2 pb-12'],
 ]);
