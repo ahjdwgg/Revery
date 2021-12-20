@@ -151,12 +151,12 @@ function isAsset(field: string | undefined): boolean {
 
 const filterTagSQLMap = new Map([
     [FILTER_TAGS.nft, '%NFT%'],
-    [FILTER_TAGS.donation, '%Gitcoin.Donation%'],
+    [FILTER_TAGS.donation, '%Gitcoin%'],
     [FILTER_TAGS.footprint, '%POAP%'],
     [FILTER_TAGS.content, '%Twitter%|%Mirror.XYZ%|%Misskey%|%Arweave%'],
 ]);
 
-const allFilterTagSQLString = '%NFT%|%Gitcoin.Donation%|%POAP%|%Twitter%|%Mirror.XYZ%|%Misskey%|%Arweave%';
+const allFilterTagSQLString = '%NFT%|%Gitcoin%|%POAP%|%Twitter%|%Mirror.XYZ%|%Misskey%|%Arweave%';
 
 async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
     const assetSet = new Set<string>();
