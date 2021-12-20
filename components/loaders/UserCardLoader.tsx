@@ -4,8 +4,7 @@ export default function UserCardLoader() {
     return (
         <ContentLoader
             speed={2}
-            width={298}
-            height={52}
+            className="w-full h-14"
             viewBox="0 0 298 52"
             backgroundColor="#f3f3f3"
             foregroundColor="#ecebeb"

@@ -152,7 +152,7 @@ const ItemCard = ({
                     onClick={toUserProfile}
                 />
                 <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => toUserProfile()}>
-                    <span className="text-base font-semibold">{username}</span>
+                    <span className="text-base font-semibold flex-shrink-0">{username}</span>
                     {asset && <span className="flex-shrink-0">{getTopic(target.field, target.action.type)}</span>}
                     {iconSVG && <>{iconSVG}</>}
                     <span className="opacity-20 truncate">{timeDifferent(timeStamp)}</span>

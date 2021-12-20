@@ -300,7 +300,7 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <section className="flex flex-col gap-4 pb-16 w-4/11 sticky top-16 self-start">
+                    <section className="flex flex-col pb-16 w-4/11 sticky top-16 self-start">
                         <FilterSection
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
