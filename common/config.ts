@@ -36,7 +36,7 @@ const config = {
         follows: 15,
     },
     recommendations: {
-        endpoint: 'https://node-beta.rss3.dev',
+        endpoint: 'https://prenode.rss3.dev',
         groupLimit: 5,
         userLimit: 8,
     },
