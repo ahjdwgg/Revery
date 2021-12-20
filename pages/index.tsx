@@ -290,8 +290,12 @@ const Home: NextPage = () => {
                                 </section>
                             ) : (
                                 <div className="flex flex-col w-full gap-2 py-32 text-sm text-center">
-                                    <p>{'Oops, nothing found from your followings:P'}</p>
-                                    <p>{'Check out some new friends from recommendations for you!'}</p>
+                                    <p>{'Oops, nothing found from your followings :P'}</p>
+                                    <p>
+                                        {
+                                            'Apply some filters or check out some new friends from recommendations for you!'
+                                        }
+                                    </p>
                                 </div>
                             )}
                         </>

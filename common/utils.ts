@@ -153,9 +153,10 @@ const filterTagSQLMap = new Map([
     [FILTER_TAGS.nft, '%NFT%'],
     [FILTER_TAGS.donation, '%Gitcoin.Donation%'],
     [FILTER_TAGS.footprint, '%POAP%'],
+    [FILTER_TAGS.content, '%Twitter%|%Mirror.XYZ%|%Misskey%|%Arweave%'],
 ]);
 
-const contentFilterTagSQLList = ['%Twitter%', '%Mirror.XYZ%', '%Misskey%', '%Arweave%'];
+const allFilterTagSQLString = '%NFT%|%Gitcoin.Donation%|%POAP%|%Twitter%|%Mirror.XYZ%|%Misskey%|%Arweave%';
 
 async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
     const assetSet = new Set<string>();
@@ -163,44 +164,41 @@ async function initContent(timestamp: string = '', following: boolean = false, f
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
-    let filteredContent: any = [];
     let items: any = [];
 
-    if (filters && following) {
-        filteredContent = await Promise.all(
-            filters.map(async (tag) => {
-                if (tag.value && tag.key != FILTER_TAGS.content) {
-                    return await pageOwner.items?.getListByPersona({
-                        persona: pageOwner.address,
-                        linkID: 'following',
-                        limit: config.splitPageLimits.contents,
-                        tsp: timestamp,
-                        fieldLike: filterTagSQLMap.get(tag.key),
-                    });
-                } else if (tag.value && tag.key == FILTER_TAGS.content) {
-                    return Promise.all(
-                        contentFilterTagSQLList.map(async (tag) => {
-                            return await pageOwner.items?.getListByPersona({
-                                persona: pageOwner.address,
-                                linkID: 'following',
-                                limit: config.splitPageLimits.contents,
-                                tsp: timestamp,
-                                fieldLike: tag,
-                            });
-                        }),
-                    ).then((value) => {
-                        let content: any[] = [];
-                        return content.concat(...value);
-                    });
+    let fieldLikeParam = allFilterTagSQLString;
+
+    let result: any = [];
+
+    filters?.map((tag) => {
+        fieldLikeParam = fieldLikeParam.replace(filterTagSQLMap.get(FILTER_TAGS.content)!, '');
+
+        if (tag.value && tag.key != FILTER_TAGS.content) {
+            fieldLikeParam.split('|').map((i) => {
+                if (i == filterTagSQLMap.get(tag.key)) {
+                    result.push(i);
                 }
-            }),
-        ).then((value) => {
-            return value;
-        });
-        items = []
-            .concat(...filteredContent.filter((item: any) => item))
-            .sort((a: any, b: any) => new Date(b.date_updated).valueOf() - new Date(a.date_updated).valueOf())
-            .slice(0, 35);
+            });
+        }
+
+        if (tag.value && tag.key == FILTER_TAGS.content) {
+            result.push(filterTagSQLMap.get(FILTER_TAGS.content));
+        }
+    });
+
+    fieldLikeParam = result.join('|') || '';
+
+    if (filters && following) {
+        if (fieldLikeParam != '') {
+            items =
+                (await pageOwner.items?.getListByPersona({
+                    persona: pageOwner.address,
+                    linkID: 'following',
+                    limit: config.splitPageLimits.contents,
+                    tsp: timestamp,
+                    fieldLike: fieldLikeParam,
+                })) || [];
+        }
     } else if (!following) {
         items =
             (await pageOwner.items?.getListByPersona({
