@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import Modal from './modal/Modal';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
@@ -26,6 +26,9 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
     const [modalHidden, setModalHidden] = useState(true);
     const [isConnectModalClosed, setConnectModalClosed] = useState(true);
+
+    const [currentSearchUser, setCurrentSearchUser] = useState('');
+
     // default avatar
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
 
@@ -102,6 +105,15 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
         router.reload();
     };
 
+    const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
+        setCurrentSearchUser(event.target.value);
+    };
+
+    const toSearchedUserPage = (event: FormEvent<HTMLInputElement>) => {
+        console.log(currentSearchUser);
+        router.push(`/u/${currentSearchUser}`);
+    };
+
     // detect whether user has scrolled the page down by 10px
     useEffect(() => {
         const scrollHandler = () => {
@@ -127,24 +139,25 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                                 <Logo />
                             </div>
                             <div className="flex flex-row justify-end w-full gap-x-4">
+                                <input
+                                    className="w-76 h-8 text-sm px-2 focus-within:ring-primary-asset"
+                                    placeholder={'Search for an address, rns or ens'}
+                                    type={'text'}
+                                    onChange={handleSearchUser}
+                                />
+                                <Button
+                                    isOutlined={false}
+                                    text={'Go'}
+                                    color={COLORS.primary}
+                                    width={'w-10'}
+                                    height={'h-8'}
+                                    onClick={toSearchedUserPage}
+                                />
+
                                 {isLoggedIn ? (
-                                    <>
-                                        <Button
-                                            isOutlined={false}
-                                            color={COLORS.primary}
-                                            text={'Create Now'}
-                                            width={'w-32'}
-                                            height={'h-8'}
-                                            isDisabled={true}
-                                        />
-                                        <div className="cursor-pointer" onClick={toProfilePage}>
-                                            <ImageHolder
-                                                imageUrl={avatarURL}
-                                                roundedClassName={'rounded-full'}
-                                                size={28}
-                                            />
-                                        </div>
-                                    </>
+                                    <div className="cursor-pointer" onClick={toProfilePage}>
+                                        <ImageHolder imageUrl={avatarURL} roundedClassName={'rounded-full'} size={28} />
+                                    </div>
                                 ) : isLoading !== null ? (
                                     <Button
                                         isOutlined={false}
