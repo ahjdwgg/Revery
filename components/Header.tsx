@@ -139,7 +139,7 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
                             </div>
                             <div className="flex flex-row justify-end w-full gap-x-4">
                                 <input
-                                    className="h-8 px-4 text-sm transition-all duration-200 border border-white rounded outline-none w-76 focus:border-primary"
+                                    className="h-8 px-2 text-sm outline-none w-76"
                                     placeholder={'Search for an address, rns or ens'}
                                     type={'text'}
                                     onChange={handleSearchUser}
