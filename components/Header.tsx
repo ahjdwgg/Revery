@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { BiSearch } from 'react-icons/bi';
 import config from '../common/config';
 import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
@@ -125,9 +126,10 @@ const Header = () => {
                             <div className="cursor-pointer" onClick={() => router.push(`/`)}>
                                 <Logo />
                             </div>
-                            <div className="flex flex-row justify-end w-full gap-x-4">
+                            <div className="flex flex-row items-center justify-end w-full gap-x-4">
+                                <BiSearch className="w-4 h-4 opacity-50" />
                                 <input
-                                    className="h-8 px-2 text-sm outline-none w-76"
+                                    className="w-64 h-8 text-sm outline-none"
                                     placeholder={'Search for an address, rns or ens'}
                                     type={'text'}
                                     onChange={handleSearchUser}
