@@ -10,11 +10,12 @@ interface AccountCardProps {
     size?: string;
     chain: string;
     address: string;
+    clickEvent?: () => void;
 }
 
-const AccountCard = ({ size = 'lg', chain, address }: AccountCardProps) => {
+const AccountCard = ({ size = 'lg', chain, address, clickEvent }: AccountCardProps) => {
     return (
-        <section className="grid items-center grid-cols-3 cursor-pointer gap-6">
+        <section className="grid items-center grid-cols-3 cursor-pointer gap-6" onClick={clickEvent}>
             {chain !== 'EVM+' ? (
                 <AccountItem size={size} chain={chain} outline="account" />
             ) : (
