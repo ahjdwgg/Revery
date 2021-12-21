@@ -59,6 +59,7 @@ const Home: NextPage = () => {
 
     const init = async () => {
         if (RSS3.isValidRSS3()) {
+            setConnectModalClosed(true);
             await RSS3.ensureLoginUser();
             const LoginUser = RSS3.getLoginUser();
             setLoggedIn(true);
