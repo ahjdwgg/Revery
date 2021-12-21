@@ -451,7 +451,7 @@ const ProfilePage: NextPage = () => {
                                         size="sm"
                                         address={accountInfo.identity}
                                         onClick={() => {
-                                            getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                            getModalDetail({ detail: accountInfo }, 'account');
                                         }}
                                     />
                                 ) : (
@@ -460,7 +460,7 @@ const ProfilePage: NextPage = () => {
                                         size="sm"
                                         chain={accountInfo.platform}
                                         onClick={() => {
-                                            getModalDetail({ detail: { ...accountInfo } }, 'account');
+                                            getModalDetail({ detail: accountInfo }, 'account');
                                         }}
                                     />
                                 );

@@ -4,17 +4,17 @@ import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
 import AccountItem from './AccountItem';
 import EVMpAccountItem from './EVMpAccountItem';
+import utils from '../../common/utils';
 
 interface AccountCardProps {
     size?: string;
     chain: string;
     address: string;
-    clickEvent?: () => void;
 }
 
-const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: AccountCardProps) => {
+const AccountCard = ({ size = 'lg', chain, address }: AccountCardProps) => {
     return (
-        <section className="grid items-center grid-cols-3 cursor-pointer gap-6" onClick={clickEvent}>
+        <section className="grid items-center grid-cols-3 cursor-pointer gap-6">
             {chain !== 'EVM+' ? (
                 <AccountItem size={size} chain={chain} outline="account" />
             ) : (
@@ -31,7 +31,16 @@ const AccountCard = ({ size = 'lg', chain, address, clickEvent = () => {} }: Acc
                         e.stopPropagation();
                     }}
                 />
-                <Button isOutlined={false} color={COLORS.primary} icon={'external'} />
+                <Button
+                    isOutlined={false}
+                    color={COLORS.primary}
+                    icon={'external'}
+                    onClick={() => {
+                        if (chain && address) {
+                            utils.toExternalAccountDetails(chain, address);
+                        }
+                    }}
+                />
             </div>
         </section>
     );

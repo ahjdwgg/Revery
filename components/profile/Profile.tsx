@@ -13,7 +13,6 @@ import RNS from '../../common/rns';
 import utils from '../../common/utils';
 import { useRouter } from 'next/router';
 import ModalRNS from '../modal/ModalRNS';
-import UserCardLoader from '../loaders/UserCardLoader';
 interface ProfileProps {
     avatarUrl: string;
     username: string;
@@ -51,8 +50,6 @@ const Profile = ({
     toRss3BioUserSite,
     toUserPage,
 }: ProfileProps) => {
-    const router = useRouter();
-
     const [modalHidden, setModalHidden] = useState(true);
     const [modalRNSHidden, setModalRNSHidden] = useState(true);
     const [followType, setFollowType] = useState<'followers' | 'followings'>('followers');

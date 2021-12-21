@@ -342,26 +342,6 @@ function getStorage(key: string): string | null {
     return localStorage.getItem(key);
 }
 
-function replacer(key: any, value: any) {
-    if (value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()),
-        };
-    } else {
-        return value;
-    }
-}
-
-function reviver(key: any, value: any) {
-    if (typeof value === 'object' && value !== null) {
-        if (value.dataType === 'Map') {
-            return new Map(value.value);
-        }
-    }
-    return value;
-}
-
 function strMapToObj(strMap: any) {
     let obj = Object.create(null);
     for (let [k, v] of strMap) {
@@ -378,6 +358,21 @@ function objToStrMap(obj: any) {
     return strMap;
 }
 
+const toExternalAccountDetails = (platform: string, identity: string) => {
+    switch (platform) {
+        case 'EVM+':
+            window.open(`https://etherscan.io/address/${identity}`, '_blank');
+            break;
+        case 'Twitter':
+            window.open(`https://twitter.com/${identity}`, '_blank');
+            break;
+        case 'Misskey':
+            const [username, instance] = identity.split('@');
+            window.open(`https://${instance}/@${username}`, '_blank');
+            break;
+    }
+};
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -388,10 +383,9 @@ const utils = {
     fixURLSchemas,
     setStorage,
     getStorage,
-    replacer,
-    reviver,
     strMapToObj,
     objToStrMap,
+    toExternalAccountDetails,
 };
 
 export default utils;
