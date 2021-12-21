@@ -152,13 +152,13 @@ function isAsset(field: string | undefined): boolean {
 }
 
 const filterTagSQLMap = new Map([
-    [FILTER_TAGS.nft, '%NFT%'],
-    [FILTER_TAGS.donation, '%Gitcoin%'],
-    [FILTER_TAGS.footprint, '%POAP%'],
-    [FILTER_TAGS.content, '%Twitter%|%Mirror.XYZ%|%Misskey%'],
+    [FILTER_TAGS.nft, 'NFT'],
+    [FILTER_TAGS.donation, 'Gitcoin'],
+    [FILTER_TAGS.footprint, 'POAP'],
+    [FILTER_TAGS.content, 'Twitter,Mirror.XYZ,Misskey'],
 ]);
 
-const allFilterTagSQLString = '%NFT%|%Gitcoin%|%POAP%|%Twitter%|%Mirror.XYZ%|%Misskey%';
+const allFilterTagQueryString = 'NFT,Gitcoin,POAP,Twitter,Mirror.XYZ,Misskey';
 
 async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
     const assetSet = new Set<string>();
@@ -168,15 +168,15 @@ async function initContent(timestamp: string = '', following: boolean = false, f
 
     let items: any = [];
 
-    let fieldLikeParam = allFilterTagSQLString;
+    let fieldLikeParam = allFilterTagQueryString;
 
     let result: any = [];
 
-    filters?.map((tag) => {
+    filters?.forEach((tag) => {
         fieldLikeParam = fieldLikeParam.replace(filterTagSQLMap.get(FILTER_TAGS.content)!, '');
 
         if (tag.value && tag.key != FILTER_TAGS.content) {
-            fieldLikeParam.split('|').map((i) => {
+            fieldLikeParam.split(',').forEach((i) => {
                 if (i == filterTagSQLMap.get(tag.key)) {
                     result.push(i);
                 }
@@ -188,7 +188,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
         }
     });
 
-    fieldLikeParam = result.join('|') || '';
+    fieldLikeParam = result.join(',') || '';
 
     if (filters && following) {
         if (fieldLikeParam != '') {
