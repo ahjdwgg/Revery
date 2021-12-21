@@ -2,14 +2,7 @@ import ContentLoader from 'react-content-loader';
 
 export default function ProfileLoader() {
     return (
-        <ContentLoader
-            speed={2}
-            width={702}
-            height={224}
-            viewBox="0 0 702 224"
-            backgroundColor="#f3f3f3"
-            foregroundColor="#ecebeb"
-        >
+        <ContentLoader speed={2} width={702} height={224} backgroundColor="#f3f3f3" foregroundColor="#ecebeb">
             <circle cx="50" cy="66" r="50" />
             <rect x="124" y="24" rx="5" ry="5" width="200" height="24" />
             <rect x="124" y="90" rx="5" ry="5" width="142" height="18" />

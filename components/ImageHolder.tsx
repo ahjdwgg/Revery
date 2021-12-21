@@ -1,7 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
-
 import React from 'react';
 import utils from '../common/utils';
+import Image from 'next/image';
 
 interface ImageProps {
     imageUrl: string;
@@ -12,15 +11,20 @@ interface ImageProps {
 }
 
 const ImageHolder = ({ imageUrl, title, roundedClassName, size, onClick }: ImageProps) => {
+    const imageClassNames = `w-full h-full object-cover transition-all duration-200 ease-in-out ${roundedClassName}`;
     return (
         <div
             className={`flex justify-around relative ${onClick ? 'cursor-pointer' : ''}`}
             style={{ width: size, height: size }}
             onClick={onClick}
         >
-            <img
-                className={`w-full h-full object-cover transition-all duration-200 ease-in-out ${roundedClassName}`}
-                src={utils.fixURLSchemas(imageUrl)}
+            <Image
+                className={imageClassNames}
+                src={`/api/imageproxy?url=${encodeURIComponent(utils.fixURLSchemas(imageUrl))}`}
+                width={size}
+                height={size}
+                objectFit={'cover'}
+                quality={80}
                 alt={title}
             />
         </div>
