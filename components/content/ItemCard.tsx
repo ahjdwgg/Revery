@@ -160,7 +160,7 @@ const ItemCard = ({
             </div>
             {!asset ? (
                 <div
-                    className="pl-2 mt-2 ml-10 border-l-2 border-opacity-50 cursor-pointer border-primary"
+                    className="pl-2 mt-2 ml-10 border-l-2 hover:border-opacity-50 cursor-pointer hover:border-primary border-primary-asset"
                     onClick={() => {
                         toExternalLink(target.field, target.action.payload);
                     }}

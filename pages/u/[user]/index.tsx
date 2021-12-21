@@ -429,7 +429,11 @@ const ProfilePage: NextPage = () => {
                         <Profile
                             avatarUrl={avatarUrl}
                             username={isRegistered ? username : link ? link : address}
-                            bio={bio}
+                            bio={
+                                isRegistered
+                                    ? bio
+                                    : 'This account is not registered with RSS3. If you are the owner, you are welcome to register now : )'
+                            }
                             followers={followers}
                             followings={followings}
                             rns={link}
@@ -562,10 +566,10 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-semibold opacity-20">
+                                        <span className="text-base font-semibold opacity-20 col-span-2">
                                             {isRegistered
                                                 ? 'Oops, nothing found :P'
-                                                : 'Oops, this user has not registered with RSS3.'}
+                                                : 'Oops, this account is not registered with RSS3.'}
                                         </span>
                                     )}
                                 </div>
@@ -594,10 +598,10 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-medium opacity-20">
+                                        <span className="text-base font-medium opacity-20 col-span-2">
                                             {isRegistered
                                                 ? 'Oops, nothing found :P'
-                                                : 'Oops, this user has not registered with RSS3.'}
+                                                : 'Oops, this account is not registered with RSS3.'}
                                         </span>
                                     )}
                                 </div>
@@ -629,7 +633,7 @@ const ProfilePage: NextPage = () => {
                                     <span className="text-base font-semibold opacity-20">
                                         {isRegistered
                                             ? 'Oops, nothing found :P'
-                                            : 'Oops, this user has not registered with RSS3.'}
+                                            : 'Oops, this account is not registered with RSS3.'}
                                     </span>
                                 )}
                             </div>

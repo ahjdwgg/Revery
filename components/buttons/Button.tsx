@@ -112,7 +112,7 @@ const Button = ({
     }
 
     return (
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
             <button onClick={onClick} className={className ? className : buttonClassName}>
                 {text} {iconSVG} {children}
             </button>

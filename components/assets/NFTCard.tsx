@@ -10,7 +10,7 @@ interface NFTCardProps {
 const NFTCard = ({ name, desc, imageUrl, onClick }: NFTCardProps) => {
     return (
         <div
-            className="flex flex-row justify-between pl-2 mt-2 ml-10 border-l-2 border-opacity-50 cursor-pointer select-none border-primary gap-x-4"
+            className="flex flex-row justify-between pl-2 mt-2 ml-10 border-l-2 hover:border-opacity-50 cursor-pointer select-none hover:border-primary gap-x-4 border-primary-asset"
             onClick={() => onClick()}
         >
             <div className="flex flex-col justify-between flex-1 w-0 gap-y-4">
