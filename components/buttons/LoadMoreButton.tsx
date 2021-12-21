@@ -8,10 +8,11 @@ interface LoadMoreButtonProps {
     height: string;
     isLoading: boolean;
     children?: ReactNode;
+    margin?: number;
     onClick: () => void;
 }
 
-const LoadMoreButton = ({ color, width, height, isLoading, children, onClick }: LoadMoreButtonProps) => {
+const LoadMoreButton = ({ color, width, height, isLoading, children, onClick, margin = 0 }: LoadMoreButtonProps) => {
     const handleViewChange = (inView: boolean) => {
         if (inView) {
             onClick();
@@ -26,7 +27,7 @@ const LoadMoreButton = ({ color, width, height, isLoading, children, onClick }: 
                     <InView
                         onChange={handleViewChange}
                         triggerOnce={true}
-                        rootMargin="1500px 0px" // load beforehand for better user experience
+                        rootMargin={`${margin}px 0px`} // load beforehand for better user experience
                     >
                         <Button
                             isOutlined={false}

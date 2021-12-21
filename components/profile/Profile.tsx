@@ -13,6 +13,7 @@ import RNS from '../../common/rns';
 import utils from '../../common/utils';
 import { useRouter } from 'next/router';
 import ModalRNS from '../modal/ModalRNS';
+import UserCardLoader from '../loaders/UserCardLoader';
 interface ProfileProps {
     avatarUrl: string;
     username: string;
@@ -63,6 +64,8 @@ const Profile = ({
 
     const isLoading = useRef<boolean>(false);
 
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+
     const [currentIndex, setCurrentIndex] = useState({ followers: 0, followings: 0 });
 
     const openModal = (type: typeof followType) => {
@@ -80,6 +83,7 @@ const Profile = ({
     };
 
     const loadFoList = async (addressList: string[]) => {
+        setIsLoadingMore(true);
         const curI = currentIndex[followType];
         const apiUser = RSS3.getAPIUser().persona as IRSS3;
         const userList = (await Promise.all(
@@ -107,6 +111,7 @@ const Profile = ({
             ...v,
             [followType]: v[followType].concat(userList),
         }));
+        setIsLoadingMore(false);
     };
 
     const loadMoreFollow = () => {
@@ -205,17 +210,17 @@ const Profile = ({
                 closeEvent={closeModal}
                 theme={'primary'}
                 size={'sm'}
-                onReachBottom={loadMoreFollow}
+                loadMorePlaceholder={<FollowList showLoader={true} />}
+                isLoadingMore={isLoadingMore}
+                onLoadMore={loadMoreFollow}
                 title={followType}
             >
                 <FollowList
-                    followType={followType}
                     followList={foList[followType]}
                     toUserPage={(aon) => {
                         closeModal();
                         toUserPage(aon);
                     }}
-                    shouldShowLoader={shouldShowLoader}
                 />
             </Modal>
             <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />

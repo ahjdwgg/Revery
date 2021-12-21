@@ -3,17 +3,16 @@ import UserCardLoader from '../loaders/UserCardLoader';
 import UserCard, { UserItems } from './UserCard';
 
 interface FollowListProps {
-    followType: string;
-    followList: UserItems[];
-    toUserPage: (addrOrName: string) => void;
-    shouldShowLoader?: boolean;
+    followList?: UserItems[];
+    toUserPage?: (addrOrName: string) => void;
+    showLoader?: boolean | number;
 }
 
-const FollowList = ({ followType, followList, toUserPage, shouldShowLoader = false }: FollowListProps) => {
+const FollowList = ({ followList, toUserPage, showLoader = false }: FollowListProps) => {
     return (
         <div className="flex flex-col p-3 divide-y divide-solid divide-primary divide-opacity-5 gap-3">
             <div className="flex flex-col">
-                {followList.map((user, i) => (
+                {followList?.map((user, i) => (
                     <UserCard
                         key={i}
                         username={user.username}
@@ -24,7 +23,10 @@ const FollowList = ({ followType, followList, toUserPage, shouldShowLoader = fal
                         toUserPage={toUserPage}
                     />
                 ))}
-                {shouldShowLoader && [...Array(3)].map((_, i) => <UserCardLoader key={i} />)}
+                {showLoader &&
+                    [...Array(typeof showLoader === 'number' ? showLoader : 3)].map((_, i) => (
+                        <UserCardLoader key={i} />
+                    ))}
             </div>
         </div>
     );

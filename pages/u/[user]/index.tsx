@@ -510,6 +510,7 @@ const ProfilePage: NextPage = () => {
                                         height={'h-8'}
                                         isLoading={isLoadingMore}
                                         onClick={loadMoreContent}
+                                        margin={1500}
                                     >
                                         {[...Array(3)].map((_, id) => (
                                             <ContentItemLoader key={id} />

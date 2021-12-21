@@ -1,5 +1,7 @@
-import { ReactNode, UIEvent, useEffect, useState } from 'react';
+import { ReactNode, UIEvent, useEffect, useLayoutEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
+import LoadMoreButton from '../buttons/LoadMoreButton';
+import { COLORS } from '../buttons/variables';
 
 export type ModalColorStyle = 'account' | 'nft' | 'donation' | 'footprint' | 'primary';
 
@@ -10,10 +12,22 @@ interface ModalProps {
     title?: ReactNode;
     children: ReactNode;
     closeEvent: () => void;
-    onReachBottom?: () => void;
+    loadMorePlaceholder?: ReactNode;
+    onLoadMore?: () => void;
+    isLoadingMore?: boolean;
 }
 
-export default function Modal({ theme, hidden, size, title, children, closeEvent, onReachBottom }: ModalProps) {
+export default function Modal({
+    theme,
+    hidden,
+    size,
+    title,
+    children,
+    closeEvent,
+    loadMorePlaceholder,
+    onLoadMore,
+    isLoadingMore,
+}: ModalProps) {
     const [isHidden, setIsHidden] = useState(hidden);
     const [animation, setAnimation] = useState(true);
 
@@ -33,16 +47,6 @@ export default function Modal({ theme, hidden, size, title, children, closeEvent
             modalClose();
         } else {
             setIsHidden(hidden);
-        }
-    };
-
-    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-        if (typeof onReachBottom === 'function') {
-            const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-            const bottom = scrollHeight - scrollTop === clientHeight;
-            if (bottom) {
-                onReachBottom();
-            }
         }
     };
 
@@ -70,8 +74,23 @@ export default function Modal({ theme, hidden, size, title, children, closeEvent
                         <span className="text-primary text-lg font-semibold capitalize mx-2">{title}</span>
                     </div>
                 </div>
-                <div style={{ maxHeight: '85vh' }} className="overflow-auto" onScroll={handleScroll}>
+                <div style={{ maxHeight: '85vh' }} className="overflow-auto">
                     {children}
+                    {typeof isLoadingMore !== 'undefined' && (
+                        <LoadMoreButton
+                            color={COLORS.primary}
+                            width={'w-32'}
+                            height={'h-8'}
+                            isLoading={isLoadingMore}
+                            onClick={() => {
+                                if (typeof onLoadMore === 'function') {
+                                    onLoadMore();
+                                }
+                            }}
+                        >
+                            {loadMorePlaceholder}
+                        </LoadMoreButton>
+                    )}
                 </div>
             </div>
         </div>
