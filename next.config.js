@@ -11,6 +11,7 @@ const moduleExports = {
     images: {
         formats: ['image/avif', 'image/webp'],
     },
+    productionBrowserSourceMaps: false,
 };
 
 const SentryWebpackPluginOptions = {
