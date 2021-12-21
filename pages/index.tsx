@@ -326,9 +326,20 @@ const Home: NextPage = () => {
                     </section>
                 </div>
             ) : (
-                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto pt-80 gap-y-8">
-                    <p className="text-4xl font-semibold">This is a closed beta test for Revery and RSS3 v0.3.1.</p>
-                    <p className="text-xl">Please noted that your profile and data will be deleted after the test.</p>
+                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto pt-80 gap-y-8 text-center">
+                    <p className="text-4xl font-semibold">This is a beta test for Revery and RSS3 v0.3.1.</p>
+                    <p className="text-xl">
+                        <span className={'mx-2'}>Revery</span>
+                        made with 🌀 by
+                        <a
+                            href={'https://rss3.io'}
+                            target={'_blank'}
+                            rel={'noreferrer'}
+                            className={'text-primary mx-2'}
+                        >
+                            RSS3
+                        </a>
+                    </p>
                     <Button
                         isOutlined={false}
                         color={COLORS.primary}
