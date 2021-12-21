@@ -422,7 +422,7 @@ const ProfilePage: NextPage = () => {
         <>
             <Header />
             <div className="flex flex-row justify-between max-w-6xl px-2 pt-16 mx-auto gap-x-8">
-                <section className="divide-y-2 w-7/11 divide-solid divide-opacity-5 divide-primary">
+                <section className="divide-y-2 w-7/11 divide-solid divide-primary-asset">
                     {isProfileLoading ? (
                         <ProfileLoader />
                     ) : (

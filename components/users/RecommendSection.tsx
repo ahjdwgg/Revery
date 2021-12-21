@@ -43,7 +43,7 @@ const RecommendSection = ({
                 <span className="text-primary text-md font-semibold">For You</span>
             </div>
             <div className="flex flex-row gap-4">
-                <div className="flex flex-col divide-primary divide-opacity-10 divide-y flex-grow">
+                <div className="flex flex-col divide-primary-asset divide-y-2 flex-grow">
                     <div className="mt-3 mb-2.5 text-xs">
                         <p>{isLoadingGroups ? <GroupIntroBarLoader /> : groups[activeGroupId].description || ''}</p>
                     </div>
