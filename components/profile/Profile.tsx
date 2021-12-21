@@ -145,12 +145,7 @@ const Profile = ({
     const logout = () => {
         if (confirm('Are you sure you want to logout?')) {
             RSS3.disconnect();
-            reloadPage();
         }
-    };
-
-    const reloadPage = () => {
-        router.reload();
     };
 
     return (

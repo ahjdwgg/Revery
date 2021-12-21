@@ -9,14 +9,11 @@ import Metamask from './icons/Metamask';
 import WalletConnect from './icons/WalletConnect';
 import ImageHolder from './ImageHolder';
 import Modal from './modal/Modal';
+import Events from '../common/events';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
-interface HeaderProps {
-    triggerModalOpen?: () => void;
-}
-
-const Header = ({ triggerModalOpen }: HeaderProps) => {
+const Header = () => {
     const router = useRouter();
 
     const [top, setTop] = useState(true);
@@ -24,7 +21,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
     const [modalHidden, setModalHidden] = useState(true);
-    const [isConnectModalClosed, setConnectModalClosed] = useState(true);
 
     const [currentSearchUser, setCurrentSearchUser] = useState('');
 
@@ -32,19 +28,13 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
 
     const init = async () => {
-        if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
-            initAccount();
+        if (RSS3.isValidRSS3()) {
             setIsLoggedIn(true);
+            await RSS3.ensureLoginUser();
+            initAccount();
+        } else {
+            setIsLoggedIn(false);
         }
-    };
-
-    const openConnectModal = () => {
-        setIsLoading('any');
-        setConnectModalClosed(false);
-    };
-    const closeConnectModal = () => {
-        setIsLoading(null);
-        setConnectModalClosed(true);
     };
     const openModal = () => {
         setIsLoading('any');
@@ -62,7 +52,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             if (await RSS3.connect.walletConnect()) {
                 initAccount();
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
@@ -77,7 +66,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             if (await RSS3.connect.metamask()) {
                 initAccount();
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
@@ -90,7 +78,9 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
         setIsLoading('any');
         const profile = RSS3.getLoginUser().profile;
 
-        setAvatarURL(profile?.avatar?.[0] || avatarURL);
+        if (profile?.avatar?.[0]) {
+            setAvatarURL(profile.avatar[0]);
+        }
 
         setIsLoading(null);
     };
@@ -98,10 +88,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const toProfilePage = () => {
         const { name, address } = RSS3.getLoginUser();
         router.push(`/u/${name || address}`);
-    };
-
-    const reloadPage = () => {
-        router.reload();
     };
 
     const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
@@ -124,6 +110,8 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
 
     useEffect(() => {
         init();
+        document.addEventListener(Events.connect, init);
+        document.addEventListener(Events.disconnect, init);
     }, []);
 
     // init();

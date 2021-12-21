@@ -24,6 +24,7 @@ import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
 import FilterSection, { mapToArray } from '../components/filter/FilterSection';
 import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
+import Events from '../common/events';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -70,7 +71,7 @@ const Home: NextPage = () => {
 
             if (profile) {
                 // Profile
-                setAddress(pageOwner?.address || '');
+                setAddress(pageOwner.address);
             }
 
             setTimeout(async () => {
@@ -103,6 +104,11 @@ const Home: NextPage = () => {
         // init();
         setContentLoading(true);
     }, [address]);
+
+    useEffect(() => {
+        // Add re-connect & init event listener
+        document.addEventListener(Events.connect, init);
+    }, []);
 
     const loadMoreContent = async () => {
         setIsLoadingMore(true);
