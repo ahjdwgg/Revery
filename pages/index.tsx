@@ -57,7 +57,8 @@ const Home: NextPage = () => {
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
     const init = async () => {
-        if (await RSS3.ensureLoginUser()) {
+        if (RSS3.isValidRSS3()) {
+            await RSS3.ensureLoginUser();
             const LoginUser = RSS3.getLoginUser();
             setLoggedIn(true);
 
