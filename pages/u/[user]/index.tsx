@@ -43,6 +43,7 @@ interface ModalDetail {
 const ProfilePage: NextPage = () => {
     const router = useRouter();
     const addrOrName = useRef<string>('');
+    const [isRegistered, setRegistered] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
 
     const [isProfileLoading, setProfileLoading] = useState(true);
@@ -170,7 +171,7 @@ const ProfilePage: NextPage = () => {
         const aon = (router.query.user as string) || '';
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
-
+        setRegistered(pageOwner.file?.signature ? true : false);
         const profile = pageOwner.profile;
         if (profile) {
             // Profile
@@ -427,7 +428,7 @@ const ProfilePage: NextPage = () => {
                     ) : (
                         <Profile
                             avatarUrl={avatarUrl}
-                            username={username}
+                            username={isRegistered ? username : link ? link : address}
                             bio={bio}
                             followers={followers}
                             followings={followings}
@@ -481,7 +482,7 @@ const ProfilePage: NextPage = () => {
                                             <ItemCard
                                                 key={index}
                                                 avatarUrl={element.avatar}
-                                                username={element.name}
+                                                username={isRegistered ? element.name : link ? link : address}
                                                 content={element.item.summary}
                                                 asset={element.details}
                                                 timeStamp={new Date(element.item.date_updated).valueOf()}
@@ -495,7 +496,7 @@ const ProfilePage: NextPage = () => {
                                             <ContentCard
                                                 key={index}
                                                 avatarUrl={element.avatar}
-                                                username={element.name}
+                                                username={isRegistered ? element.name : link ? link : address}
                                                 title={element.item.title}
                                                 content={element.item.summary}
                                                 timeStamp={new Date(element.item.date_updated).valueOf()}
@@ -560,8 +561,10 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-semibold line-clamp-1 opacity-20">
-                                            Oops, nothing found :P
+                                        <span className="text-base font-semibold opacity-20">
+                                            {isRegistered
+                                                ? 'Oops, nothing found :P'
+                                                : 'Oops, this user has not registered with RSS3.'}
                                         </span>
                                     )}
                                 </div>
@@ -590,7 +593,11 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-medium opacity-20">Oops, nothing found :P</span>
+                                        <span className="text-base font-medium opacity-20">
+                                            {isRegistered
+                                                ? 'Oops, nothing found :P'
+                                                : 'Oops, this user has not registered with RSS3.'}
+                                        </span>
                                     )}
                                 </div>
                             )}
@@ -618,8 +625,10 @@ const ProfilePage: NextPage = () => {
                                         />
                                     ))
                                 ) : (
-                                    <span className="text-base font-semibold line-clamp-1 opacity-20">
-                                        Oops, nothing found :P
+                                    <span className="text-base font-semibold opacity-20">
+                                        {isRegistered
+                                            ? 'Oops, nothing found :P'
+                                            : 'Oops, this user has not registered with RSS3.'}
                                     </span>
                                 )}
                             </div>
