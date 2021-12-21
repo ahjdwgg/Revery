@@ -9,14 +9,6 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const moduleExports = {
     reactStrictMode: true,
     images: {
-        domains: [
-            'i.imgur.com',
-            'rss3.mypinata.cloud',
-            'http.cat',
-            'c.gitcoin.co',
-            'assets.poap.xyz',
-            'gateway.pinata.cloud',
-        ],
         formats: ['image/avif', 'image/webp'],
     },
 };
