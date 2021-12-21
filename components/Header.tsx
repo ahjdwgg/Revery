@@ -1,15 +1,14 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import Modal from './modal/Modal';
+import { useRouter } from 'next/router';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import config from '../common/config';
+import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
-import WalletConnect from './icons/WalletConnect';
-import Metamask from './icons/Metamask';
-import ImageHolder from './ImageHolder';
-import RSS3 from '../common/rss3';
-import { useRouter } from 'next/router';
-import config from '../common/config';
 import Logo from './icons/Logo';
-import ModalConnect from '../components/modal/ModalConnect';
+import Metamask from './icons/Metamask';
+import WalletConnect from './icons/WalletConnect';
+import ImageHolder from './ImageHolder';
+import Modal from './modal/Modal';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
@@ -134,13 +133,13 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             <header className={`fixed w-full z-30 transition duration-300 ease-in-out ${!top && 'bg-white shadow'}`}>
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
-                        <nav className="w-full flex items-center justify-between">
+                        <nav className="flex items-center justify-between w-full">
                             <div className="cursor-pointer" onClick={() => router.push(`/`)}>
                                 <Logo />
                             </div>
                             <div className="flex flex-row justify-end w-full gap-x-4">
                                 <input
-                                    className="w-76 h-8 text-sm px-2 focus-within:ring-primary-asset"
+                                    className="h-8 px-4 text-sm transition-all duration-200 border border-white rounded outline-none w-76 focus:border-primary"
                                     placeholder={'Search for an address, rns or ens'}
                                     type={'text'}
                                     onChange={handleSearchUser}
@@ -183,7 +182,7 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             </header>
             {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="sm">
-                <div className="flex flex-col my-8 gap-y-6 mx-14 overflow-y-hidden">
+                <div className="flex flex-col my-8 overflow-y-hidden gap-y-6 mx-14">
                     {isLoading === 'WalletConnect' ? (
                         <Button
                             isOutlined={false}
