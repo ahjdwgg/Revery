@@ -1,23 +1,20 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import Modal from './modal/Modal';
+import { useRouter } from 'next/router';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { BiSearch } from 'react-icons/bi';
+import config from '../common/config';
+import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
-import WalletConnect from './icons/WalletConnect';
-import Metamask from './icons/Metamask';
-import ImageHolder from './ImageHolder';
-import RSS3 from '../common/rss3';
-import { useRouter } from 'next/router';
-import config from '../common/config';
 import Logo from './icons/Logo';
-import ModalConnect from '../components/modal/ModalConnect';
+import Metamask from './icons/Metamask';
+import WalletConnect from './icons/WalletConnect';
+import ImageHolder from './ImageHolder';
+import Modal from './modal/Modal';
+import Events from '../common/events';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
-interface HeaderProps {
-    triggerModalOpen?: () => void;
-}
-
-const Header = ({ triggerModalOpen }: HeaderProps) => {
+const Header = () => {
     const router = useRouter();
 
     const [top, setTop] = useState(true);
@@ -25,7 +22,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
     const [modalHidden, setModalHidden] = useState(true);
-    const [isConnectModalClosed, setConnectModalClosed] = useState(true);
 
     const [currentSearchUser, setCurrentSearchUser] = useState('');
 
@@ -33,19 +29,13 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
 
     const init = async () => {
-        if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
-            initAccount();
+        if (RSS3.isValidRSS3()) {
             setIsLoggedIn(true);
+            await RSS3.ensureLoginUser();
+            initAccount();
+        } else {
+            setIsLoggedIn(false);
         }
-    };
-
-    const openConnectModal = () => {
-        setIsLoading('any');
-        setConnectModalClosed(false);
-    };
-    const closeConnectModal = () => {
-        setIsLoading(null);
-        setConnectModalClosed(true);
     };
     const openModal = () => {
         setIsLoading('any');
@@ -63,7 +53,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             if (await RSS3.connect.walletConnect()) {
                 initAccount();
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
@@ -78,7 +67,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             if (await RSS3.connect.metamask()) {
                 initAccount();
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
@@ -91,7 +79,9 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
         setIsLoading('any');
         const profile = RSS3.getLoginUser().profile;
 
-        setAvatarURL(profile?.avatar?.[0] || avatarURL);
+        if (profile?.avatar?.[0]) {
+            setAvatarURL(profile.avatar[0]);
+        }
 
         setIsLoading(null);
     };
@@ -99,10 +89,6 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
     const toProfilePage = () => {
         const { name, address } = RSS3.getLoginUser();
         router.push(`/u/${name || address}`);
-    };
-
-    const reloadPage = () => {
-        router.reload();
     };
 
     const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +111,8 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
 
     useEffect(() => {
         init();
+        document.addEventListener(Events.connect, init);
+        document.addEventListener(Events.disconnect, init);
     }, []);
 
     // init();
@@ -134,13 +122,14 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             <header className={`fixed w-full z-30 transition duration-300 ease-in-out ${!top && 'bg-white shadow'}`}>
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
-                        <nav className="w-full flex items-center justify-between">
+                        <nav className="flex items-center justify-between w-full">
                             <div className="cursor-pointer" onClick={() => router.push(`/`)}>
                                 <Logo />
                             </div>
-                            <div className="flex flex-row justify-end w-full gap-x-4">
+                            <div className="flex flex-row items-center justify-end w-full gap-x-4">
+                                <BiSearch className="w-4 h-4 opacity-50" />
                                 <input
-                                    className="w-76 h-8 text-sm px-2 focus-within:ring-primary-asset"
+                                    className="w-64 h-8 text-sm outline-none"
                                     placeholder={'Search for an address, rns or ens'}
                                     type={'text'}
                                     onChange={handleSearchUser}
@@ -183,7 +172,7 @@ const Header = ({ triggerModalOpen }: HeaderProps) => {
             </header>
             {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="sm">
-                <div className="flex flex-col my-8 gap-y-6 mx-14 overflow-y-hidden">
+                <div className="flex flex-col my-8 overflow-y-hidden gap-y-6 mx-14">
                     {isLoading === 'WalletConnect' ? (
                         <Button
                             isOutlined={false}

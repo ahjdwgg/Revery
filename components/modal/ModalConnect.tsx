@@ -16,16 +16,12 @@ interface ModalConnectProps {
 }
 
 export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) {
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
 
     const init = async () => {
         if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
             setIsLoading(null);
         }
-    };
-    const reloadPage = () => {
-        router.reload();
     };
     const openModal = () => {
         setIsLoading('any');
@@ -40,7 +36,6 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
             if (await RSS3.connect.walletConnect()) {
                 setIsLoading(null);
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
@@ -55,7 +50,6 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
             if (await RSS3.connect.metamask()) {
                 setIsLoading(null);
                 closeModal();
-                reloadPage();
                 return;
             }
         } catch (e) {
