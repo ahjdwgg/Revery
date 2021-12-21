@@ -21,13 +21,15 @@ const GroupItem = ({ title, icon, isSelected, onClick }: GroupItemProps) => {
         >
             <div
                 className={`animate-fade-in border rounded-full w-full h-16 flex justify-center items-center ${
-                    isSelected ? 'border-primary' : isHovered ? 'border-primary border-opacity-40' : ''
+                    isSelected ? 'border-primary' : isHovered ? 'border-black border-opacity-40' : ''
                 }`}
             >
                 <ImageHolder imageUrl={icon || config.undefinedImageAlt} roundedClassName={'rounded-full'} size={52} />
             </div>
             <div className={'mt-1'}>
-                <p className={`text-xs ${isSelected ? 'opacity-100' : 'opacity-20'}`}>{title}</p>
+                <p className={`text-xs ${isSelected ? 'opacity-100' : isHovered ? 'opacity-40' : 'opacity-20'}`}>
+                    {title}
+                </p>
             </div>
         </div>
     );

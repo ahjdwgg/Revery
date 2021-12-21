@@ -25,7 +25,7 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
         <div
             className={`flex flex-row gap-2 justify-start p-2 bg-transparent ${
                 toUserPage ? 'cursor-pointer' : ''
-            } bg-white hover:bg-primary-bg transition-all duration-100 ease-in-out`}
+            } bg-white transition-all duration-100 ease-in-out`}
             onClick={() => {
                 if (toUserPage) {
                     toUserPage(rns || ethAddress);
@@ -43,7 +43,13 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
             </section>
             <section className="animate-fade-in flex flex-col flex-grow">
                 <div className="flex flex-row items-center gap-1.5">
-                    <span className="flex-1 w-0 truncate max-w-max font-semibold text-sm">{username}</span>
+                    <span
+                        className={`flex-1 w-0 truncate max-w-max ${
+                            isAvatarFullRounded ? 'font-semibold' : 'font-bold'
+                        } text-sm`}
+                    >
+                        {username}
+                    </span>
                     <LinkButton key={address} text={address} />
                 </div>
                 <div className="flex flex-row">
