@@ -19,7 +19,11 @@ const NFTCard = ({ name, desc, imageUrl, onClick }: NFTCardProps) => {
                 ) : (
                     <div className="text-base font-semibold line-clamp-1 opacity-20">Oops, no detail found.</div>
                 )}
-                {name || desc ? <p className="line-clamp-3">{desc}</p> : <p className="line-clamp-3 opacity-20">:(</p>}
+                {name || desc ? (
+                    <p className="line-clamp-3">{typeof desc === 'object' ? JSON.stringify(desc) : desc}</p>
+                ) : (
+                    <p className="line-clamp-3 opacity-20">:(</p>
+                )}
             </div>
             <NFTItem previewUrl={imageUrl} isShowingDetails={false} size={84} />
         </div>
