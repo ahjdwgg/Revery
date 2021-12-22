@@ -34,6 +34,7 @@ import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader
 import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
 import ProfileLoader from '../../../components/loaders/ProfileLoader';
 import LoadMoreButton from '../../../components/buttons/LoadMoreButton';
+import ModalConnect from '../../../components/modal/ModalConnect';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -196,6 +197,7 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 const { listed, haveMore } = await utils.initContent();
                 setContent(listed);
+                console.log(listed);
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);

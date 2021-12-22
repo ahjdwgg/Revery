@@ -1,11 +1,10 @@
-import { ReactNode, useEffect, useState } from 'react';
-import Modal from './Modal';
+import { useEffect, useState } from 'react';
+import RSS3 from '../../common/rss3';
 import Button from '../buttons/Button';
 import { COLORS } from '../buttons/variables';
-import WalletConnect from '../icons/WalletConnect';
 import Metamask from '../icons/Metamask';
-import RSS3 from '../../common/rss3';
-import { useRouter } from 'next/router';
+import WalletConnect from '../icons/WalletConnect';
+import Modal from './Modal';
 
 export type ModalColorStyle = 'account' | 'nft' | 'donation' | 'footprint' | 'primary';
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
@@ -23,13 +22,12 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
             setIsLoading(null);
         }
     };
-    const openModal = () => {
-        setIsLoading('any');
-    };
 
     const closeModal = () => {
         setIsLoading(null);
+        closeEvent();
     };
+
     const handleWalletConnect = async () => {
         setIsLoading('WalletConnect');
         try {
@@ -64,7 +62,7 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
 
     return (
         <Modal hidden={hidden} closeEvent={closeEvent} theme={'primary'} size="sm">
-            <div className="flex flex-col my-8 gap-y-6 mx-14 overflow-y-hidden">
+            <div className="flex flex-col my-8 overflow-y-hidden gap-y-6 mx-14">
                 {isLoading === 'WalletConnect' ? (
                     <Button isOutlined={false} color={COLORS.primary} icon={'loading'} width={'w-60'} height={'h-14'} />
                 ) : (
