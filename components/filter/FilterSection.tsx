@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import FilterTag from './FilterTag';
 
 interface FilterSectionProps {
@@ -17,9 +17,9 @@ const FilterSection = ({ filterTagActiveMap, getFilteredContent }: FilterSection
     };
 
     return (
-        <div className="animate-fade-in-up flex flex-col p-3 w-full">
+        <div className="sticky flex flex-col w-full p-3 animate-fade-in-up top-16">
             <div>
-                <span className="text-primary text-md font-semibold">+ Filter</span>
+                <span className="font-semibold text-primary text-md">+ Filter</span>
             </div>
             <div className="flex flex-wrap w-full gap-2 py-3">
                 {mapToArray(filterTagActiveMap).map((item) => {

@@ -309,11 +309,7 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <section className="flex flex-col pb-16 w-4/11 sticky top-16 self-start">
-                        <FilterSection
-                            getFilteredContent={getFilteredContent}
-                            filterTagActiveMap={filterTagActiveMap}
-                        />
+                    <section className="w-4/11">
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers[currentRecommendGroupType] ?? []}
@@ -324,10 +320,14 @@ const Home: NextPage = () => {
                             isLoadingGroups={isLoadingRecommendGroups}
                             isLoadingMembers={isLoadingRecommendGroupMembers}
                         />
+                        <FilterSection
+                            getFilteredContent={getFilteredContent}
+                            filterTagActiveMap={filterTagActiveMap}
+                        />
                     </section>
                 </div>
             ) : (
-                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto pt-80 gap-y-8 text-center">
+                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto text-center pt-80 gap-y-8">
                     <p className="text-4xl font-semibold">This is a beta test for Revery and RSS3 v0.3.1.</p>
                     <p className="text-xl">
                         <span className={'mx-2'}>Revery</span>
