@@ -17,7 +17,7 @@ interface ModalConnectProps {
 
 export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) {
     const [isLoading, setIsLoading] = useState<LoadingTypes>(null);
-
+    const [modalHidden, setModalHidden] = useState(true);
     const init = async () => {
         if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
             setIsLoading(null);
@@ -25,10 +25,12 @@ export default function ModalConnect({ hidden, closeEvent }: ModalConnectProps) 
     };
     const openModal = () => {
         setIsLoading('any');
+        setModalHidden(false);
     };
 
     const closeModal = () => {
         setIsLoading(null);
+        setModalHidden(true);
     };
     const handleWalletConnect = async () => {
         setIsLoading('WalletConnect');
