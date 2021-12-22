@@ -25,7 +25,7 @@ const FootprintCard = ({
     country,
     username,
     activity,
-    clickEvent = () => {},
+    clickEvent,
 }: FootprintProps) => {
     // Calc display date
     let displayDate;

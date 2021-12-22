@@ -402,11 +402,11 @@ const ProfilePage: NextPage = () => {
 
     const getModalDisplay = () => {
         if (modal.type === 'nft') {
-            return <SingleNFT NFT={modal.details ? modal.details : {}} />;
+            return <SingleNFT NFT={modal.details || {}} />;
         } else if (modal.type === 'donation') {
-            return <SingleDonation Gitcoin={modal.details ? modal.details : {}} />;
+            return <SingleDonation Gitcoin={modal.details || {}} />;
         } else if (modal.type === 'footprint') {
-            return <SingleFootprint POAPInfo={modal.details ? modal.details : {}} />;
+            return <SingleFootprint POAPInfo={modal.details || {}} />;
         } else if (modal.type == 'account') {
             return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
         }

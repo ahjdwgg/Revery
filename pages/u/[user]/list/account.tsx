@@ -29,7 +29,13 @@ const Account: NextPage = () => {
         const addrOrName = (router.query.user as string) || '';
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         const { listed } = await utils.initAccounts();
-        setListedAccounts(listed);
+        setListedAccounts(
+            [
+                {
+                    id: `EVM+-${pageOwner.address}`,
+                },
+            ].concat(listed),
+        );
         if (listed.length > 0) {
             setListedAccountsIsEmpty(false);
         } else {
