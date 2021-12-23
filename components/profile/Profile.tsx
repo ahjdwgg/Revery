@@ -11,8 +11,9 @@ import config from '../../common/config';
 import RSS3, { IRSS3 } from '../../common/rss3';
 import RNS from '../../common/rns';
 import utils from '../../common/utils';
-import { useRouter } from 'next/router';
 import ModalRNS from '../modal/ModalRNS';
+import ModalConnect from '../modal/ModalConnect';
+
 interface ProfileProps {
     avatarUrl: string;
     username: string;
@@ -65,6 +66,8 @@ const Profile = ({
 
     const [currentIndex, setCurrentIndex] = useState({ followers: 0, followings: 0 });
 
+    const [isConnectModalClosed, setConnectModalClosed] = useState(true);
+
     const openModal = (type: typeof followType) => {
         setFollowType(type);
         document.body.style.overflow = 'hidden';
@@ -77,6 +80,13 @@ const Profile = ({
         isLoading.current = false;
         setModalHidden(true);
         // setFoList([]);
+    };
+
+    const openConnectModal = () => {
+        setConnectModalClosed(false);
+    };
+    const closeConnectModal = () => {
+        setConnectModalClosed(true);
     };
 
     const loadFoList = async (addressList: string[]) => {
@@ -162,14 +172,14 @@ const Profile = ({
                             <Button icon={'logout'} color={COLORS.primary} isOutlined={true} onClick={logout} />
                         </div>
                     ) : (
-                        isLogin && (
-                            <Button
-                                text={isFollowing ? 'Unfollow' : 'Follow'}
-                                color={COLORS.primary}
-                                isOutlined={true}
-                                onClick={onFollow}
-                            />
-                        )
+                        // isLogin && (
+                        <Button
+                            text={isFollowing ? 'Unfollow' : 'Follow'}
+                            color={COLORS.primary}
+                            isOutlined={true}
+                            onClick={isLogin ? onFollow : openConnectModal}
+                        />
+                        // )
                     )}
                 </div>
                 <div className="flex flex-row text-sm gap-x-8 text-primary">
@@ -216,6 +226,7 @@ const Profile = ({
                 />
             </Modal>
             <ModalRNS hidden={modalRNSHidden} closeEvent={() => setModalRNSHidden(true)} />
+            <ModalConnect hidden={isConnectModalClosed} closeEvent={() => closeConnectModal()} />
         </div>
     );
 };

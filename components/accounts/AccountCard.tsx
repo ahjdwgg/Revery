@@ -36,10 +36,11 @@ const AccountCard = ({ size = 'lg', chain, address, clickEvent }: AccountCardPro
                     isOutlined={false}
                     color={COLORS.primary}
                     icon={'external'}
-                    onClick={() => {
+                    onClick={(e: any) => {
                         if (chain && address) {
                             utils.toExternalAccountDetails(chain, address);
                         }
+                        e.stopPropagation();
                     }}
                 />
             </div>

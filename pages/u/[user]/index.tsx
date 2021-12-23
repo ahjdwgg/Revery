@@ -34,6 +34,7 @@ import FootprintItemLoader from '../../../components/loaders/FootprintItemLoader
 import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
 import ProfileLoader from '../../../components/loaders/ProfileLoader';
 import LoadMoreButton from '../../../components/buttons/LoadMoreButton';
+import ModalConnect from '../../../components/modal/ModalConnect';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -171,7 +172,7 @@ const ProfilePage: NextPage = () => {
         const aon = (router.query.user as string) || '';
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
-        setRegistered(pageOwner.file?.signature ? true : false);
+        setRegistered(!!pageOwner.file?.signature);
         const profile = pageOwner.profile;
         if (profile) {
             // Profile
@@ -196,6 +197,7 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 const { listed, haveMore } = await utils.initContent();
                 setContent(listed);
+                console.log(listed);
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);
@@ -400,11 +402,11 @@ const ProfilePage: NextPage = () => {
 
     const getModalDisplay = () => {
         if (modal.type === 'nft') {
-            return <SingleNFT NFT={modal.details ? modal.details : {}} />;
+            return <SingleNFT NFT={modal.details || {}} />;
         } else if (modal.type === 'donation') {
-            return <SingleDonation Gitcoin={modal.details ? modal.details : {}} />;
+            return <SingleDonation Gitcoin={modal.details || {}} />;
         } else if (modal.type === 'footprint') {
-            return <SingleFootprint POAPInfo={modal.details ? modal.details : {}} />;
+            return <SingleFootprint POAPInfo={modal.details || {}} />;
         } else if (modal.type == 'account') {
             return <SingleAccount chain={modal.details?.platform} address={modal.details?.identity} />;
         }

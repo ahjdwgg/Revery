@@ -49,12 +49,13 @@ async function initAssets() {
     // @ts-ignore // WHATS YOUR PROBLEM!!!!!!!
     const passTags = pageOwner.file?.['_pass']?.assets;
     const taggedList: CustomField_PassAssets[] = passTags || [];
+    const validTaggedList = taggedList.filter((tagged) => assetList.includes(tagged.id));
 
-    const hiddenList = taggedList
+    const hiddenList = validTaggedList
         .filter((asset: any) => asset.hasOwnProperty('hide'))
         .map((asset: { id: string }) => asset.id);
 
-    const orderedList = taggedList
+    const orderedList = validTaggedList
         .filter((asset: any) => !asset.hasOwnProperty('hide'))
         .sort((a: any, b: any) => a.order - b.order)
         .map((asset: { id: string }) => asset.id);

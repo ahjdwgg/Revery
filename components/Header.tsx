@@ -11,6 +11,8 @@ import Metamask from './icons/Metamask';
 import WalletConnect from './icons/WalletConnect';
 import ImageHolder from './ImageHolder';
 import Modal from './modal/Modal';
+import Events from '../common/events';
+import ModalConnect from './modal/ModalConnect';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
@@ -170,53 +172,7 @@ const Header = () => {
                     </div>
                 </div>
             </header>
-            {/* <ModalConnect hidden={isConnectModalClosed} closeEvent={closeConnectModal} /> */}
-            <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="sm">
-                <div className="flex flex-col my-8 overflow-y-hidden gap-y-6 mx-14">
-                    {isLoading === 'WalletConnect' ? (
-                        <Button
-                            isOutlined={false}
-                            color={COLORS.primary}
-                            icon={'loading'}
-                            width={'w-60'}
-                            height={'h-14'}
-                        />
-                    ) : (
-                        <Button
-                            isOutlined={false}
-                            color={COLORS.primary}
-                            onClick={handleWalletConnect}
-                            fontSize={'text-md'}
-                            width={'w-60'}
-                            height={'h-14'}
-                        >
-                            <WalletConnect size={30} />
-                            <span>WalletConnect</span>
-                        </Button>
-                    )}
-                    {isLoading === 'Metamask' ? (
-                        <Button
-                            isOutlined={false}
-                            color={COLORS.metamask}
-                            icon={'loading'}
-                            width={'w-60'}
-                            height={'h-14'}
-                        />
-                    ) : (
-                        <Button
-                            isOutlined={false}
-                            color={COLORS.metamask}
-                            onClick={handleMetamask}
-                            fontSize={'text-md'}
-                            width={'w-60'}
-                            height={'h-14'}
-                        >
-                            <Metamask size={30} />
-                            <span>Metamask</span>
-                        </Button>
-                    )}
-                </div>
-            </Modal>
+            <ModalConnect hidden={modalHidden} closeEvent={closeModal} />
         </>
     );
 };
