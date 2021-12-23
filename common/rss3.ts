@@ -344,6 +344,14 @@ async function unfollow(address: string = RSS3PageOwner.address) {
     }
 }
 
+function checkIsLoginUser(address: string = RSS3PageOwner.address) {
+    if (address === RSS3LoginUser.address) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export default {
     connect: {
         walletConnect: async () => {
@@ -460,4 +468,5 @@ export default {
     checkIsFollowing,
     follow,
     unfollow,
+    checkIsLoginUser,
 };

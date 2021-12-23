@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ImageHolder from '../ImageHolder';
 import LinkButton from '../buttons/LinkButton';
-import { BiUserCheck, BiUserPlus } from 'react-icons/bi';
+import { BiUser, BiUserCheck, BiUserPlus } from 'react-icons/bi';
 import RSS3 from '../../common/rss3';
 export interface UserItems {
     username: string;
@@ -19,10 +19,20 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
     // Setup user address
     // using rss3.bio or other things maybe
     const address = rns ? `${rns}` : `${ethAddress.slice(0, 6)}...${ethAddress.slice(-4)}`;
-    const checkFollowed = RSS3.checkIsFollowing(address);
+    const checkFollowed = RSS3.checkIsFollowing(ethAddress);
+    const isLoginUser = RSS3.checkIsLoginUser(ethAddress);
     const [isAvatarFullRounded, setIsAvatarFullRounded] = React.useState(true);
     const [isFollowed, setFollowed] = useState(checkFollowed);
 
+    const handleFollow = () => {
+        RSS3.follow(ethAddress);
+        setFollowed(true);
+    };
+
+    const handleUnfollow = () => {
+        RSS3.unfollow(ethAddress);
+        setFollowed(false);
+    };
     // useEffect(()=>{
 
     //     setFollowed(RSS3.checkIsFollowing(address));
@@ -71,15 +81,20 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
                     <span className="flex-1 w-0 truncate text-xs leading-5">{bio}</span>
                 </div>
             </section>
-            <section
-                className={`animate-fade-in flex flex-row items-center ${
-                    isFollowed ? 'text-black' : 'text-primary'
-                } text-opacity-50 text-lg`}
-            >
-                {isFollowed ? (
-                    <BiUserCheck onClick={() => setFollowed(false)} />
+            <section className={`animate-fade-in flex flex-row items-center text-lg`}>
+                {isLoginUser ? (
+                    <BiUser
+                        className="text-primary text-opacity-20"
+                        onClick={() => {
+                            if (toUserPage) {
+                                toUserPage(rns || ethAddress);
+                            }
+                        }}
+                    />
+                ) : isFollowed ? (
+                    <BiUserCheck className="text-black text-opacity-50" onClick={handleUnfollow} />
                 ) : (
-                    <BiUserPlus onClick={() => setFollowed(true)} />
+                    <BiUserPlus className="text-primary text-opacity-50" onClick={handleFollow} />
                 )}
             </section>
         </div>
