@@ -37,7 +37,7 @@ const AssetCard = ({
 
     return (
         <div className={`w-full h-full px-3.5 py-3 flex flex-col gap-2 overflow-auto ${cardBackgroundColorClass}`}>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between shrink-0">
                 <div className={colorClasses[color].textColorClass}>
                     <span className="font-semibold text-sm">{title}</span>
                 </div>
@@ -56,7 +56,7 @@ const AssetCard = ({
                 </div>
             </div>
 
-            <div className="flex h-full w-full p-2 overflow-y-auto">{children}</div>
+            <div className="flex h-full w-full p-2 overflow-y-auto min-w-36">{children}</div>
 
             {(footerTips || footerButtons?.length) && (
                 <div className="flex justify-between">

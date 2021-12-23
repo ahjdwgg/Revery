@@ -530,7 +530,7 @@ const ProfilePage: NextPage = () => {
                         )}
                     </>
                 </section>
-                <section className="flex flex-col gap-4 pb-16 w-4/11">
+                <section className="flex flex-col gap-4 pb-16 w-4/11 min-w-44">
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
                             {isNftLoading ? (
@@ -539,11 +539,11 @@ const ProfilePage: NextPage = () => {
                                 // </div>
                                 <CardItemLoader />
                             ) : (
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 w-20.5">
                                     {nftItems.length > 0 ? (
                                         nftItems.map((asset, i) => (
                                             <div
-                                                className="cursor-pointer"
+                                                className="cursor-pointer w-17.5"
                                                 key={i}
                                                 onClick={() => {
                                                     getModalDetail(asset, 'nft');
@@ -580,10 +580,10 @@ const ProfilePage: NextPage = () => {
                                 // </div>
                                 <CardItemLoader />
                             ) : (
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 w-20.5">
                                     {donationItems.length > 0 ? (
                                         donationItems.map((asset, i) => (
-                                            <div key={i} className="flex cursor-pointer">
+                                            <div key={i} className="flex cursor-pointer w-17.5">
                                                 <ImageHolder
                                                     imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
                                                     roundedClassName={'rounded'}
