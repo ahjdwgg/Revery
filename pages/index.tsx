@@ -25,6 +25,8 @@ import LoadMoreButton from '../components/buttons/LoadMoreButton';
 import FilterSection, { mapToArray } from '../components/filter/FilterSection';
 import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 import Events from '../common/events';
+import StickyBox from 'react-sticky-box';
+
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -309,7 +311,7 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <section className="flex flex-col pb-16 w-4/11 sticky top-16 self-start">
+                    <StickyBox className="flex flex-col self-start w-4/11" offsetTop={64} offsetBottom={200}>
                         <FilterSection
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
@@ -324,10 +326,10 @@ const Home: NextPage = () => {
                             isLoadingGroups={isLoadingRecommendGroups}
                             isLoadingMembers={isLoadingRecommendGroupMembers}
                         />
-                    </section>
+                    </StickyBox>
                 </div>
             ) : (
-                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto pt-80 gap-y-8 text-center">
+                <div className="flex flex-col justify-start h-full max-w-6xl px-2 mx-auto text-center pt-80 gap-y-8">
                     <p className="text-4xl font-semibold">This is a beta test for Revery and RSS3 v0.3.1.</p>
                     <p className="text-xl">
                         <span className={'mx-2'}>Revery</span>

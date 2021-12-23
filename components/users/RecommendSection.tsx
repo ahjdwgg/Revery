@@ -38,12 +38,12 @@ const RecommendSection = ({
     };
 
     return (
-        <div className="animate-fade-in-up flex flex-col p-3">
+        <div className="p-3 animate-fade-in-up">
             <div>
-                <span className="text-primary text-md font-semibold">For You</span>
+                <span className="font-semibold text-primary text-md">For You</span>
             </div>
             <div className="flex flex-row gap-4">
-                <div className="flex flex-col divide-primary-asset divide-y-2 flex-grow">
+                <div className="flex flex-col flex-grow divide-y-2 divide-primary-asset">
                     <div className="mt-3 mb-2.5 text-xs">
                         <p>{isLoadingGroups ? <GroupIntroBarLoader /> : groups[activeGroupId].description || ''}</p>
                     </div>
