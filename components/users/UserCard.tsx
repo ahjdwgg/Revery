@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageHolder from '../ImageHolder';
 import LinkButton from '../buttons/LinkButton';
-
+import { BiUserCheck, BiUserPlus } from 'react-icons/bi';
 export interface UserItems {
     username: string;
     avatarUrl: string;
@@ -23,7 +23,7 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
 
     return (
         <div
-            className={`flex flex-row gap-2 justify-start p-2 bg-transparent ${
+            className={`flex flex-row gap-2 justify-start py-2 bg-transparent ${
                 toUserPage ? 'cursor-pointer' : ''
             } bg-white transition-all duration-100 ease-in-out`}
             onClick={() => {
@@ -55,6 +55,9 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
                 <div className="flex flex-row">
                     <span className="flex-1 w-0 truncate text-xs leading-5">{bio}</span>
                 </div>
+            </section>
+            <section className="animate-fade-in flex flex-row items-center text-primary text-opacity-50 text-lg">
+                <BiUserPlus />
             </section>
         </div>
     );
