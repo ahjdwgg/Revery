@@ -7,11 +7,7 @@ import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
 import Logo from './icons/Logo';
-import Metamask from './icons/Metamask';
-import WalletConnect from './icons/WalletConnect';
 import ImageHolder from './ImageHolder';
-import Modal from './modal/Modal';
-import Events from '../common/events';
 import ModalConnect from './modal/ModalConnect';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
