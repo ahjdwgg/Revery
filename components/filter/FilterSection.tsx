@@ -17,7 +17,7 @@ const FilterSection = ({ filterTagActiveMap, getFilteredContent }: FilterSection
     };
 
     return (
-        <div className="sticky flex flex-col w-full p-3 animate-fade-in-up top-16">
+        <div className="p-3 animate-fade-in-up">
             <div>
                 <span className="font-semibold text-primary text-md">+ Filter</span>
             </div>
