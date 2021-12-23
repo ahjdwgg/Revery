@@ -320,36 +320,33 @@ async function getRecommendGroupMembers(type: string) {
 
 function checkIsFollowing(address: string = RSS3PageOwner.address) {
     const followList = RSS3LoginUser.followings;
-    if (followList?.includes(address)) {
-        return true;
-    } else {
-        return false;
-    }
+    return !!followList?.includes(address);
 }
 
 async function follow(address: string = RSS3PageOwner.address) {
     if (!checkIsFollowing(address)) {
-        if (address === RSS3PageOwner.address) RSS3PageOwner.followers.push(RSS3LoginUser.address);
         RSS3LoginUser.followings.push(address);
+        if (address === RSS3PageOwner.address) {
+            RSS3PageOwner.followers.push(RSS3LoginUser.address);
+        }
         await RSS3LoginUser.persona?.links.post('following', address);
+        await RSS3LoginUser.persona.files.sync();
     }
 }
 
 async function unfollow(address: string = RSS3PageOwner.address) {
     if (checkIsFollowing(address)) {
-        if (address === RSS3PageOwner.address)
+        if (address === RSS3PageOwner.address) {
             RSS3PageOwner.followers.splice(RSS3PageOwner.followers.indexOf(RSS3LoginUser.address), 1);
+        }
         RSS3LoginUser.followings.splice(RSS3LoginUser.followings.indexOf(address), 1);
         await RSS3LoginUser.persona?.links.delete('following', address);
+        await RSS3LoginUser.persona.files.sync();
     }
 }
 
 function checkIsLoginUser(address: string = RSS3PageOwner.address) {
-    if (address === RSS3LoginUser.address) {
-        return true;
-    } else {
-        return false;
-    }
+    return address === RSS3LoginUser.address;
 }
 
 export default {

@@ -24,13 +24,13 @@ const UserCard = ({ username, avatarUrl, bio, ethAddress, rns, toUserPage }: Use
     const [isAvatarFullRounded, setIsAvatarFullRounded] = React.useState(true);
     const [isFollowed, setFollowed] = useState(checkFollowed);
 
-    const handleFollow = () => {
-        RSS3.follow(ethAddress);
+    const handleFollow = async () => {
+        await RSS3.follow(ethAddress);
         setFollowed(true);
     };
 
-    const handleUnfollow = () => {
-        RSS3.unfollow(ethAddress);
+    const handleUnfollow = async () => {
+        await RSS3.unfollow(ethAddress);
         setFollowed(false);
     };
     // useEffect(()=>{

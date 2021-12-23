@@ -191,7 +191,7 @@ const ProfilePage: NextPage = () => {
             if (RSS3.isValidRSS3()) {
                 await RSS3.ensureLoginUser();
                 checkOwner();
-                checkIsFollowing();
+                setIsFollowing(RSS3.checkIsFollowing());
             }
 
             setTimeout(async () => {
@@ -242,54 +242,13 @@ const ProfilePage: NextPage = () => {
     };
 
     const onFollow = async () => {
-        const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.getPageOwner();
-
-        if (checkIsFollowing()) {
-            await unfollow();
-        } else {
-            await follow();
-        }
-        await loginUser.persona.files.sync();
-    };
-
-    const checkIsFollowing = () => {
-        const loginUser = RSS3.getLoginUser();
-        const pageOwner = RSS3.getPageOwner();
-        const followList = loginUser.followings;
-        if (followList?.includes(pageOwner.address)) {
-            setIsFollowing(true);
-            return true;
-        } else {
+        if (RSS3.checkIsFollowing()) {
+            await RSS3.unfollow();
             setIsFollowing(false);
-            return false;
+        } else {
+            await RSS3.follow();
+            setIsFollowing(true);
         }
-    };
-
-    const follow = async () => {
-        const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.getPageOwner();
-
-        if (!checkIsFollowing()) {
-            pageOwner.followers.push(loginUser.address);
-            loginUser.followings.push(pageOwner.address);
-            await loginUser.persona?.links.post('following', pageOwner.address);
-        }
-
-        setIsFollowing(true);
-    };
-
-    const unfollow = async () => {
-        const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.getPageOwner();
-
-        if (checkIsFollowing()) {
-            pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
-            loginUser.followings.splice(loginUser.followings.indexOf(pageOwner.address), 1);
-            await loginUser.persona?.links.delete('following', pageOwner.address);
-        }
-
-        setIsFollowing(false);
     };
 
     const toEditProfile = async () => {
