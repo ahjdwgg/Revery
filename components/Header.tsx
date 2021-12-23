@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import config from '../common/config';
+import Events from '../common/events';
 import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
@@ -120,7 +121,7 @@ const Header = () => {
 
     return (
         <>
-            <header className={`fixed w-full z-30 transition duration-300 ease-in-out ${!top && 'bg-white shadow'}`}>
+            <header className={`fixed w-full z-30 transition duration-300 ease-in-out bg-white ${!top && 'shadow'}`}>
                 <div className="max-w-6xl px-2 mx-auto">
                     <div className="flex items-center justify-between h-12 md:h-16">
                         <nav className="flex items-center justify-between w-full">
