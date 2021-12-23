@@ -2,7 +2,14 @@ import React from 'react';
 
 export default function Twitter() {
     return (
-        <svg id="Twitter-Logo" data-name="Twitter Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <svg
+            width="20"
+            height="20"
+            id="Twitter-Logo"
+            data-name="Twitter Logo"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+        >
             <g>
                 <path
                     fill="#1D9BF0"
