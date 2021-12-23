@@ -30,7 +30,7 @@
         "react-icons": "4.3.1",
         "react-intersection-observer": "8.33.0",
         "react-sticky-box": "0.9.3",
-        "rss3": "0.8.10"
+        "rss3": "0.8.11"
     },
     "devDependencies": {
         "@types/async-lock": "1.1.3",
