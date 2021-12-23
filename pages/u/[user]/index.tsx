@@ -245,17 +245,12 @@ const ProfilePage: NextPage = () => {
         const loginUser = await RSS3.getLoginUser();
         const pageOwner = await RSS3.getPageOwner();
 
-        const file = pageOwner.file;
-        if (file?.signature) {
-            if (checkIsFollowing()) {
-                await unfollow();
-            } else {
-                await follow();
-            }
-            await loginUser.persona.files.sync();
+        if (checkIsFollowing()) {
+            await unfollow();
         } else {
-            // Not registered user
+            await follow();
         }
+        await loginUser.persona.files.sync();
     };
 
     const checkIsFollowing = () => {
