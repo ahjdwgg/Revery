@@ -522,10 +522,8 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-semibold opacity-20 col-span-2">
-                                            {isRegistered
-                                                ? 'Oops, nothing found :P'
-                                                : 'Oops, this account is not registered with RSS3.'}
+                                        <span className="col-span-2 text-base font-semibold opacity-20">
+                                            {'Oops, nothing found :P'}
                                         </span>
                                     )}
                                 </div>
@@ -554,10 +552,8 @@ const ProfilePage: NextPage = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="text-base font-medium opacity-20 col-span-2">
-                                            {isRegistered
-                                                ? 'Oops, nothing found :P'
-                                                : 'Oops, this account is not registered with RSS3.'}
+                                        <span className="col-span-2 text-base font-medium opacity-20">
+                                            {'Oops, nothing found :P'}
                                         </span>
                                     )}
                                 </div>
@@ -587,9 +583,7 @@ const ProfilePage: NextPage = () => {
                                     ))
                                 ) : (
                                     <span className="text-base font-semibold opacity-20">
-                                        {isRegistered
-                                            ? 'Oops, nothing found :P'
-                                            : 'Oops, this account is not registered with RSS3.'}
+                                        {'Oops, nothing found :P'}
                                     </span>
                                 )}
                             </div>
