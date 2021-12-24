@@ -197,7 +197,6 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 const { listed, haveMore } = await utils.initContent();
                 setContent(listed);
-                console.log(listed);
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);
