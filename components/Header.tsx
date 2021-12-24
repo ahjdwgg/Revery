@@ -3,13 +3,14 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import config from '../common/config';
 import Events from '../common/events';
-import rns from '../common/rns';
+import RNS from '../common/rns';
 import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
 import Logo from './icons/Logo';
 import ImageHolder from './ImageHolder';
 import ModalConnect from './modal/ModalConnect';
+import { utils as ethersUtils } from 'ethers';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
@@ -96,31 +97,26 @@ const Header = () => {
         setCurrentSearchUser(event.target.value as string);
     };
 
-    const toSearchedUserPage = async (event: FormEvent<HTMLInputElement>) => {
-        var utils = require('ethers').utils;
+    const toSearchedUserPage = async () => {
         const invalidAddr = '0x0000000000000000000000000000000000000000';
         if (currentSearchUser) {
-            if (/^0x[a-fA-F0-9]{40}$/.test(currentSearchUser)) {
+            let ethAddress = '';
+            let rns = '';
+            if (ethersUtils.isAddress(currentSearchUser)) {
                 // current search input is an address
-                const name = await rns.addr2Name(utils.getAddress(currentSearchUser));
-                if (name && currentSearchUser != invalidAddr) {
-                    setSearchError(false);
-                    router.push(`/u/${utils.getAddress(currentSearchUser)}`);
-                } else {
-                    setSearchError(true);
-                }
+                ethAddress = ethersUtils.getAddress(currentSearchUser);
+                rns = await RNS.addr2Name(ethAddress);
             } else {
                 // current search input is an RNS or ENS
-                const address = await rns.name2Addr(currentSearchUser.toLowerCase());
-                if (address && address != invalidAddr) {
-                    setSearchError(false);
-                    router.push(`/u/${currentSearchUser}`);
-                } else {
-                    setSearchError(true);
-                }
+                rns = currentSearchUser.toLowerCase();
+                ethAddress = await RNS.name2Addr(rns);
             }
-        } else {
-            setSearchError(true);
+            if (ethAddress !== invalidAddr) {
+                setSearchError(false);
+                router.push(`/u/${rns || ethAddress}`);
+            } else {
+                setSearchError(true);
+            }
         }
     };
 
