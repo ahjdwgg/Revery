@@ -299,7 +299,9 @@ async function initContent(timestamp: string = '', following: boolean = false, f
     );
 
     return {
-        listed: listed,
+        listed: listed.sort(
+            (a, b) => new Date(b.item.date_updated).valueOf() - new Date(a.item.date_updated).valueOf(),
+        ),
         haveMore: haveMore,
     };
 }
