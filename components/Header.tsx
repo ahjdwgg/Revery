@@ -118,6 +118,8 @@ const Header = () => {
                     setSearchError(true);
                 }
             }
+        } else {
+            setSearchError(true);
         }
     };
 
