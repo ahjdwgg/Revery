@@ -7,11 +7,7 @@ import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
 import Logo from './icons/Logo';
-import Metamask from './icons/Metamask';
-import WalletConnect from './icons/WalletConnect';
 import ImageHolder from './ImageHolder';
-import Modal from './modal/Modal';
-import Events from '../common/events';
 import ModalConnect from './modal/ModalConnect';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
@@ -29,6 +25,8 @@ const Header = () => {
 
     // default avatar
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
+
+    const [searchError, setSearchError] = useState(false);
 
     const init = async () => {
         if (RSS3.isValidRSS3()) {
@@ -99,7 +97,12 @@ const Header = () => {
 
     const toSearchedUserPage = (event: FormEvent<HTMLInputElement>) => {
         console.log(currentSearchUser);
-        router.push(`/u/${currentSearchUser}`);
+        if (currentSearchUser) {
+            setSearchError(false);
+            router.push(`/u/${currentSearchUser}`);
+        } else {
+            setSearchError(true);
+        }
     };
 
     // detect whether user has scrolled the page down by 10px
@@ -130,12 +133,21 @@ const Header = () => {
                             </div>
                             <div className="flex flex-row items-center justify-end w-full gap-x-4">
                                 <BiSearch className="w-4 h-4 opacity-50" />
-                                <input
-                                    className="w-64 h-8 text-sm outline-none"
-                                    placeholder={'Search for an address, rns or ens'}
-                                    type={'text'}
-                                    onChange={handleSearchUser}
-                                />
+                                <div className={`flex flex-col ${searchError ? 'mt-4' : ''}`}>
+                                    <input
+                                        className="w-64 h-8 text-sm outline-none"
+                                        placeholder={'Search for an address, RNS or ENS'}
+                                        type={'text'}
+                                        onChange={handleSearchUser}
+                                    />
+                                    <p
+                                        className={`text-tiny text-error -translate-y-1 ${
+                                            !searchError ? 'hidden' : ''
+                                        }`}
+                                    >
+                                        Invalid address, RNS or ENS
+                                    </p>
+                                </div>
                                 <Button
                                     isOutlined={false}
                                     text={'Go'}

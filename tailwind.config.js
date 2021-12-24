@@ -68,6 +68,9 @@ module.exports = {
             minWidth: {
                 '1/4': '25%',
             },
+            fontSize: {
+                tiny: '.65rem',
+            },
             boxShadow: {
                 DEFAULT: '0px 4px 6px -2px rgba(0, 0, 0, 0.02), 0px 10px 15px -3px rgba(0, 0, 0, 0.04)',
             },
