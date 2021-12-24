@@ -123,6 +123,8 @@ async function mmConn(skipSignSync: boolean = false) {
 
     const metamaskEthereum = (window as any).ethereum;
     ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+    // Enable Metamask
+    await ethersProvider.send('eth_requestAccounts', []);
 
     let address = getStorage(KeyNames.ConnectAddress);
     if (!address) {
