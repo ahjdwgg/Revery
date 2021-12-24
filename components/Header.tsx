@@ -97,21 +97,22 @@ const Header = () => {
     };
 
     const toSearchedUserPage = async (event: FormEvent<HTMLInputElement>) => {
+        var utils = require('ethers').utils;
         const invalidAddr = '0x0000000000000000000000000000000000000000';
         if (currentSearchUser) {
             if (/^0x[a-fA-F0-9]{40}$/.test(currentSearchUser)) {
                 // current search input is an address
-                const name = await rns.addr2Name(currentSearchUser);
+                const name = await rns.addr2Name(utils.getAddress(currentSearchUser));
                 if (name && currentSearchUser != invalidAddr) {
                     setSearchError(false);
-                    router.push(`/u/${currentSearchUser}`);
+                    router.push(`/u/${utils.getAddress(currentSearchUser)}`);
                 } else {
                     setSearchError(true);
                 }
             } else {
                 // current search input is an RNS or ENS
                 const address = await rns.name2Addr(currentSearchUser.toLowerCase());
-                if (address != invalidAddr) {
+                if (address && address != invalidAddr) {
                     setSearchError(false);
                     router.push(`/u/${currentSearchUser}`);
                 } else {
