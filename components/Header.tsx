@@ -3,12 +3,14 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import config from '../common/config';
 import Events from '../common/events';
+import RNS from '../common/rns';
 import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
 import Logo from './icons/Logo';
 import ImageHolder from './ImageHolder';
 import ModalConnect from './modal/ModalConnect';
+import { utils as ethersUtils } from 'ethers';
 
 type LoadingTypes = 'any' | 'WalletConnect' | 'Metamask' | null;
 
@@ -25,6 +27,8 @@ const Header = () => {
 
     // default avatar
     const [avatarURL, setAvatarURL] = useState(config.undefinedImageAlt);
+
+    const [searchError, setSearchError] = useState(false);
 
     const init = async () => {
         if (RSS3.isValidRSS3()) {
@@ -90,12 +94,30 @@ const Header = () => {
     };
 
     const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
-        setCurrentSearchUser(event.target.value);
+        setCurrentSearchUser(event.target.value as string);
     };
 
-    const toSearchedUserPage = (event: FormEvent<HTMLInputElement>) => {
-        console.log(currentSearchUser);
-        router.push(`/u/${currentSearchUser}`);
+    const toSearchedUserPage = async () => {
+        const invalidAddr = '0x0000000000000000000000000000000000000000';
+        if (currentSearchUser) {
+            let ethAddress = '';
+            let rns = '';
+            if (ethersUtils.isAddress(currentSearchUser)) {
+                // current search input is an address
+                ethAddress = ethersUtils.getAddress(currentSearchUser);
+                rns = await RNS.addr2Name(ethAddress);
+            } else {
+                // current search input is an RNS or ENS
+                rns = currentSearchUser.toLowerCase();
+                ethAddress = await RNS.name2Addr(rns);
+            }
+            if (ethAddress !== invalidAddr) {
+                setSearchError(false);
+                router.push(`/u/${rns || ethAddress}`);
+            } else {
+                setSearchError(true);
+            }
+        }
     };
 
     // detect whether user has scrolled the page down by 10px
@@ -126,12 +148,17 @@ const Header = () => {
                             </div>
                             <div className="flex flex-row items-center justify-end w-full gap-x-4">
                                 <BiSearch className="w-4 h-4 opacity-50" />
-                                <input
-                                    className="w-64 h-8 text-sm outline-none"
-                                    placeholder={'Search for an address, rns or ens'}
-                                    type={'text'}
-                                    onChange={handleSearchUser}
-                                />
+                                <div className={`flex flex-col ${searchError ? 'mt-4' : ''}`}>
+                                    <input
+                                        className="w-64 h-8 text-sm outline-none"
+                                        placeholder={'Search for an address, RNS or ENS'}
+                                        type={'text'}
+                                        onChange={handleSearchUser}
+                                    />
+                                    <p className={`text-xs text-error -translate-y-1 ${!searchError ? 'hidden' : ''}`}>
+                                        Invalid address, RNS or ENS
+                                    </p>
+                                </div>
                                 <Button
                                     isOutlined={false}
                                     text={'Go'}
