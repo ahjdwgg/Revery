@@ -3,6 +3,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import config from '../common/config';
 import Events from '../common/events';
+import rns from '../common/rns';
 import RSS3 from '../common/rss3';
 import Button from './buttons/Button';
 import { COLORS } from './buttons/variables';
@@ -92,16 +93,31 @@ const Header = () => {
     };
 
     const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
-        setCurrentSearchUser(event.target.value);
+        setCurrentSearchUser(event.target.value as string);
     };
 
-    const toSearchedUserPage = (event: FormEvent<HTMLInputElement>) => {
-        console.log(currentSearchUser);
+    const toSearchedUserPage = async (event: FormEvent<HTMLInputElement>) => {
+        const invalidAddr = '0x0000000000000000000000000000000000000000';
         if (currentSearchUser) {
-            setSearchError(false);
-            router.push(`/u/${currentSearchUser}`);
-        } else {
-            setSearchError(true);
+            if (/^0x[a-fA-F0-9]{40}$/.test(currentSearchUser)) {
+                // current search input is an address
+                const name = await rns.addr2Name(currentSearchUser);
+                if (name && currentSearchUser != invalidAddr) {
+                    setSearchError(false);
+                    router.push(`/u/${currentSearchUser}`);
+                } else {
+                    setSearchError(true);
+                }
+            } else {
+                // current search input is an RNS or ENS
+                const address = await rns.name2Addr(currentSearchUser.toLowerCase());
+                if (address != invalidAddr) {
+                    setSearchError(false);
+                    router.push(`/u/${currentSearchUser}`);
+                } else {
+                    setSearchError(true);
+                }
+            }
         }
     };
 
@@ -140,11 +156,7 @@ const Header = () => {
                                         type={'text'}
                                         onChange={handleSearchUser}
                                     />
-                                    <p
-                                        className={`text-tiny text-error -translate-y-1 ${
-                                            !searchError ? 'hidden' : ''
-                                        }`}
-                                    >
+                                    <p className={`text-xs text-error -translate-y-1 ${!searchError ? 'hidden' : ''}`}>
                                         Invalid address, RNS or ENS
                                     </p>
                                 </div>
