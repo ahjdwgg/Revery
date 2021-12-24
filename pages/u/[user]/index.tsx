@@ -6,7 +6,7 @@ import AssetCard, { AssetCardButtonMode } from '../../../components/assets/Asset
 import FootprintCard from '../../../components/assets/FootprintCard';
 import ContentCard from '../../../components/content/ContentCard';
 import Header from '../../../components/Header';
-import Image from 'next/image';
+import ImageHolder from '../../../components/ImageHolder';
 import Profile from '../../../components/profile/Profile';
 import RSS3 from '../../../common/rss3';
 import RNS from '../../../common/rns';
@@ -35,7 +35,6 @@ import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
 import ProfileLoader from '../../../components/loaders/ProfileLoader';
 import LoadMoreButton from '../../../components/buttons/LoadMoreButton';
 import ModalConnect from '../../../components/modal/ModalConnect';
-
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -198,6 +197,7 @@ const ProfilePage: NextPage = () => {
             setTimeout(async () => {
                 const { listed, haveMore } = await utils.initContent();
                 setContent(listed);
+                console.log(listed);
                 setHaveMoreContent(haveMore);
                 setContentLoading(false);
             }, 0);
@@ -493,38 +493,36 @@ const ProfilePage: NextPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <AssetCard title="NFTs" color="primary" headerButtons={assetCardButtons.NFT}>
                             {isNftLoading ? (
+                                // <div className="flex flex-row items-center justify-center w-full h-32">
+                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                // </div>
                                 <CardItemLoader />
                             ) : (
-                                <div className="grid w-full grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3">
                                     {nftItems.length > 0 ? (
                                         nftItems.map((asset, i) => (
                                             <div
-                                                className="aspect-w-1 aspect-h-1"
+                                                className="cursor-pointer"
                                                 key={i}
                                                 onClick={() => {
                                                     getModalDetail(asset, 'nft');
                                                 }}
                                             >
-                                                <Image
-                                                    className="rounded cursor-pointer"
-                                                    src={`/api/imageproxy?url=${encodeURIComponent(
-                                                        utils.fixURLSchemas(
-                                                            asset.detail.image_preview_url ||
-                                                                asset.detail.image_url ||
-                                                                asset.detail.animation_url ||
-                                                                asset.animation_original_url ||
-                                                                config.undefinedImageAlt,
-                                                        ),
-                                                    )}`}
-                                                    layout="fill"
-                                                    objectFit={'cover'}
-                                                    quality={80}
-                                                    alt={asset.detail.name}
+                                                <NFTItem
+                                                    key={asset.id}
+                                                    previewUrl={
+                                                        asset.detail.image_preview_url ||
+                                                        asset.detail.image_url ||
+                                                        asset.detail.animation_url ||
+                                                        asset.animation_original_url
+                                                    }
+                                                    isShowingDetails={false}
+                                                    size={70}
                                                 />
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="col-span-2 text-base font-semibold opacity-20">
+                                        <span className="text-base font-semibold opacity-20 col-span-2">
                                             {isRegistered
                                                 ? 'Oops, nothing found :P'
                                                 : 'Oops, this account is not registered with RSS3.'}
@@ -536,34 +534,27 @@ const ProfilePage: NextPage = () => {
 
                         <AssetCard title="Donations" color="primary" headerButtons={assetCardButtons.Donation}>
                             {isDonationLoading ? (
+                                // <div className="flex flex-row items-center justify-center w-full h-32">
+                                //     <BiLoaderAlt className="w-12 h-12 animate-spin text-primary opacity-20" />
+                                // </div>
                                 <CardItemLoader />
                             ) : (
-                                <div className="grid w-full grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3">
                                     {donationItems.length > 0 ? (
                                         donationItems.map((asset, i) => (
-                                            <div
-                                                key={i}
-                                                className="aspect-w-1 aspect-h-1"
-                                                onClick={() => {
-                                                    getModalDetail(asset, 'donation');
-                                                }}
-                                            >
-                                                <Image
-                                                    className="rounded cursor-pointer"
-                                                    src={`/api/imageproxy?url=${encodeURIComponent(
-                                                        utils.fixURLSchemas(
-                                                            asset.detail.grant.logo || config.undefinedImageAlt,
-                                                        ),
-                                                    )}`}
-                                                    layout="fill"
-                                                    objectFit={'cover'}
-                                                    quality={80}
-                                                    alt={asset.detail.grant.title}
+                                            <div key={i} className="flex cursor-pointer">
+                                                <ImageHolder
+                                                    imageUrl={asset.detail.grant.logo || config.undefinedImageAlt}
+                                                    roundedClassName={'rounded'}
+                                                    size={70}
+                                                    onClick={() => {
+                                                        getModalDetail(asset, 'donation');
+                                                    }}
                                                 />
                                             </div>
                                         ))
                                     ) : (
-                                        <span className="col-span-2 text-base font-medium opacity-20">
+                                        <span className="text-base font-medium opacity-20 col-span-2">
                                             {isRegistered
                                                 ? 'Oops, nothing found :P'
                                                 : 'Oops, this account is not registered with RSS3.'}
