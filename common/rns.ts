@@ -114,11 +114,15 @@ const RNS = {
     isMetamaskEnabled,
     isSpecifyNetwork,
     async registerRNS(name: string) {
-        await (window as any).ethereum?.enable();
+        await (window as any).ethereum?.request({
+            method: 'eth_requestAccounts',
+        });
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'register', name);
     },
     async balanceOfPASS(addr: string) {
-        await (window as any).ethereum?.enable();
+        await (window as any).ethereum?.request({
+            method: 'eth_requestAccounts',
+        });
         const balance = await callRNSContract<ethers.BigNumber>('token', 'balanceOf', addr);
         return Number(ethers.utils.formatUnits(balance, 18));
     },
