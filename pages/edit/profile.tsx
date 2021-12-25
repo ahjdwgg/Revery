@@ -18,6 +18,7 @@ import { stringify } from 'querystring';
 import { AnyObject } from 'rss3/types/extend';
 import IPFS from '../../common/ipfs';
 import ModalRNS from '../../components/modal/ModalRNS';
+import RNS from '../../common/rns';
 
 type InputEventType = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -28,6 +29,7 @@ const Profile: NextPage = () => {
     const [avatarUrl, setAvatarUrl] = useState(RSS3.getLoginUser().profile?.avatar?.[0] || config.undefinedImageAlt);
     const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
     const [link, setLink] = useState<string>('');
+    const [rns, setRNS] = useState<string>('');
 
     const [username, setUsername] = useState<string>('');
     const [bio, setBio] = useState<string>('');
@@ -235,6 +237,7 @@ const Profile: NextPage = () => {
         setBio(extracted);
         setWebsite(fieldsMatch?.['SITE'] || '');
         setLink(loginUser.name);
+        setRNS(await RNS.addr2Name(loginUser.address, true));
 
         await RSS3.setPageOwner(loginUser.address);
         const { listed } = await utils.initAccounts();
@@ -296,8 +299,8 @@ const Profile: NextPage = () => {
                                 ref={(input) => (inputElement = input)}
                             />
                             <div>
-                                {link ? (
-                                    <LinkButton text={link} onClick={toRss3BioUserSite} color={COLORS.primary} />
+                                {rns ? (
+                                    <LinkButton text={rns} onClick={toRss3BioUserSite} color={COLORS.primary} />
                                 ) : (
                                     <LinkButton
                                         text={'Claim Your RNS'}
