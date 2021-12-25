@@ -24,6 +24,17 @@ function MyApp({ Component, pageProps }: AppProps) {
                     href="https://fonts.googleapis.com/css?family=Open+Sans:400,500,600,700"
                 />
                 <meta name="viewport" content="width=1024, initial-scale=1.0" />
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-9R6MPJZKWL"></script>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', 'G-9R6MPJZKWL');
+                        `,
+                    }}
+                />
             </Head>
             <Component {...pageProps} />
         </>
