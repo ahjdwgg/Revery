@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
+
 import React from 'react';
 import utils from '../common/utils';
-import Image from 'next/image';
 
 interface ImageProps {
     imageUrl: string;
@@ -18,13 +19,11 @@ const ImageHolder = ({ imageUrl, title, roundedClassName, size, onClick }: Image
             style={{ width: size, height: size }}
             onClick={onClick}
         >
-            <Image
+            <img
                 className={imageClassNames}
                 src={`/api/imageproxy?url=${encodeURIComponent(utils.fixURLSchemas(imageUrl))}`}
                 width={size}
                 height={size}
-                objectFit={'cover'}
-                quality={80}
                 alt={title}
             />
         </div>
