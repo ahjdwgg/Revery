@@ -21,7 +21,7 @@ const ImageHolder = ({ imageUrl, title, roundedClassName, size, onClick }: Image
         >
             <img
                 className={imageClassNames}
-                src={`/api/imageproxy?url=${encodeURIComponent(utils.fixURLSchemas(imageUrl))}`}
+                src={utils.fixURLSchemas(imageUrl)}
                 width={size}
                 height={size}
                 alt={title}
