@@ -113,6 +113,9 @@ module.exports = {
                 'fade-in': 'fade-in 0.5s ease-in',
                 'fade-in-up': 'fade-in-up 0.35s ease-in',
             },
+            gridTemplateColumns: {
+                listHeader: '60px auto 60px',
+            },
         },
     },
     variants: {
