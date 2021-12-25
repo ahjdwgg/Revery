@@ -61,6 +61,7 @@ const Donation: NextPage = () => {
         }
 
         setPersona(pageOwner);
+        checkOwner();
     };
 
     const loadDonations = async () => {
@@ -125,7 +126,7 @@ const Donation: NextPage = () => {
         <>
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
-                <section className="grid grid-cols-listHeader justify-between w-full my-4">
+                <section className="grid justify-between w-full my-4 grid-cols-listHeader">
                     <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Donations" : 'Donations'}

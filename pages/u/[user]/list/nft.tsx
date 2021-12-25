@@ -68,6 +68,7 @@ const Nft: NextPage = () => {
         }
 
         setPersona(pageOwner);
+        checkOwner();
     };
 
     const loadNFTs = async () => {
@@ -127,7 +128,7 @@ const Nft: NextPage = () => {
         <>
             <Header />
             <div className="max-w-6xl px-2 py-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
-                <section className="grid grid-cols-listHeader justify-between w-full my-4">
+                <section className="grid justify-between w-full my-4 grid-cols-listHeader">
                     <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s NFTs" : 'NFTs'}

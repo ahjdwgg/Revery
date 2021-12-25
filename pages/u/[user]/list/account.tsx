@@ -59,6 +59,7 @@ const Account: NextPage = () => {
             setListedAccountsIsEmpty(true);
         }
         setPersona(pageOwner);
+        checkOwner();
     };
 
     const checkOwner = () => {
@@ -102,7 +103,7 @@ const Account: NextPage = () => {
         <>
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
-                <section className="grid grid-cols-listHeader justify-between w-full my-4">
+                <section className="grid justify-between w-full my-4 grid-cols-listHeader">
                     <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Accounts" : 'Accounts'}
@@ -117,11 +118,11 @@ const Account: NextPage = () => {
                     )}
                 </section>
                 {!listedAccounts.length && listedAccountsIsEmpty === null ? (
-                    <div className="flex w-full justify-center items-center py-10">
+                    <div className="flex items-center justify-center w-full py-10">
                         <BiLoaderAlt className={'w-12 h-12 animate-spin text-primary opacity-50'} />
                     </div>
                 ) : listedAccountsIsEmpty ? (
-                    <div className="flex w-full justify-center items-center py-10 text-normal">
+                    <div className="flex items-center justify-center w-full py-10 text-normal">
                         {persona ? persona.profile?.name + "'s Accounts list is empty :)" : 'Accounts list is empty :)'}
                     </div>
                 ) : (
