@@ -182,7 +182,8 @@ const Home: NextPage = () => {
 
     const initRecommendationGrops = async () => {
         setIsLoadingRecommendGroups(true);
-        const recommendGroups = await RSS3.getRecommendGroups();
+        let recommendGroups = await RSS3.getRecommendGroups();
+        recommendGroups = recommendGroups.filter((group) => group.key === 'random');
         if (recommendGroups.length) {
             setRecommendGroups(recommendGroups);
             setIsLoadingRecommendGroups(false);
@@ -199,6 +200,7 @@ const Home: NextPage = () => {
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
+        console.log(type);
         if (recommendGroupMemberIndexes.length) {
             let _recommendGroupMembers = recommendGroupMemberIndexes.map((memberIndex) => {
                 const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);

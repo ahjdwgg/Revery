@@ -5,7 +5,7 @@ import Button from '../../../../components/buttons/Button';
 import { COLORS } from '../../../../components/buttons/variables';
 import SingleDonation from '../../../../components/details/SingleDonation';
 import Header from '../../../../components/Header';
-import Modal from '../../../../components/modal/Modal';
+import Modal, { ModalColorStyle } from '../../../../components/modal/Modal';
 import RSS3, { RSS3DetailPersona } from '../../../../common/rss3';
 import ModalLoading from '../../../../components/modal/ModalLoading';
 import config from '../../../../common/config';
@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { AnyObject } from 'rss3/types/extend';
 import DonationItemLoader from '../../../../components/loaders/DonationItemLoader';
 import LoadMoreButton from '../../../../components/buttons/LoadMoreButton';
+import Events from '../../../../common/events';
 
 const Donation: NextPage = () => {
     const router = useRouter();
@@ -27,6 +28,22 @@ const Donation: NextPage = () => {
     const briefList = useRef<AnyObject[]>([]);
     const assetCount = useRef(0);
     const [isLoadingMore, setLoadingMore] = useState(false);
+
+    const [isOwner, setIsOwner] = useState(false);
+    const [isShowingRedirectNotice, setIsShowingRedirectNotice] = useState(false);
+    const [otherProductRedirectSettings, setOtherProductRedirectSettings] = useState<{
+        product: string;
+        type: string;
+        route: string;
+        baseUrl: string;
+        colorStyle: ModalColorStyle;
+    }>({
+        product: '',
+        type: '',
+        route: '',
+        baseUrl: '',
+        colorStyle: 'primary',
+    });
 
     const init = async () => {
         const addrOrName = (router.query.user as string) || '';
@@ -61,11 +78,37 @@ const Donation: NextPage = () => {
         setLoadingMore(false);
     };
 
+    const checkOwner = () => {
+        const latestIsOwner = RSS3.isNowOwner();
+        setIsOwner(latestIsOwner);
+        return latestIsOwner;
+    };
+
+    const toRSS3BioEditAssetNotice = (type: string, route: string, colorStyle: ModalColorStyle) => {
+        // to RSS3.Bio edit this
+        const product = 'RSS3Bio';
+        const loginUser = RSS3.getLoginUser();
+        const baseUrl = RSS3.buildProductBaseURL(product, loginUser.address, loginUser.name);
+        setOtherProductRedirectSettings({ product, type, route, baseUrl, colorStyle });
+        setIsShowingRedirectNotice(true);
+    };
+
+    const toEditAssetRedirect = () => {
+        // open new window
+        setIsShowingRedirectNotice(false);
+        window.open(`${otherProductRedirectSettings.baseUrl}${otherProductRedirectSettings.route}`, '_blank');
+    };
+
     useEffect(() => {
         if (router.isReady) {
             init();
         }
     }, [router.isReady]);
+
+    useEffect(() => {
+        addEventListener(Events.connect, checkOwner);
+        addEventListener(Events.disconnect, checkOwner);
+    }, []);
 
     const openModal = async (asset: AnyObject) => {
         document.body.style.overflow = 'hidden';
@@ -82,12 +125,19 @@ const Donation: NextPage = () => {
         <>
             <Header />
             <div className="max-w-6xl px-2 pt-16 mx-auto divide-y divide-solid divide-primary divide-opacity-5">
-                <section className="flex flex-row justify-between w-full my-4">
+                <section className="grid grid-cols-listHeader justify-between w-full my-4">
                     <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-primary">
                         {persona ? persona.profile?.name + "'s Donations" : 'Donations'}
                     </h1>
-                    <Button isOutlined={true} color={COLORS.primary} text={'Edit'} />
+                    {isOwner && (
+                        <Button
+                            isOutlined={true}
+                            color={COLORS.primary}
+                            text={'Edit'}
+                            onClick={() => toRSS3BioEditAssetNotice('Donations', '/setup/gitcoins', 'primary')}
+                        />
+                    )}
                 </section>
                 {!listedDonation.length && listedDonationIsEmpty === null ? (
                     // <div className="flex items-center justify-center w-full py-10">
@@ -138,6 +188,50 @@ const Donation: NextPage = () => {
             </div>
             <Modal hidden={modalHidden} closeEvent={closeModal} theme={'primary'} size="lg">
                 {donation ? <SingleDonation Gitcoin={donation} /> : <ModalLoading color={'primary'} />}
+            </Modal>
+
+            <Modal
+                theme={'primary'}
+                size={'sm'}
+                hidden={!isShowingRedirectNotice}
+                closeEvent={() => setIsShowingRedirectNotice(false)}
+            >
+                <div className="flex flex-col justify-between w-full h-full">
+                    <div className="flex justify-center flex-start">
+                        <span className={`mx-2 text-xl text-${otherProductRedirectSettings.colorStyle}`}>Info</span>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <div className="inline px-12 pt-8 pb-12">
+                            {`You will be redirect to`}
+                            <span className="mx-2 text-primary">{otherProductRedirectSettings.product}</span>
+                            {`to set up your`}
+                            <span className={`mx-2 text-${otherProductRedirectSettings.colorStyle}`}>
+                                {otherProductRedirectSettings.type}
+                            </span>
+                            {`.`}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center gap-x-3">
+                        <Button
+                            isOutlined={true}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Cancel'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={() => setIsShowingRedirectNotice(false)}
+                        />
+                        <Button
+                            isOutlined={false}
+                            color={otherProductRedirectSettings.colorStyle}
+                            text={'Go'}
+                            fontSize={'text-base'}
+                            width={'w-24'}
+                            onClick={toEditAssetRedirect}
+                        />
+                    </div>
+                </div>
             </Modal>
         </>
     );
