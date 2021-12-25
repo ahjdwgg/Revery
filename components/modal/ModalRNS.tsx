@@ -108,8 +108,8 @@ export default function ModalRNS({ hidden, closeEvent }: ModalConnectProps) {
             await RNS.registerRNS(rns);
             setNotice('RNS registered successfully! It might need a while for the transaction to confirm.');
         } catch (e) {
-            setNotice((e as any)?.message || 'Sorry, but something went wrong. Please try again later.');
-            console.log(e);
+            setNotice('Sorry, but something went wrong. Please try again later.');
+            throw e; // Let sentry handle this error
         }
         setIsLoading(false);
         setIsShowingConfirm(false);
