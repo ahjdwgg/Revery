@@ -59,17 +59,19 @@ const Home: NextPage = () => {
     const filterTagList: string[] = Object.values(FILTER_TAGS);
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
+    const isInitialized = useRef(false);
+
     const init = async () => {
-        if (RSS3.isValidRSS3()) {
+        if (RSS3.isValidRSS3() && !isInitialized.current) {
             setConnectModalClosed(true);
             await RSS3.ensureLoginUser();
             const LoginUser = RSS3.getLoginUser();
             setLoggedIn(true);
+            isInitialized.current = true;
 
             setTimeout(initRecommendationGrops, 0);
 
             const pageOwner = await RSS3.setPageOwner(LoginUser.address);
-
             const profile = pageOwner.profile;
 
             if (profile) {
@@ -95,19 +97,11 @@ const Home: NextPage = () => {
         await router.push(`/u/${addr}`);
     };
 
-    // Initialize
-
     useEffect(() => {
-        if (router.isReady) {
-            init();
-        }
-    }, [router.isReady]);
-
-    useEffect(() => {
-        // init();
         setContentLoading(true);
     }, [address]);
 
+    // Initialize
     useEffect(() => {
         // Add re-connect & init event listener
         document.addEventListener(Events.connect, init);
