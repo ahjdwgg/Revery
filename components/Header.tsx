@@ -83,6 +83,8 @@ const Header = () => {
 
         if (profile?.avatar?.[0]) {
             setAvatarURL(profile.avatar[0]);
+        } else {
+            setAvatarURL(config.undefinedImageAlt);
         }
 
         setIsLoading(null);
