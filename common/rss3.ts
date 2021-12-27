@@ -321,8 +321,12 @@ async function getRecommendGroupMembers(type: string) {
 }
 
 function checkIsFollowing(address: string = RSS3PageOwner.address) {
-    const followList = RSS3LoginUser.followings;
-    return !!followList?.includes(address);
+    if (isValidRSS3()) {
+        const followList = RSS3LoginUser.followings;
+        return !!followList?.includes(address);
+    } else {
+        return false;
+    }
 }
 
 async function follow(address: string = RSS3PageOwner.address) {

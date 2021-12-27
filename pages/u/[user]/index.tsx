@@ -309,8 +309,8 @@ const ProfilePage: NextPage = () => {
     }, [address]);
 
     useEffect(() => {
-        addEventListener(Events.connect, checkOwner);
-        addEventListener(Events.disconnect, checkOwner);
+        addEventListener(Events.connect, () => checkOwner() || setIsFollowing(RSS3.checkIsFollowing()));
+        addEventListener(Events.disconnect, () => checkOwner() || setIsFollowing(RSS3.checkIsFollowing()));
     }, []);
 
     const loadMoreContent = async () => {
