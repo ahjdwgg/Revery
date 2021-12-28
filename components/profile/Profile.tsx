@@ -19,6 +19,7 @@ interface ProfileProps {
     username: string;
     rns?: string;
     link?: string;
+    website?: string;
     bio: string;
     isLogin: boolean;
     isOwner: boolean;
@@ -38,6 +39,7 @@ const Profile = ({
     username,
     rns,
     link,
+    website,
     bio,
     isLogin,
     isOwner,
@@ -193,16 +195,18 @@ const Profile = ({
                 <div className={`flex flex-row gap-x-2`}>
                     {rns ? (
                         <LinkButton text={fixRNS(rns)} color={COLORS.primary} onClick={toRss3BioUserSite} />
+                    ) : isOwner ? (
+                        <LinkButton
+                            text={'Claim Your RNS'}
+                            color={COLORS.primary}
+                            onClick={() => setModalRNSHidden(false)}
+                        />
                     ) : (
-                        isOwner && (
-                            <LinkButton
-                                text={'Claim Your RNS'}
-                                color={COLORS.primary}
-                                onClick={() => setModalRNSHidden(false)}
-                            />
-                        )
+                        link && <LinkButton text={link} color={COLORS.primary} onClick={toRss3BioUserSite} />
                     )}
-                    {link && <LinkButton text={link} color={COLORS.primary} onClick={toExternalUserSite} link={true} />}
+                    {website && (
+                        <LinkButton text={website} color={COLORS.primary} onClick={toExternalUserSite} link={true} />
+                    )}
                 </div>
                 <div className="text-sm leading-5 whitespace-pre-line select-none">{bio}</div>
                 <div className={`${!children && 'hidden'} flex flex-row gap-x-2`}>{children}</div>

@@ -35,6 +35,7 @@ import ContentItemLoader from '../../../components/loaders/ContentItemLoader';
 import ProfileLoader from '../../../components/loaders/ProfileLoader';
 import LoadMoreButton from '../../../components/buttons/LoadMoreButton';
 import ModalConnect from '../../../components/modal/ModalConnect';
+import { formatter } from '../../../common/address';
 interface ModalDetail {
     hidden: boolean;
     type: ModalColorStyle;
@@ -49,6 +50,7 @@ const ProfilePage: NextPage = () => {
 
     const [isProfileLoading, setProfileLoading] = useState(true);
 
+    const [rns, setRNS] = useState<string>('');
     const [link, setLink] = useState<string>('');
     const [avatarUrl, setAvatarUrl] = useState(config.undefinedImageAlt);
     const [username, setUsername] = useState<string>('');
@@ -179,9 +181,10 @@ const ProfilePage: NextPage = () => {
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
             setAvatarUrl(profile?.avatar?.[0] || config.undefinedImageAlt);
             setUsername(profile?.name || '');
-            setAddress(pageOwner?.address || '');
+            setAddress(pageOwner.address);
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
+            setRNS(await RNS.addr2Name(pageOwner.address));
             setLink(pageOwner.name);
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
@@ -383,7 +386,7 @@ const ProfilePage: NextPage = () => {
                     ) : (
                         <Profile
                             avatarUrl={avatarUrl}
-                            username={isRegistered ? username : link ? link : address}
+                            username={username || link || formatter(address)}
                             bio={
                                 isRegistered
                                     ? bio
@@ -391,8 +394,9 @@ const ProfilePage: NextPage = () => {
                             }
                             followers={followers}
                             followings={followings}
-                            rns={link}
-                            link={website}
+                            rns={rns}
+                            link={link}
+                            website={website}
                             isLogin={RSS3.isValidRSS3()}
                             isOwner={isOwner}
                             isFollowing={isFollowing}
