@@ -26,6 +26,7 @@ import FilterSection, { mapToArray } from '../components/filter/FilterSection';
 import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 import Events from '../common/events';
 import StickyBox from 'react-sticky-box';
+import AsyncLock from 'async-lock';
 
 interface ModalDetail {
     hidden: boolean;
@@ -35,6 +36,7 @@ interface ModalDetail {
 
 const Home: NextPage = () => {
     const router = useRouter();
+    const lock = new AsyncLock();
     const [address, setAddress] = useState<string>('');
 
     const [isLoggedIn, setLoggedIn] = useState(false);
@@ -62,49 +64,56 @@ const Home: NextPage = () => {
     const isInitialized = useRef(false);
 
     const init = async () => {
-        if (RSS3.isValidRSS3() && !isInitialized.current) {
-            setConnectModalClosed(true);
-            await RSS3.ensureLoginUser();
-            const LoginUser = RSS3.getLoginUser();
-            setLoggedIn(true);
-            isInitialized.current = true;
+        await lock.acquire('Initialize', async () => {
+            if (RSS3.isValidRSS3() && !isInitialized.current) {
+                setConnectModalClosed(true);
+                await RSS3.ensureLoginUser();
+                const LoginUser = RSS3.getLoginUser();
+                setLoggedIn(true);
+                isInitialized.current = true;
 
-            setTimeout(initRecommendationGrops, 0);
+                setTimeout(initRecommendationGrops, 0);
 
-            const pageOwner = await RSS3.setPageOwner(LoginUser.address);
-            const profile = pageOwner.profile;
+                const pageOwner = await RSS3.setPageOwner(LoginUser.address);
+                const profile = pageOwner.profile;
 
-            if (profile) {
-                // Profile
-                setAddress(pageOwner.address);
-            }
-
-            setTimeout(async () => {
-                const localStoreFilterTagActiveMap = utils.objToStrMap(
-                    JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
-                );
-                for (const tag of filterTagList) {
-                    if (!localStoreFilterTagActiveMap.has(tag)) {
-                        localStoreFilterTagActiveMap.set(tag, true);
-                    }
+                if (profile) {
+                    // Profile
+                    setAddress(pageOwner.address);
                 }
-                await getFilteredContent(localStoreFilterTagActiveMap);
-            }, 0);
-        }
+
+                setTimeout(async () => {
+                    const localStoreFilterTagActiveMap = utils.objToStrMap(
+                        JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
+                    );
+                    for (const tag of filterTagList) {
+                        if (!localStoreFilterTagActiveMap.has(tag)) {
+                            localStoreFilterTagActiveMap.set(tag, true);
+                        }
+                    }
+                    await getFilteredContent(localStoreFilterTagActiveMap);
+                }, 0);
+            }
+        });
     };
 
     const toUserPage = async (addr: string) => {
         await router.push(`/u/${addr}`);
     };
 
+    // Initialize
+    useEffect(() => {
+        init();
+    }, [router.isReady]);
+
     useEffect(() => {
         setContentLoading(true);
     }, [address]);
 
-    // Initialize
     useEffect(() => {
         // Add re-connect & init event listener
         document.addEventListener(Events.connect, init);
+        return () => document.removeEventListener(Events.connect, init);
     }, []);
 
     const loadMoreContent = async () => {
