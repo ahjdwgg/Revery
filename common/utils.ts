@@ -202,8 +202,6 @@ async function initContent(
 
     fieldLikeParam = result.join(',') || '';
 
-    console.log(fieldLikeParam);
-
     if (filters && following) {
         if (fieldLikeParam != '') {
             items =
