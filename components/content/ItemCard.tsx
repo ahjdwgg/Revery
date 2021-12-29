@@ -7,7 +7,7 @@ import { timeDifferent } from '../../common/timeStamp';
 import Markdown from '../Markdown';
 import EmblaCarousel from './EmblaCarousel';
 import config from '../../common/config';
-import NFTCard from '../assets/NFTCard';
+import AssetDetailsCard from '../assets/AssetDetailsCard';
 import { imgRegSrc, mdImgRegSrc } from '../../common/image';
 import NFTIcon from '../icons/NFTIcon';
 import FootprintIcon from '../icons/FootprintIcon';
@@ -170,7 +170,7 @@ const ItemCard = ({
                     {images && images?.length > 0 && <EmblaCarousel slides={images} />}
                 </div>
             ) : (
-                <NFTCard
+                <AssetDetailsCard
                     name={asset.name}
                     desc={asset.description}
                     imageUrl={asset.image_url || config.undefinedImageAlt}
