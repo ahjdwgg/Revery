@@ -62,7 +62,7 @@ const Home: NextPage = () => {
     const filterTagList: string[] = Object.values(FILTER_TAGS);
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
-    const [web2Enabled, setWeb2Enabled] = useState<boolean | undefined>();
+    const [web2Enabled, setWeb2Enabled] = useState<boolean>();
 
     const isInitialized = useRef(false);
 
@@ -353,7 +353,7 @@ const Home: NextPage = () => {
                                     Web2.0
                                 </span>
                                 <Switch
-                                    checked={web2Enabled}
+                                    checked={web2Enabled || false}
                                     onChange={setWeb2Enabled}
                                     className={`animate-fade-in-up ${
                                         web2Enabled
