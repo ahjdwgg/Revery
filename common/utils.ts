@@ -194,14 +194,15 @@ async function initContent(
 
         if (tag.value && tag.key == FILTER_TAGS.content) {
             result.push(filterTagSQLMap.get(FILTER_TAGS.content));
+            if (web2Enabled) {
+                result.push(web2TagQueryString);
+            }
         }
     });
 
     fieldLikeParam = result.join(',') || '';
 
-    if (fieldLikeParam && web2Enabled) {
-        fieldLikeParam += ',' + web2TagQueryString;
-    }
+    console.log(fieldLikeParam);
 
     if (filters && following) {
         if (fieldLikeParam != '') {

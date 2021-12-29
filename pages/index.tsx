@@ -62,7 +62,7 @@ const Home: NextPage = () => {
     const filterTagList: string[] = Object.values(FILTER_TAGS);
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
-    const [web2Enabled, setWeb2Enabled] = useState(true);
+    const [web2Enabled, setWeb2Enabled] = useState<boolean | undefined>();
 
     const isInitialized = useRef(false);
 
@@ -89,11 +89,13 @@ const Home: NextPage = () => {
                     const localStoreFilterTagActiveMap = utils.objToStrMap(
                         JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
                     );
+                    const localStoreWeb2Enabled = JSON.parse(utils.getStorage('web2Enabled') || 'false');
                     for (const tag of filterTagList) {
                         if (!localStoreFilterTagActiveMap.has(tag)) {
                             localStoreFilterTagActiveMap.set(tag, true);
                         }
                     }
+                    setWeb2Enabled(localStoreWeb2Enabled);
                     await getFilteredContent(localStoreFilterTagActiveMap);
                 }, 0);
             }
@@ -232,6 +234,12 @@ const Home: NextPage = () => {
         setFilterTagActiveMap(updatedFilterTagActiveMap);
         setContentLoading(true);
         utils.setStorage('filterTagActiveMap', JSON.stringify(utils.strMapToObj(updatedFilterTagActiveMap)));
+        if (!updatedFilterTagActiveMap.get(FILTER_TAGS.content)) {
+            setWeb2Enabled(false);
+        }
+        if (web2Enabled !== undefined) {
+            utils.setStorage('web2Enabled', JSON.stringify(web2Enabled));
+        }
         await updateFilteredContent(updatedFilterTagActiveMap);
     };
 
@@ -251,6 +259,9 @@ const Home: NextPage = () => {
     useEffect(() => {
         setContentLoading(true);
         if (filterTagActiveMap.size !== 0) {
+            if (!filterTagActiveMap.get(FILTER_TAGS.content) && web2Enabled) {
+                filterTagActiveMap.set(FILTER_TAGS.content, !filterTagActiveMap.get(FILTER_TAGS.content));
+            }
             getFilteredContent(filterTagActiveMap);
         }
     }, [web2Enabled]);
@@ -338,11 +349,13 @@ const Home: NextPage = () => {
                         />
                         <Switch.Group>
                             <div className="flex px-3 items-center">
-                                <span className="font-semibold text-primary text-md pr-2">Web2.0</span>
+                                <span className="animate-fade-in-up font-semibold text-primary text-md pr-2">
+                                    Web2.0
+                                </span>
                                 <Switch
                                     checked={web2Enabled}
                                     onChange={setWeb2Enabled}
-                                    className={`${
+                                    className={`animate-fade-in-up ${
                                         web2Enabled
                                             ? 'border border-primary border-opacity-70'
                                             : 'border border-black border-opacity-20'
