@@ -77,7 +77,6 @@ const NFTItem = ({ size, previewUrl, detailUrl, isShowingDetails }: NFTItemProps
                     alt="NFT Image"
                     onError={() => {
                         setMainUrl(config.undefinedImageAlt);
-                        console.log(mainUrl);
                     }}
                 />
             )}
