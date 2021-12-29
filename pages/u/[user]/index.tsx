@@ -245,12 +245,12 @@ const ProfilePage: NextPage = () => {
 
     const onFollow = async () => {
         const isFollowing = RSS3.checkIsFollowing();
+        setIsFollowing(!isFollowing);
         if (isFollowing) {
             await RSS3.unfollow();
         } else {
             await RSS3.follow();
         }
-        setIsFollowing(!isFollowing);
     };
 
     const toEditProfile = async () => {
