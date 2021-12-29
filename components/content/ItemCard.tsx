@@ -34,52 +34,6 @@ interface ItemCardProps {
     showAssetDetail: () => void;
 }
 
-function categorize(field: string) {
-    if (field.includes('Arweave')) {
-        return (
-            <>
-                <span>posted on</span>
-                <div className="flex items-center justify-center w-4 h-4 rounded-full">
-                    <Arweave />
-                </div>
-            </>
-        );
-    } else if (field.includes('Twitter')) {
-        return (
-            <>
-                <span>posted on</span>
-                <div className="flex items-center justify-center w-4 h-4 rounded-full">
-                    <Twitter />
-                </div>
-            </>
-        );
-    } else if (field.includes('Mirror.XYZ')) {
-        return (
-            <>
-                <span>posted on</span>
-                <div className="flex items-center justify-center w-4 h-4 rounded-full">
-                    <Mirror />
-                </div>
-            </>
-        );
-    } else if (field.includes('Misskey')) {
-        return (
-            <>
-                <span>posted on</span>
-                <div className="flex items-center justify-center w-4 h-4 rounded-full">
-                    <Misskey />
-                </div>
-            </>
-        );
-    } else if (field.includes('NFT')) {
-        return <NFTIcon />;
-    } else if (field.includes('POAP')) {
-        return <FootprintIcon />;
-    } else if (field.includes('Gitcoin')) {
-        return <GitcoinIcon />;
-    }
-}
-
 const getTopic = (field: string, type: string) => {
     const topic = new Map([
         ['add', 'got '],
@@ -99,6 +53,37 @@ const getTopic = (field: string, type: string) => {
     }
 
     return content;
+};
+
+const categorize = (field: string, type: string) => {
+    let iconSVG = null;
+    let topic = 'posted on';
+
+    if (field.includes('NFT')) {
+        topic = getTopic(field, type);
+        iconSVG = <NFTIcon />;
+    } else if (field.includes('POAP')) {
+        topic = getTopic(field, type);
+        iconSVG = <FootprintIcon />;
+    } else if (field.includes('Gitcoin')) {
+        topic = getTopic(field, type);
+        iconSVG = <GitcoinIcon />;
+    } else if (field.includes('Arweave')) {
+        iconSVG = <Arweave />;
+    } else if (field.includes('Twitter')) {
+        iconSVG = <Twitter />;
+    } else if (field.includes('Mirror.XYZ')) {
+        iconSVG = <Mirror />;
+    } else if (field.includes('Misskey')) {
+        iconSVG = <Misskey />;
+    }
+
+    return (
+        <>
+            <span className="flex-shrink-0">{topic}</span>
+            <div className="flex items-center justify-center w-4 h-4 rounded-full">{iconSVG}</div>
+        </>
+    );
 };
 
 const toExternalLink = (field: string, payload: string) => {
@@ -126,12 +111,6 @@ const ItemCard = ({
     toUserProfile,
     showAssetDetail,
 }: ItemCardProps) => {
-    let iconSVG = null;
-
-    if (target.field) {
-        iconSVG = categorize(target.field);
-    }
-
     if (!images && content) {
         let { newStr, srcArr } =
             target.field.includes('Twitter') || target.field.includes('Misskey')
@@ -147,14 +126,13 @@ const ItemCard = ({
                 <ImageHolder
                     imageUrl={avatarUrl}
                     title={username}
-                    roundedClassName={'rounded-full'}
+                    roundedClassName={'rounded-full cursor-pointer'}
                     size={32}
                     onClick={toUserProfile}
                 />
-                <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => toUserProfile()}>
+                <div className="flex flex-row items-center gap-2 cursor-pointer">
                     <span className="text-base font-semibold flex-shrink-0">{username}</span>
-                    {asset && <span className="flex-shrink-0">{getTopic(target.field, target.action.type)}</span>}
-                    {iconSVG && <>{iconSVG}</>}
+                    {categorize(target.field, target.action.type)}
                     <span className="opacity-20 truncate">{timeDifferent(timeStamp)}</span>
                 </div>
             </div>
@@ -174,7 +152,7 @@ const ItemCard = ({
                     name={asset.name}
                     desc={asset.description}
                     imageUrl={asset.image_url || config.undefinedImageAlt}
-                    onClick={() => showAssetDetail()}
+                    onClick={showAssetDetail}
                 />
             )}
         </div>
