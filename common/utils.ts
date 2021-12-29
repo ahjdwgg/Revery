@@ -157,12 +157,19 @@ const filterTagSQLMap = new Map([
     [FILTER_TAGS.nft, 'NFT'],
     [FILTER_TAGS.donation, 'Gitcoin'],
     [FILTER_TAGS.footprint, 'POAP'],
-    [FILTER_TAGS.content, 'Twitter,Mirror.XYZ,Misskey'],
+    [FILTER_TAGS.content, 'Mirror.XYZ,Misskey'],
 ]);
 
-const allFilterTagQueryString = 'NFT,Gitcoin,POAP,Twitter,Mirror.XYZ,Misskey';
+const web2TagQueryString = 'Twitter';
 
-async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
+const defaultFilterTagQueryString = 'NFT,Gitcoin,POAP,Mirror.XYZ,Misskey';
+
+async function initContent(
+    timestamp: string = '',
+    following: boolean = false,
+    filters?: { key: any; value: any }[],
+    web2Enabled?: boolean,
+) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
     const apiUser = await RSS3.getAPIUser();
@@ -170,7 +177,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
 
     let items: any = [];
 
-    let fieldLikeParam = allFilterTagQueryString;
+    let fieldLikeParam = defaultFilterTagQueryString;
 
     let result: any = [];
 
@@ -191,6 +198,10 @@ async function initContent(timestamp: string = '', following: boolean = false, f
     });
 
     fieldLikeParam = result.join(',') || '';
+
+    if (fieldLikeParam && web2Enabled) {
+        fieldLikeParam += ',' + web2TagQueryString;
+    }
 
     if (filters && following) {
         if (fieldLikeParam != '') {

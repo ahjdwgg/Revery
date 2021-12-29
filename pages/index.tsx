@@ -27,6 +27,7 @@ import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 import Events from '../common/events';
 import StickyBox from 'react-sticky-box';
 import AsyncLock from 'async-lock';
+import { Switch } from '@headlessui/react';
 
 interface ModalDetail {
     hidden: boolean;
@@ -60,6 +61,8 @@ const Home: NextPage = () => {
 
     const filterTagList: string[] = Object.values(FILTER_TAGS);
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
+
+    const [web2Enabled, setWeb2Enabled] = useState(true);
 
     const isInitialized = useRef(false);
 
@@ -234,11 +237,23 @@ const Home: NextPage = () => {
 
     const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
         // request based on filter tags
-        const { listed, haveMore } = await utils.initContent('', true, mapToArray(updatedFilterTagActiveMap));
+        const { listed, haveMore } = await utils.initContent(
+            '',
+            true,
+            mapToArray(updatedFilterTagActiveMap),
+            web2Enabled,
+        );
         setContent(listed);
         setHaveMoreContent(haveMore);
         setContentLoading(false);
     };
+
+    useEffect(() => {
+        setContentLoading(true);
+        if (filterTagActiveMap.size !== 0) {
+            getFilteredContent(filterTagActiveMap);
+        }
+    }, [web2Enabled]);
 
     return (
         <>
@@ -321,6 +336,24 @@ const Home: NextPage = () => {
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />
+                        <Switch.Group>
+                            <div className="flex p-3">
+                                <span className="font-semibold text-primary text-md pr-2">Web2.0 Switch</span>
+                                <Switch
+                                    checked={web2Enabled}
+                                    onChange={setWeb2Enabled}
+                                    className={`${
+                                        web2Enabled ? 'bg-primary opacity-40' : 'bg-gray-200'
+                                    } relative inline-flex items-center h-6 rounded-full w-11`}
+                                >
+                                    <span
+                                        className={`transform transition ease-in-out duration-200 ${
+                                            web2Enabled ? 'translate-x-6' : 'translate-x-1'
+                                        } inline-block w-4 h-4 transform bg-white rounded-full`}
+                                    />
+                                </Switch>
+                            </div>
+                        </Switch.Group>
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers[currentRecommendGroupType] ?? []}
