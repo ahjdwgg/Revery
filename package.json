@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "@google/model-viewer": "1.9.2",
+        "@headlessui/react": "1.4.2",
         "@sentry/nextjs": "6.16.1",
         "@tailwindcss/aspect-ratio": "0.3.0",
         "@tailwindcss/line-clamp": "0.2.2",
