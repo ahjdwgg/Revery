@@ -252,6 +252,10 @@ async function initContent(
                 name: profile?.name || (personaID ? await RNS.addr2Name(personaID) : formatter(personaID)),
             };
 
+            if (ItemDetails.name?.length === 0) {
+                ItemDetails.name = formatter(personaID);
+            }
+
             if ('target' in item) {
                 // Is auto item
                 if (isAsset(item.target.field)) {

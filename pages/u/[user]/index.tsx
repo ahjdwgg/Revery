@@ -445,7 +445,7 @@ const ProfilePage: NextPage = () => {
                                             <ItemCard
                                                 key={index}
                                                 avatarUrl={element.avatar}
-                                                username={isRegistered ? element.name : link ? link : address}
+                                                username={isRegistered ? element.name : link || formatter(address)}
                                                 content={element.item.summary}
                                                 asset={element.details}
                                                 timeStamp={new Date(element.item.date_updated).valueOf()}

@@ -208,7 +208,6 @@ const Home: NextPage = () => {
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
-        console.log(type);
         if (recommendGroupMemberIndexes.length) {
             let _recommendGroupMembers = recommendGroupMemberIndexes.map((memberIndex) => {
                 const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
