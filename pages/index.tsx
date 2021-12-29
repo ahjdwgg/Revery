@@ -337,19 +337,23 @@ const Home: NextPage = () => {
                             filterTagActiveMap={filterTagActiveMap}
                         />
                         <Switch.Group>
-                            <div className="flex p-3">
-                                <span className="font-semibold text-primary text-md pr-2">Web2.0 Switch</span>
+                            <div className="flex px-3 items-center">
+                                <span className="font-semibold text-primary text-md pr-2">Web2.0</span>
                                 <Switch
                                     checked={web2Enabled}
                                     onChange={setWeb2Enabled}
                                     className={`${
-                                        web2Enabled ? 'bg-primary opacity-40' : 'bg-gray-200'
-                                    } relative inline-flex items-center h-6 rounded-full w-11`}
+                                        web2Enabled
+                                            ? 'border border-primary border-opacity-70'
+                                            : 'border border-black border-opacity-20'
+                                    } relative inline-flex items-center h-6 rounded w-11`}
                                 >
                                     <span
                                         className={`transform transition ease-in-out duration-200 ${
-                                            web2Enabled ? 'translate-x-6' : 'translate-x-1'
-                                        } inline-block w-4 h-4 transform bg-white rounded-full`}
+                                            web2Enabled
+                                                ? 'translate-x-6 bg-primary bg-opacity-30 border border-primary border-opacity-70'
+                                                : 'translate-x-1 bg-black bg-opacity-10 border border-black border-opacity-20'
+                                        } inline-block w-4 h-4 transform rounded`}
                                     />
                                 </Switch>
                             </div>
