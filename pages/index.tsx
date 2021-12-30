@@ -348,14 +348,13 @@ const Home: NextPage = () => {
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />
-
                         <Switch.Group>
                             <div className="flex px-3 items-center">
                                 <span className="animate-fade-in-up font-semibold text-primary text-md pr-1">
                                     Web2.0
                                 </span>
                                 <div className="animate-fade-in-up has-tooltip">
-                                    <span className="tooltip rounded bg-black bg-opacity-60 md:w-72 text-white text-xs mt-6 px-2 py-1">
+                                    <span className="tooltip rounded bg-tooltip md:w-72 text-white text-xs mt-6 px-2 py-1">
                                         This switch controls whether Web2.0 activities or contents (e.g. Twitter) will
                                         be shown.
                                     </span>
