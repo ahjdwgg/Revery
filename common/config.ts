@@ -38,7 +38,7 @@ const config = {
     recommendations: {
         endpoint: 'https://prenode.rss3.dev',
         groupLimit: 5,
-        userLimit: 8,
+        userLimit: 10,
     },
     ipfs: {
         download: {

@@ -341,7 +341,7 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <StickyBox className="flex flex-col self-start w-4/11" offsetTop={64} offsetBottom={200}>
+                    <StickyBox className="flex flex-col self-start w-4/11" offsetTop={64} offsetBottom={0}>
                         <FilterSection
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
