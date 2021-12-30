@@ -23,7 +23,7 @@ import config from '../common/config';
 import ModalConnect from '../components/modal/ModalConnect';
 import LoadMoreButton from '../components/buttons/LoadMoreButton';
 import FilterSection, { mapToArray } from '../components/filter/FilterSection';
-import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
+import { FILTER_TAGS } from '../components/filter/FilterTag';
 import Events from '../common/events';
 import StickyBox from 'react-sticky-box';
 import AsyncLock from 'async-lock';
@@ -96,7 +96,7 @@ const Home: NextPage = () => {
                         }
                     }
                     setWeb2Enabled(localStoreWeb2Enabled);
-                    await getFilteredContent(localStoreFilterTagActiveMap);
+                    await getFilteredContent(localStoreFilterTagActiveMap, localStoreWeb2Enabled);
                 }, 0);
             }
         });
@@ -229,7 +229,7 @@ const Home: NextPage = () => {
         setIsLoadingRecommendGroupMembers(false);
     };
 
-    const getFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
+    const getFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>, web2IsEnabled?: boolean) => {
         setFilterTagActiveMap(updatedFilterTagActiveMap);
         setContentLoading(true);
         utils.setStorage('filterTagActiveMap', JSON.stringify(utils.strMapToObj(updatedFilterTagActiveMap)));
@@ -239,16 +239,16 @@ const Home: NextPage = () => {
         if (web2Enabled !== undefined) {
             utils.setStorage('web2Enabled', JSON.stringify(web2Enabled));
         }
-        await updateFilteredContent(updatedFilterTagActiveMap);
+        await updateFilteredContent(updatedFilterTagActiveMap, web2IsEnabled);
     };
 
-    const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
+    const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>, web2IsEnabled?: boolean) => {
         // request based on filter tags
         const { listed, haveMore } = await utils.initContent(
             '',
             true,
             mapToArray(updatedFilterTagActiveMap),
-            web2Enabled,
+            web2IsEnabled || web2Enabled,
         );
         setContent(listed);
         setHaveMoreContent(haveMore);
@@ -261,7 +261,7 @@ const Home: NextPage = () => {
             if (!filterTagActiveMap.get(FILTER_TAGS.content) && web2Enabled) {
                 filterTagActiveMap.set(FILTER_TAGS.content, !filterTagActiveMap.get(FILTER_TAGS.content));
             }
-            getFilteredContent(filterTagActiveMap);
+            getFilteredContent(filterTagActiveMap, web2Enabled);
         }
     }, [web2Enabled]);
 
