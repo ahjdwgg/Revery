@@ -35,7 +35,7 @@ const EmblaCarousel = ({ slides }: any) => {
     }, [embla, onSelect]);
 
     return slides.length === 1 ? (
-        <div className="aspect-w-16 aspect-h-9">
+        <div className="aspect-w-16 aspect-h-9 mt-3">
             <img src={slides[0]} alt={slides[0]} className="object-cover w-full h-full cursor-pointer" />
         </div>
     ) : (

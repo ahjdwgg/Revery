@@ -157,12 +157,19 @@ const filterTagSQLMap = new Map([
     [FILTER_TAGS.nft, 'NFT'],
     [FILTER_TAGS.donation, 'Gitcoin'],
     [FILTER_TAGS.footprint, 'POAP'],
-    [FILTER_TAGS.content, 'Twitter,Mirror.XYZ,Misskey'],
+    [FILTER_TAGS.content, 'Mirror.XYZ,Misskey'],
 ]);
 
-const allFilterTagQueryString = 'NFT,Gitcoin,POAP,Twitter,Mirror.XYZ,Misskey';
+const web2TagQueryString = 'Twitter';
 
-async function initContent(timestamp: string = '', following: boolean = false, filters?: { key: any; value: any }[]) {
+const defaultFilterTagQueryString = 'NFT,Gitcoin,POAP,Mirror.XYZ,Misskey';
+
+async function initContent(
+    timestamp: string = '',
+    following: boolean = false,
+    filters?: { key: any; value: any }[],
+    web2Enabled?: boolean,
+) {
     const assetSet = new Set<string>();
     const profileSet = new Set<string>();
     const apiUser = await RSS3.getAPIUser();
@@ -170,7 +177,7 @@ async function initContent(timestamp: string = '', following: boolean = false, f
 
     let items: any = [];
 
-    let fieldLikeParam = allFilterTagQueryString;
+    let fieldLikeParam = defaultFilterTagQueryString;
 
     let result: any = [];
 
@@ -187,6 +194,9 @@ async function initContent(timestamp: string = '', following: boolean = false, f
 
         if (tag.value && tag.key == FILTER_TAGS.content) {
             result.push(filterTagSQLMap.get(FILTER_TAGS.content));
+            if (web2Enabled) {
+                result.push(web2TagQueryString);
+            }
         }
     });
 
@@ -241,6 +251,10 @@ async function initContent(timestamp: string = '', following: boolean = false, f
                 avatar: profile?.avatar?.[0] || config.undefinedImageAlt,
                 name: profile?.name || (personaID ? await RNS.addr2Name(personaID) : formatter(personaID)),
             };
+
+            if (ItemDetails.name?.length === 0) {
+                ItemDetails.name = formatter(personaID);
+            }
 
             if ('target' in item) {
                 // Is auto item

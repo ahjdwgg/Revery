@@ -179,7 +179,7 @@ const Nft: NextPage = () => {
                                 <NFTBadges
                                     location="overlay"
                                     chain={asset.detail.chain.split('.')[0]}
-                                    collectionImg={asset.detail.collection_icon}
+                                    collectionImg={asset.detail.collection?.image_url}
                                 />
                             </div>
                         ))}

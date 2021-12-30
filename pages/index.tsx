@@ -27,6 +27,7 @@ import FilterTag, { FILTER_TAGS } from '../components/filter/FilterTag';
 import Events from '../common/events';
 import StickyBox from 'react-sticky-box';
 import AsyncLock from 'async-lock';
+import { Switch } from '@headlessui/react';
 
 interface ModalDetail {
     hidden: boolean;
@@ -61,6 +62,8 @@ const Home: NextPage = () => {
     const filterTagList: string[] = Object.values(FILTER_TAGS);
     const [filterTagActiveMap, setFilterTagActiveMap] = useState<Map<string, boolean>>(new Map());
 
+    const [web2Enabled, setWeb2Enabled] = useState<boolean>();
+
     const isInitialized = useRef(false);
 
     const init = async () => {
@@ -86,11 +89,13 @@ const Home: NextPage = () => {
                     const localStoreFilterTagActiveMap = utils.objToStrMap(
                         JSON.parse(utils.getStorage('filterTagActiveMap') || '{}'),
                     );
+                    const localStoreWeb2Enabled = JSON.parse(utils.getStorage('web2Enabled') || 'false');
                     for (const tag of filterTagList) {
                         if (!localStoreFilterTagActiveMap.has(tag)) {
                             localStoreFilterTagActiveMap.set(tag, true);
                         }
                     }
+                    setWeb2Enabled(localStoreWeb2Enabled);
                     await getFilteredContent(localStoreFilterTagActiveMap);
                 }, 0);
             }
@@ -203,7 +208,6 @@ const Home: NextPage = () => {
     const getRecommendationGroups = async (type: string) => {
         setIsLoadingRecommendGroupMembers(true);
         const recommendGroupMemberIndexes = await RSS3.getRecommendGroupMembers(type);
-        console.log(type);
         if (recommendGroupMemberIndexes.length) {
             let _recommendGroupMembers = recommendGroupMemberIndexes.map((memberIndex) => {
                 const { extracted } = utils.extractEmbedFields(memberIndex.profile?.bio || '', []);
@@ -229,16 +233,37 @@ const Home: NextPage = () => {
         setFilterTagActiveMap(updatedFilterTagActiveMap);
         setContentLoading(true);
         utils.setStorage('filterTagActiveMap', JSON.stringify(utils.strMapToObj(updatedFilterTagActiveMap)));
+        if (!updatedFilterTagActiveMap.get(FILTER_TAGS.content)) {
+            setWeb2Enabled(false);
+        }
+        if (web2Enabled !== undefined) {
+            utils.setStorage('web2Enabled', JSON.stringify(web2Enabled));
+        }
         await updateFilteredContent(updatedFilterTagActiveMap);
     };
 
     const updateFilteredContent = async (updatedFilterTagActiveMap: Map<string, boolean>) => {
         // request based on filter tags
-        const { listed, haveMore } = await utils.initContent('', true, mapToArray(updatedFilterTagActiveMap));
+        const { listed, haveMore } = await utils.initContent(
+            '',
+            true,
+            mapToArray(updatedFilterTagActiveMap),
+            web2Enabled,
+        );
         setContent(listed);
         setHaveMoreContent(haveMore);
         setContentLoading(false);
     };
+
+    useEffect(() => {
+        setContentLoading(true);
+        if (filterTagActiveMap.size !== 0) {
+            if (!filterTagActiveMap.get(FILTER_TAGS.content) && web2Enabled) {
+                filterTagActiveMap.set(FILTER_TAGS.content, !filterTagActiveMap.get(FILTER_TAGS.content));
+            }
+            getFilteredContent(filterTagActiveMap);
+        }
+    }, [web2Enabled]);
 
     return (
         <>
@@ -321,6 +346,30 @@ const Home: NextPage = () => {
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />
+                        <Switch.Group>
+                            <div className="flex px-3 items-center">
+                                <span className="animate-fade-in-up font-semibold text-primary text-md pr-2">
+                                    Web2.0
+                                </span>
+                                <Switch
+                                    checked={web2Enabled || false}
+                                    onChange={setWeb2Enabled}
+                                    className={`animate-fade-in-up ${
+                                        web2Enabled
+                                            ? 'border border-primary border-opacity-70'
+                                            : 'border border-black border-opacity-20'
+                                    } relative inline-flex items-center h-6 rounded w-11`}
+                                >
+                                    <span
+                                        className={`transform transition ease-in-out duration-200 ${
+                                            web2Enabled
+                                                ? 'translate-x-6 bg-primary bg-opacity-30 border border-primary border-opacity-70'
+                                                : 'translate-x-1 bg-black bg-opacity-10 border border-black border-opacity-20'
+                                        } inline-block w-4 h-4 transform rounded`}
+                                    />
+                                </Switch>
+                            </div>
+                        </Switch.Group>
                         <RecommendSection
                             groups={recommendGroups}
                             members={recommendGroupMembers[currentRecommendGroupType] ?? []}
