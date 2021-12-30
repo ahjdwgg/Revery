@@ -12,6 +12,7 @@ import SingleNFT from '../components/details/SingleNFT';
 import SingleDonation from '../components/details/SingleDonation';
 import SingleFootprint from '../components/details/SingleFootprint';
 import Button from '../components/buttons/Button';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { AnyObject } from 'rss3/types/extend';
 import ItemCard from '../components/content/ItemCard';
 import SingleAccount from '../components/details/SingleAccount';
@@ -347,11 +348,19 @@ const Home: NextPage = () => {
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />
+
                         <Switch.Group>
                             <div className="flex px-3 items-center">
-                                <span className="animate-fade-in-up font-semibold text-primary text-md pr-2">
+                                <span className="animate-fade-in-up font-semibold text-primary text-md pr-1">
                                     Web2.0
                                 </span>
+                                <div className="animate-fade-in-up has-tooltip">
+                                    <span className="tooltip rounded bg-black bg-opacity-60 md:w-72 text-white text-xs mt-6 px-2 py-1">
+                                        This switch controls whether Web2.0 activities or contents (e.g. Twitter) will
+                                        be shown.
+                                    </span>
+                                    <AiOutlineQuestionCircle className="mr-2 w-4 text-primary opacity-80 hover:opacity-60" />
+                                </div>
                                 <Switch
                                     checked={web2Enabled || false}
                                     onChange={setWeb2Enabled}
