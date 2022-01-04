@@ -38,7 +38,7 @@ const RecommendSection = ({
     };
 
     return (
-        <div className="p-3 animate-fade-in-up">
+        <div className="animate-fade-in-up">
             <div>
                 <span className="font-semibold text-primary text-md">For You</span>
             </div>

@@ -342,13 +342,13 @@ const Home: NextPage = () => {
                             )}
                         </>
                     </section>
-                    <StickyBox className="flex flex-col self-start w-4/11" offsetTop={64} offsetBottom={0}>
+                    <StickyBox className="flex flex-col self-start w-4/11 p-3 gap-3" offsetTop={64} offsetBottom={0}>
                         <FilterSection
                             getFilteredContent={getFilteredContent}
                             filterTagActiveMap={filterTagActiveMap}
                         />
                         <Switch.Group>
-                            <div className="flex px-3 items-center">
+                            <div className="flex items-center">
                                 <span className="animate-fade-in-up font-semibold text-primary text-md pr-1">
                                     Web2.0
                                 </span>
@@ -388,6 +388,27 @@ const Home: NextPage = () => {
                             isLoadingGroups={isLoadingRecommendGroups}
                             isLoadingMembers={isLoadingRecommendGroupMembers}
                         />
+                        <div className="text-xs text-gray-500 divide-x divide-gray-500">
+                            <a className="pr-1.5" href="https://rss3.io/#/privacy">
+                                Privacy
+                            </a>
+                            <a className="px-1.5" href="https://github.com/NaturalSelectionLabs/Revery">
+                                GitHub
+                            </a>
+                            <span className="px-1.5">
+                                Made with 🌀 by&nbsp;
+                                <a
+                                    href="https://rss3.io"
+                                    className="
+                                    no-underline
+                                    visited:no-underline
+                                    active:no-underline
+                                "
+                                >
+                                    RSS3
+                                </a>
+                            </span>
+                        </div>
                     </StickyBox>
                 </div>
             ) : (
