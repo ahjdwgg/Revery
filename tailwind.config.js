@@ -37,6 +37,9 @@ module.exports = {
                 filter: {
                     DEFAULT: '#F2F2F2',
                 },
+                tooltip: {
+                    DEFAULT: '#666666',
+                },
                 error: '#D75F5F',
             },
             opacity: {

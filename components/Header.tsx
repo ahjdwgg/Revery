@@ -122,6 +122,13 @@ const Header = () => {
         }
     };
 
+    const handleKeypress = async (e: any) => {
+        var code = e.keyCode || e.which;
+        if (code === 13) {
+            await toSearchedUserPage();
+        }
+    };
+
     // detect whether user has scrolled the page down by 10px
     useEffect(() => {
         const scrollHandler = () => {
@@ -155,6 +162,7 @@ const Header = () => {
                                         className="w-64 h-8 text-sm outline-none"
                                         placeholder={'Search for an address, RNS or ENS'}
                                         type={'text'}
+                                        onKeyPress={handleKeypress}
                                         onChange={handleSearchUser}
                                     />
                                     <p className={`text-xs text-error -translate-y-1 ${!searchError ? 'hidden' : ''}`}>
