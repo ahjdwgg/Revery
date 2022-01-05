@@ -17,11 +17,11 @@ const FilterSection = ({ filterTagActiveMap, getFilteredContent }: FilterSection
     };
 
     return (
-        <div className="p-3 animate-fade-in-up">
+        <div className="animate-fade-in-up">
             <div>
                 <span className="font-semibold text-primary text-md">+ Filter</span>
             </div>
-            <div className="flex flex-wrap w-full gap-2 py-3">
+            <div className="flex flex-wrap w-full gap-2 pt-3">
                 {mapToArray(filterTagActiveMap).map((item) => {
                     return (
                         <FilterTag
