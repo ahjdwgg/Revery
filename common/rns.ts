@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 interface RSS3Domains {
     address: string;
     rnsName: string;
+    dasName: string;
     ensName: string;
 }
 
@@ -18,6 +19,8 @@ const searchInCache = (aon: string, type: 'address' | 'name') => {
     } else {
         if (aon.endsWith('.eth')) {
             index = cache.findIndex((record) => record.ensName === aon);
+        } else if (aon.endsWith('.bit')) {
+            index = cache.findIndex((record) => record.dasName === aon);
         } else {
             index = cache.findIndex((record) => record.rnsName === aon);
         }
@@ -45,7 +48,7 @@ const addr2Name = async (addr: string, isPureRNS: boolean = false) => {
     if (isPureRNS) {
         return domainInfo.rnsName || '';
     } else {
-        return domainInfo.rnsName || domainInfo.ensName || '';
+        return domainInfo.rnsName || domainInfo.dasName || domainInfo.ensName || '';
     }
 };
 
