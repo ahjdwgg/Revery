@@ -160,7 +160,7 @@ const Header = () => {
                                 <div className={`flex flex-col ${searchError ? 'mt-4' : ''}`}>
                                     <input
                                         className="w-64 h-8 text-sm outline-none"
-                                        placeholder={'Search for an address, RNS or ENS'}
+                                        placeholder={'Search for an address, RNS, DAS or ENS'}
                                         type={'text'}
                                         onKeyPress={handleKeypress}
                                         onChange={handleSearchUser}
