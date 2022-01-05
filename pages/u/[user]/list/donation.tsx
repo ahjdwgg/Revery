@@ -129,7 +129,7 @@ const Donation: NextPage = () => {
                 <section className="grid justify-between w-full my-4 grid-cols-listHeader">
                     <Button isOutlined={true} color={COLORS.primary} text={'Back'} onClick={() => router.back()} />
                     <h1 className="text-lg font-bold text-left text-primary">
-                        {persona ? persona.profile?.name + "'s Donations" : 'Donations'}
+                        {persona?.profile?.name ? persona.profile.name + "'s Donations" : 'Donations'}
                     </h1>
                     {isOwner && (
                         <Button
