@@ -242,6 +242,7 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         }
         if (user.name && !user.address) {
             user.address = await rns.name2Addr(user.name);
+            user.name = await rns.addr2Name(user.address); // fix: name with priority
         }
         if (user.address && !user.name) {
             user.name = await rns.addr2Name(user.address);

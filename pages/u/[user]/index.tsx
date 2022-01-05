@@ -184,7 +184,7 @@ const ProfilePage: NextPage = () => {
             setAddress(pageOwner.address);
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
-            setRNS(await RNS.addr2Name(pageOwner.address));
+            setRNS(await RNS.addr2Name(pageOwner.address, true));
             setLink(pageOwner.name);
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
