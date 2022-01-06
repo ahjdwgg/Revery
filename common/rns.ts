@@ -118,7 +118,7 @@ const RNS = {
         return name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
     },
     addSuffix: (name: string) => {
-        return name.endsWith(config.rns.suffix) ? name : `${name}${config.rns.suffix}`;
+        return !name.includes('.') && !name.endsWith(config.rns.suffix) ? `${name}${config.rns.suffix}` : name;
     },
     isMetamaskEnabled,
     isSpecifyNetwork,
