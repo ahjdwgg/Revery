@@ -114,6 +114,12 @@ const RNS = {
     addr2Name,
     name2Addr,
     tryName,
+    removeSuffix: (name: string) => {
+        return name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
+    },
+    addSuffix: (name: string) => {
+        return name.endsWith(config.rns.suffix) ? name : `${name}${config.rns.suffix}`;
+    },
     isMetamaskEnabled,
     isSpecifyNetwork,
     async registerRNS(name: string) {

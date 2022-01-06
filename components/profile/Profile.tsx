@@ -193,9 +193,7 @@ const Profile = ({
                     </span>
                 </div>
                 <div className={`flex flex-row gap-x-2`}>
-                    {rns ? (
-                        <LinkButton text={fixRNS(rns)} color={COLORS.primary} onClick={toRss3BioUserSite} />
-                    ) : isOwner ? (
+                    {!rns && isOwner ? (
                         <LinkButton
                             text={'Claim Your RNS'}
                             color={COLORS.primary}

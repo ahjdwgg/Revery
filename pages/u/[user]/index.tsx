@@ -190,7 +190,7 @@ const ProfilePage: NextPage = () => {
             setBio(extracted);
             setWebsite(fieldsMatch?.['SITE'] || '');
             setRNS(await RNS.addr2Name(pageOwner.address, true));
-            setLink(pageOwner.name);
+            setLink(/^0x[a-fA-F0-9]{40}$/.test(aon) ? '' : RNS.addSuffix(aon));
             setFollowers(pageOwner.followers || []);
             setFollowings(pageOwner.followings || []);
             setProfileLoading(false);

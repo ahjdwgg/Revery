@@ -8,6 +8,7 @@ import { RecommendationGroupsResponse, RecommendationUsersResponse } from './typ
 import config from './config';
 import rns from './rns';
 import Events from './events';
+import RNS from './rns';
 
 export interface RSS3DetailPersona {
     file: RSS3Index | null;
@@ -454,7 +455,7 @@ export default {
             const p = config.productsList[product];
             if (p.subDomainMode) {
                 if (name) {
-                    const fixedName = name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
+                    const fixedName = RNS.removeSuffix(name);
                     return `${p.schema}${fixedName}.${p.baseDomain}`;
                 } else {
                     return `${p.schema}${p.baseDomain}/${address}`;
