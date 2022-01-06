@@ -174,6 +174,11 @@ const ProfilePage: NextPage = () => {
         const aon = (router.query.user as string) || '';
         addrOrName.current = aon;
         const pageOwner = await RSS3.setPageOwner(aon);
+        if (pageOwner.name && /^0x[a-fA-F0-9]{40}$/.test(aon)) {
+            // Prefer name to address
+            await router.push(`/u/${pageOwner.name}`);
+            return;
+        }
         setRegistered(!!pageOwner.file?.signature);
         const profile = pageOwner.profile;
         if (profile) {
